@@ -76,7 +76,7 @@ public class AccessionLookup extends LazyCachedLookup {
      * @throws Nothing
      */
 
-    public String getAddQuery (Object add)
+    public String getAddQuery (Object accid)
        {
            String query = "select accID, _Object_key " +
                          "from ACC_Accession " +
