@@ -61,6 +61,8 @@ public class VocabKeyLookup extends LazyCachedLookup
 
   /**
    * constructor
+   * @param vocabType the type of vocabulary which are listed in 
+   * org.jax.mgi.dbs.mgd.VocabularyTypeConstants
    * @throws CacheException thrown if there is an error with the cache
    * @throws DBException thrown if there is an error accessing the db
    * @throws ConfigException thrown if there is an error accessing the
