@@ -15,14 +15,26 @@ import org.jax.mgi.dbs.mgd.MGD;
 public class TranslationExceptionFactory extends ExceptionFactory {
 
   /**
-   * Could not find given translation type
+   * Could not find given translation type key
    */
-  public static final String BadTranslationType =
-      "org.jax.mgi.dbs.mgd.trans.BadTranslationType";
+  public static final String NoTransTypeKey =
+      "org.jax.mgi.dbs.mgd.trans.NoTransTypeKey";
   static {
-    exceptionsMap.put(BadTranslationType, new TranslationException(
+    exceptionsMap.put(NoTransTypeKey, new TranslationException(
         "Could not find record in " + MGD.mgi_translationtype._name + " " +
         "for translationType key of ??", false));
   }
+
+  /**
+   * Could not find given translation type name
+   */
+  public static final String NoTransTypeName =
+      "org.jax.mgi.dbs.mgd.trans.NoTransTypeName";
+  static {
+    exceptionsMap.put(NoTransTypeName, new TranslationException(
+        "Could not find record in " + MGD.mgi_translationtype._name + " " +
+        "for translationType name of ??", false));
+  }
+
 
 }

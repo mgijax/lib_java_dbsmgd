@@ -60,8 +60,10 @@ public class Translator extends CachedLookup
   /*
    * the following constant definitions are exceptions thrown by this class
    */
-  private static String BadTranslationType =
-      TranslationExceptionFactory.BadTranslationType;
+  private static String NoTransTypeKey =
+      TranslationExceptionFactory.NoTransTypeKey;
+  private static String NoTransTypeName =
+      TranslationExceptionFactory.NoTransTypeName;
   private static String KeyNotFound =
 		LookupExceptionFactory.KeyNotFound;
 
@@ -102,7 +104,18 @@ public class Translator extends CachedLookup
     super(cacheType,
           SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
     TranslationTypeKeyLookup ttkLookup = new TranslationTypeKeyLookup();
-    this.translationType = ttkLookup.lookup(translationType);
+    try
+    {
+      this.translationType = ttkLookup.lookup(translationType);
+    }
+    catch (KeyNotFoundException e)
+    {
+      TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
+      TranslationException e2 =
+          (TranslationException) eFactory.getException(NoTransTypeName);
+      e2.bind(translationType);
+      throw e2;
+    }
     setup();
 
   }
@@ -223,7 +236,7 @@ public class Translator extends CachedLookup
     catch (KeyNotFoundException e) {
       TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
       TranslationException e2 =
-          (TranslationException) eFactory.getException(BadTranslationType);
+          (TranslationException) eFactory.getException(NoTransTypeKey);
       e2.bind(translationType.intValue());
       throw e2;
     }
@@ -283,7 +296,7 @@ public class Translator extends CachedLookup
      */
     public HashMap lookup(int translationType) throws LookupException,
         KeyNotFoundException {
-      Object o = lookup(new Integer(translationType));
+      Object o = super.lookup(new Integer(translationType));
       return (HashMap) o;
     }
 
@@ -355,7 +368,7 @@ public class Translator extends CachedLookup
      */
     public HashMap lookup(int translationType) throws KeyNotFoundException,
         LookupException {
-      Object o = lookup(new Integer(translationType));
+      Object o = super.lookup(new Integer(translationType));
       return (HashMap) o;
     }
 
@@ -427,8 +440,9 @@ public class Translator extends CachedLookup
      * @param the given translation type
      * @return the MGI type
      */
-    public Integer lookup(String translationName) throws LookupException {
-      Object o = lookup(translationName);
+    public Integer lookup(String translationName)
+        throws LookupException, KeyNotFoundException {
+      Object o = super.lookup(translationName);
       return (Integer) o;
     }
 
