@@ -21,12 +21,21 @@ public class LogicalDBConstants
     //
     public static final int MGI = 1;
     public static final int SEQUENCE = 9;
+    public static final int SWISSPROT = 13;
+    public static final int REFSEQ = 27;
+    public static final int TREMBL = 41;
+    public static final int TIGR = 35;
+    public static final int DOTS = 36;
+
     public static final int PUBMED = 29;
     public static final int MEDLINE = 7;
 }
 
 
 //  $Log$
+//  Revision 1.1.2.1  2003/11/13 20:37:26  sc
+//  added PUBMED and MEDLINE constants
+//
 //  Revision 1.1  2003/09/18 14:25:17  dbm
 //  Initial version
 //
