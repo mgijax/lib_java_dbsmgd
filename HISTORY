@@ -1,3 +1,8 @@
+DATE: 02/17/2004
+STAFF: sc
+RELEASE: dev
+CHANGES: changed AccessionLookup to a FullCacheLookup (from Lazy)
+
 DATE: 02/16/2004
 STAFF: mbw
 RELEASE: dev
