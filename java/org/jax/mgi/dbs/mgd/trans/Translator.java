@@ -65,7 +65,7 @@ public class Translator extends CachedLookup
   private static String NoTransTypeName =
       TranslationExceptionFactory.NoTransTypeName;
   private static String KeyNotFound =
-		LookupExceptionFactory.KeyNotFound;
+                LookupExceptionFactory.KeyNotFound;
 
   /**
    * constructor
@@ -176,7 +176,7 @@ public class Translator extends CachedLookup
                "     " + transTable + " tr " +
                " WHERE tr." + object_key + " = tg." + this.targetPrimaryKey +
                " AND tr." + transType + " = " + this.translationType +
-               " AND tr." + badName + " = " + term.toString();
+               " AND tr." + badName + " = '" + term.toString() + "'";
     return s;
   }
 
