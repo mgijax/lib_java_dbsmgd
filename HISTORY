@@ -1,10 +1,16 @@
+TAG: lib_java_dbsmgd-1-0-18
+DATE: 04/07/2004
+STAFF: jw
+RELEASE: dev
+CHANGES:
+1) fixes to SequenceFactory.java
+
 TAG: lib_java_dbsmgd-1-0-17
 DATE: 04/06/2004
 STAFF: sc
 RELEASE: dev
 CHANGES:
 1) tag incorporating changes listed below
-
 
 DATE: 04/01/2004
 STAFF: sd
