@@ -472,6 +472,8 @@ public class MarkerFactory
 	return marker;
     }
 
+    /* -------------------------------------------------------------------- */
+
     /** retrieve the the basic info avaliable for the marker specified in
     *    'parms', as well as its Gene Ontology (GO) data.
     * @param parms set of parameters specifying which marker we are seeking.
@@ -524,6 +526,60 @@ public class MarkerFactory
     }
 
     /* -------------------------------------------------------------------- */
+
+    /** retrieve the the basic info avaliable for the marker specified in
+    *    'parms', as well as its tissues with expression data.
+    * @param parms set of parameters specifying which marker we are seeking.
+    *    Three keys in 'parms' are checked, in order of preference:  "key"
+    *    (marker key as a String), "id" (marker accession ID), and "symbol"
+    *    (marker symbol).
+    * @return DTO which defines all marker data fields
+    * @assumes nothing
+    * @effects retrieves all marker data by quering a database
+    * @throws DBException if there is a problem querying the database or
+    *    processing the results
+    */
+    public DTO getBasicTissueInfo (Map parms) throws DBException
+    {
+	// all data for the marker with the given 'key'
+        DTO marker = DTO.getDTO();
+
+	// data for a particular section, to merge with 'marker'
+	DTO section = null;
+
+	// marker key as a String
+	String keyStr = getKey (parms);
+
+	// if we could not find a marker key based on 'parms', then bail out
+	// before bothering with anything else
+	if (keyStr == null)
+	{
+	    this.logInfo ("Could not find marker");
+	    return marker;
+	}
+
+	// marker key as an integer
+	int key = Integer.parseInt (keyStr);
+
+	// get data for individual sections.  For the sake of efficiency, we
+	// make sure to always return the 'section' to the pool of available
+	// DTOs once we are done with it.
+	
+	section = this.getBasicInfo (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved basic marker info");
+
+        section = this.getTissues (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved tissue data");
+
+	return marker;
+    }
+
+    /* -------------------------------------------------------------------- */
+
     /** retrieve the the basic info avaliable for the marker specified in
     *    'parms', as well as its nomenclature history.
     * @param parms set of parameters specifying which marker we are seeking.
@@ -1547,11 +1603,158 @@ public class MarkerFactory
 	DTO marker = DTO.getDTO();	// start with a new DTO
 
         nav = this.sqlDM.executeQuery (
-	         Sprintf.sprintf (EXPRESSION_TISSUES, key));
+	         Sprintf.sprintf (EXPRESSION_TISSUE_COUNT, key));
 	if (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
 	    marker.set (DTOConstants.TissueCount, rr.getInt(1));
+	}
+	nav.close();
+
+	return marker;
+    }
+
+    /* -------------------------------------------------------------------- */
+
+    /** get the tissues which have expression results associated with the
+    *    marker with the given 'key'.
+    * @param key the marker key of the marker whose data we seek
+    * @return DTO maps DTOConstants.TissueCount to an Integer count.  If there
+    *    are no associated tissues, then an empty DTO is returned.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    * @notes This method should probably be moved into an ExpressionFactory
+    *    which knows how to retrieve expression-related data.
+    */
+    public DTO getTissues (int key) throws DBException
+    {
+	ResultsNavigator nav = null;   	// set of query results
+	RowReference rr = null;	       	// one row in 'nav'
+	DTO marker = DTO.getDTO();	// start with a new DTO
+
+        nav = this.sqlDM.executeQuery (
+	         Sprintf.sprintf (EXPRESSION_TISSUES, key));
+
+	if (nav.next())
+	{
+	    ArrayList list = new ArrayList();
+	    rr = (RowReference) nav.getCurrent();
+
+	    // count of positive (+) expression results for this structure
+	    int expressedCount = 0;
+
+	    // count of negative (-) expression results for this structure
+	    int notExpressedCount = 0;
+
+	    // printName for the current structure
+	    String printName = null;
+
+	    // was the current result expressed or not?
+	    int expressed = -1;
+
+	    // current Theiler stage
+	    Integer stage = null;
+
+	    // current database structure
+	    int structureKey = -1;
+
+	    // current database structure as an Integer
+	    Integer structureKeyInteger = null;
+
+	    // previous database structure
+	    int lastStructureKey = -1;
+
+	    // all data for the current structure
+	    DTO dto = null;
+
+	    // shared instance of 0, to avoid instantiating multiples
+	    Integer zero = new Integer(0);
+
+	    /* Each expression result is returned individually, and we want to
+	    * group them by tissue and by result type (expressed or not), to 
+	    * get counts for each grouping.  To do this, we rely on the proper
+	    * sorting of the query results, and we remember the previous
+	    * structure key.
+	    */
+
+	    do
+	    {
+	        printName = rr.getString(1);
+		expressed = rr.getInt(2).intValue();
+		stage = rr.getInt(3);
+		structureKeyInteger = rr.getInt(4);
+		structureKey = structureKeyInteger.intValue();
+
+		if (structureKey != lastStructureKey)
+		{
+		    // if we have a DTO object that we need to update...
+
+		    if (dto != null)
+		    {
+		        if (expressedCount > 0)
+			{
+		            dto.set (DTOConstants.PositiveExpressionCount,
+			        new Integer(expressedCount));
+			}
+			if (notExpressedCount > 0)
+			{
+		            dto.set (DTOConstants.NegativeExpressionCount,
+			        new Integer(notExpressedCount));
+			}
+		    }
+
+		    // start a new DTO for the new structure
+
+		    dto = DTO.getDTO();
+
+		    dto.set (DTOConstants.Structure, printName);
+		    dto.set (DTOConstants.StructureKey, structureKeyInteger);
+		    dto.set (DTOConstants.Stage, stage);
+		    dto.set (DTOConstants.PositiveExpressionCount, zero);
+		    dto.set (DTOConstants.NegativeExpressionCount, zero);
+
+		    expressedCount = 0;
+		    notExpressedCount = 0;
+
+		    list.add(dto);
+
+		    lastStructureKey = structureKey;
+		}
+
+		if (expressed == 1)
+		{
+		    expressedCount++;
+		}
+		else
+		{
+		    notExpressedCount++;
+		}
+
+	    } while (nav.next());
+
+	    // if we have a DTO object, then it is the last one.  It was not
+	    // updated in the above loop to reflect the new counts.
+
+	    if (dto != null)
+	    {
+	        if (expressedCount > 0)
+		{
+	            dto.set (DTOConstants.PositiveExpressionCount,
+		        new Integer(expressedCount));
+		}
+		if (notExpressedCount > 0)
+		{
+	            dto.set (DTOConstants.NegativeExpressionCount,
+		        new Integer(notExpressedCount));
+		}
+	    
+		// we only add the item to the result DTO if there were any
+		// tissues with expression data
+
+	        marker.set (DTOConstants.ExpressionTissues, list);
+	    }
 	}
 	nav.close();
 
@@ -2591,10 +2794,23 @@ public class MarkerFactory
 
     // get a count of tissues for the marker
     // fill in: marker key (int)
-    private static final String EXPRESSION_TISSUES =
+    private static final String EXPRESSION_TISSUE_COUNT =
 		"select count (distinct ge._Structure_key)"
 		+ " from GXD_Expression ge"
 		+ " where ge._Marker_key = %d";
+
+    // get the tissue data for those with expression results for the marker
+    // fill in: marker key (int)
+    private static final String EXPRESSION_TISSUES =
+    		"SELECT gs.printName, ge.expressed, gt.stage,"
+		+ " gs._Structure_key, gs.topoSort "
+		+ "FROM GXD_Expression ge,"
+		+ " GXD_Structure gs,"
+		+ " GXD_TheilerStage gt "
+		+ "WHERE ge._Marker_key = %d"
+		+ " AND ge._Structure_key = gs._Structure_key"
+		+ " AND gs._Stage_key = gt._Stage_key "
+		+ "ORDER BY gt.stage, gs.topoSort, ge.expressed";
 
     // create a temp table for use in retrieving GO annotations
     // fill in: nothing
@@ -2934,6 +3150,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.3  2004/02/11 16:28:00  jsb
+* Updated handling of actual databases
+*
 * Revision 1.2  2004/02/10 17:49:38  jsb
 * Many changes
 *
