@@ -55,7 +55,6 @@ public class TranslationTypeKeyLookup extends FullCachedLookup
    * @return the MGI type
    */
   public Integer lookup(String translationName)
-      throws LookupException
   {
     Object o = lookup(translationName);
     return (Integer)o;

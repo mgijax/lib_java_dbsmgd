@@ -65,7 +65,7 @@ public class LibraryKeyLookup extends FullCachedLookup
    */
   public Integer lookup(String term) throws CacheException,
       DBException, TranslationException, ConfigException,
-      LookupException, KeyNotFoundException
+      KeyNotFoundException
   {
     if (translator == null)
     {
