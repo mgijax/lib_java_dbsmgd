@@ -1,41 +1,22 @@
 package org.jax.mgi.dbs.mgd.lookup;
 
-
-
 import java.util.Vector;
 
-
-
 import org.jax.mgi.shr.cache.CachedLookup;
-
 import org.jax.mgi.shr.cache.CacheException;
-
 import org.jax.mgi.shr.cache.CacheConstants;
-
 import org.jax.mgi.shr.cache.KeyValue;
-
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-
 import org.jax.mgi.shr.dbutils.DBException;
-
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
-
 import org.jax.mgi.shr.dbutils.MultiRowInterpreter;
-
 import org.jax.mgi.shr.dbutils.RowReference;
-
 import org.jax.mgi.shr.config.ConfigException;
-
 import org.jax.mgi.dbs.SchemaConstants;
-
 import org.jax.mgi.dbs.mgd.dao.PRB_SourceInterpreter;
-
 import org.jax.mgi.dbs.mgd.MGITypeConstants;
-
 import org.jax.mgi.dbs.mgd.LogicalDBConstants;
-
 import org.jax.mgi.dbs.mgd.SegmentTypeConstants;
-
 import org.jax.mgi.dbs.mgd.MGD;
 
 
@@ -221,9 +202,9 @@ public class AssocClonesLookup extends CachedLookup
     /**
 
      * Get a MultiRowInterpreter for creating a KeyValue object from a
-     * set of database rows which is used by the FullCacheStrategy for creating
-     * a new cache entry. Since this method is an implementation for an
-     * abstract method, the return type must be RowDataInterpreter. The
+     * set of database rows which is used by the FullCacheStrategy for
+     * creating a new cache entry. Since this method is an implementation for
+     * an abstract method, the return type must be RowDataInterpreter. The
      * FullCacheStategy class will see that the return type is actually a
      * MultiRowInterpreter and cast it appropriately.
      * @assumes nothing

@@ -14,8 +14,8 @@ import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 /**
- * @is An object that knows how to look up a term name for a given term key in
- * the voc_term table.
+ * @is An object that knows how to look up a term name for a given term key
+ * in the voc_term table.
  * @has Nothing
  * @does
  *   <UL>
@@ -88,8 +88,8 @@ public class VocabTermLookup extends LazyCachedLookup
 
 
     /**
-     * Get a RowDataInterpreter for creating a KeyValue object from a database
-     * used for creating a new cache entry.
+     * Get a RowDataInterpreter for creating a KeyValue object from a
+     * database used for creating a new cache entry.
      * @assumes nothing
      * @effects nothing
      * @param None
@@ -112,6 +112,9 @@ public class VocabTermLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.2  2004/02/17 01:27:36  mbw
+//  renamed TermNameLookup.java  to VocabTermLookup.java
+//
 //  Revision 1.1.2.1  2004/02/16 23:36:36  mbw
 //  ranamed TermNameLookup.java  to VocabTermLookup.java
 //
