@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-1-0-4
+DATE: 01/21/2004
+STAFF: mbw
+RELEASE: dev
+CHANGES: added dburl to build.properties and changed db properties to prod values
+
 TAG: lib_java_dbsmgd-1-0-3
 DATE: 01/05/2004
 STAFF: mbw
