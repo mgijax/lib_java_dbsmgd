@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-1-0-26
+DATE: 05/19/2004
+STAFF: jsb
+CHANGES:
+1) fixes to MarkerFactory.java to handle GO annotations with multiple evidence rows
+
 TAG: lib_java_dbsmgd-1-0-25
 DATE: 05/17/2004
 STAFF: jw
