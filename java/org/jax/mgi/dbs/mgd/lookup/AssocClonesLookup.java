@@ -140,10 +140,58 @@ public class AssocClonesLookup extends CachedLookup
 
     public String getPartialInitQuery()
     {
-      return null;
+        String stmt =
+              "SELECT " +
+                 "acc2." + MGD.acc_accession.accid + ", " +
+                 "src." + MGD.prb_source.name + " " +
+              "FROM " +
+                  MGD.acc_accession._name + " acc1, " +
+                  MGD.acc_accession._name + " acc2, " +
+                  MGD.prb_probe._name + " prb, " +
+                  MGD.prb_source._name + " src " +
+              "WHERE (" +
+                  "acc1." + MGD.acc_accession._logicaldb_key + " = " +
+                      LogicalDBConstants.RIKEN + " " +
+                  "OR " +
+                  "acc1." + MGD.acc_accession._logicaldb_key + " = " +
+                      LogicalDBConstants.NIA7_4K + " " +
+                  "OR " +
+                  "acc1." + MGD.acc_accession._logicaldb_key + " = " +
+                      LogicalDBConstants.NIA15K + " " +
+                  ")" +
+              "AND " +
+                  "acc1." + MGD.acc_accession._mgitype_key + " = " +
+                      MGITypeConstants.CLONE + " " +
+              "AND " +
+                  "acc1." + MGD.acc_accession._object_key + " = " +
+                  "prb." + MGD.prb_probe._probe_key + " " +
+              "AND (" +
+                  "prb." + MGD.prb_probe._segmenttype_key + " = " +
+                     SegmentTypeConstants.CDNA + " " +
+                  "OR " +
+                  "prb." + MGD.prb_probe._segmenttype_key + " = " +
+                     SegmentTypeConstants.GENOMIC + " " +
+                  "OR " +
+                  "prb." + MGD.prb_probe._segmenttype_key + " = " +
+                     SegmentTypeConstants.NOT_SPECIFIED + " " +
+                  ")" +
+              "AND " +
+                  "prb." + MGD.prb_probe._source_key + " = " +
+                  "src." + MGD.prb_source._source_key + " " +
+              "AND " +
+                  "src." + MGD.prb_source.name + " != null " +
+              "AND " +
+              "acc2." + MGD.acc_accession._logicaldb_key + " = " +
+                      LogicalDBConstants.SEQUENCE + " " +
+              "AND " +
+                  "acc2." + MGD.acc_accession._mgitype_key + " = " +
+                  MGITypeConstants.CLONE + " " +
+              "AND " +
+                  "acc2." + MGD.acc_accession._object_key + " = " +
+                  "acc1." + MGD.acc_accession._object_key + " " +
+              "order by acc2." + MGD.acc_accession.accid ;
+          return stmt;
     }
-
-
 
     /**
      * Get the query to add an object to the cache.
