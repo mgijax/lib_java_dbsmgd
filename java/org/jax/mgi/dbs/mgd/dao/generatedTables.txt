@@ -3,3 +3,6 @@ PRB_Source
 PRB_Reference
 ACC_Accession
 ACC_AccessionReference
+SEQ_Sequence
+MGI_Reference_Assoc
+SEQ_Source_Assoc
