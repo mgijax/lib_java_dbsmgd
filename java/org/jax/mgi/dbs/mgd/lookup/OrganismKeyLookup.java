@@ -102,11 +102,14 @@ public class OrganismKeyLookup extends FullCachedLookup
    */
   public String getFullInitQuery()
   {
-    String s = "SELECT " +
-               MGD.mgi_organism._organism_key + ", " +
-               MGD.mgi_organism.commonname + " " +
-               "FROM " + MGD.mgi_organism._name;
-    return s;
+    //This code is intended for the jsam branch. It is being commented out
+    // here to support building a version for the RPCI release to prod
+    //String s = "SELECT " +
+               //MGD.mgi_organism._organism_key + ", " +
+               //MGD.mgi_organism.commonname + " " +
+               //"FROM " + MGD.mgi_organism._name;
+    //return s;
+    return null;
   }
 
   /**
