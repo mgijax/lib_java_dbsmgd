@@ -16,7 +16,10 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 /**
  * @is An object that knows how to look up a PRB_Reference record.
- * @has Nothing
+ * @has
+ *   <UL>
+ *   <LI> Lookup object for each inner lookup class
+ *   </UL>
  * @does
  *   <UL>
  *   <LI> Provides a method to look up a PRB_Reference record for a given
@@ -29,15 +32,27 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 public class ProbeReferenceLookup
 {
+    /////////////////
+    //  Variables  //
+    /////////////////
+
+    // An object used to look up a probe reference.
+    //
+    private ProbeRefLookup prbRefLookup = null;
+
     /**
      * Constructs a ProbeReferenceLookup object.
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @throws Nothing
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws DBException
      */
     public ProbeReferenceLookup()
+        throws CacheException, ConfigException, DBException
     {
+        prbRefLookup = new ProbeRefLookup();
     }
 
     /**
@@ -48,15 +63,11 @@ public class ProbeReferenceLookup
      * @param refsKey The refs key to look up.
      * @return A ProbeReferenceDAO object that represents the PRB_Reference
      *         record.
-     * @throws CacheException
-     * @throws ConfigException
-     * @throws DBException
      * @throws LookupException
      */
     public ProbeReferenceDAO findByPrbRef (Integer probeKey, Integer refsKey)
-        throws CacheException, ConfigException, DBException, LookupException
+        throws LookupException
     {
-        ProbeRefLookup prbRefLookup = new ProbeRefLookup();
         return prbRefLookup.lookup(probeKey, refsKey);
     }
 
@@ -174,6 +185,9 @@ public class ProbeReferenceLookup
 
 
 //  $Log$
+//  Revision 1.7  2003/10/10 15:30:02  dbm
+//  Update javadocs
+//
 //  Revision 1.6  2003/10/03 16:35:25  mbw
 //  modified to suit changes to the CachedLookup base class
 //

@@ -21,6 +21,7 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
  * @has
  *   <UL>
  *   <LI> Translator object
+ *   <LI> Lookup object for each inner lookup class
  *   </UL>
  * @does
  *   <UL>
@@ -42,15 +43,28 @@ public class ProbeSourceLookup
     //
     private Translator trans = null;
 
+    // An object used to look up a source by name.
+    //
+    private NamedSourceLookup namedSourceLookup = null;
+
+    // An object used to look up a source by key.
+    //
+    private KeyedSourceLookup keyedSourceLookup = null;
+
     /**
      * Constructs a ProbeSourceLookup object.
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @throws Nothing
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws DBException
      */
     public ProbeSourceLookup()
+        throws CacheException, ConfigException, DBException
     {
+        namedSourceLookup = new NamedSourceLookup();
+        keyedSourceLookup = new KeyedSourceLookup();
     }
 
     /**
@@ -59,11 +73,16 @@ public class ProbeSourceLookup
      * @assumes Nothing
      * @effects Nothing
      * @param pTrans The Translator to use for resolving a source name.
-     * @throws Nothing
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws DBException
      */
     public ProbeSourceLookup(Translator pTrans)
+        throws CacheException, ConfigException, DBException
     {
         trans = pTrans;
+        namedSourceLookup = new NamedSourceLookup();
+        keyedSourceLookup = new KeyedSourceLookup();
     }
 
     /**
@@ -74,24 +93,19 @@ public class ProbeSourceLookup
      * @effects Nothing
      * @param name The source name to look up.
      * @return A ProbeSourceDAO object that represents the PRB_Source record.
-     * @throws CacheException
-     * @throws ConfigException
-     * @throws DBException
      * @throws LookupException
      */
     public ProbeSourceDAO findByName (String name)
-        throws CacheException, ConfigException, DBException, LookupException
+        throws LookupException
     {
         if (trans != null)
         {
             KeyedDataAttribute kda = trans.translate(name);
             if (kda != null)
             {
-                KeyedSourceLookup keyedSourceLookup = new KeyedSourceLookup();
                 return keyedSourceLookup.lookup(kda.getKey());
             }
         }
-        NamedSourceLookup namedSourceLookup = new NamedSourceLookup();
         return namedSourceLookup.lookup(name);
     }
 
@@ -308,6 +322,9 @@ public class ProbeSourceLookup
 
 
 //  $Log$
+//  Revision 1.8  2003/10/10 15:30:04  dbm
+//  Update javadocs
+//
 //  Revision 1.7  2003/10/06 19:40:27  dbm
 //  Added translator to the lookup
 //
