@@ -21,18 +21,18 @@ import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.exception.MGIException;
 
 /**
- *
- * @is: a RowDataCacheHandler for caching Organism terms
+ * @is: a RowDataCacheHandler for caching tissue terms and their
+ * database key values
  * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
  * cache and performing the cache lookup and has a Translator for translating
- * incoming terms before performing the lookup.
- * @does: provides a lookup method for gender translation terms stored
- * within in a cache. Also translates lookup names to known vocabulary terms.
+ * incoming terms before performing the lookup
+ * @does: provides a lookup method for tissue terms and caches the results.
+ * Also translates lookup names to known vocabulary terms
  * @company: The Jackson Laboratory
  * @author not attributable
  * @version 1.0
  */
-public class OrganismKeyLookup extends FullCachedLookup
+public class TissueKeyLookup extends FullCachedLookup
 {
   // provide a static cache so that all instances share one cache
   private static HashMap cache = new HashMap();
@@ -44,29 +44,35 @@ public class OrganismKeyLookup extends FullCachedLookup
   // the Translator object shared by all instances of this class
   private static Translator translator = null;
 
-
-  public OrganismKeyLookup()
+  /**
+   * constructor
+   * @throws CacheException thrown if there is an error with the cache
+   * @throws DBException thrown if there is an error accessing the db
+   * @throws ConfigException thrown if there is an error accessing the
+   * configuration file
+   */
+  public TissueKeyLookup()
       throws CacheException, DBException, ConfigException
   {
     super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
     setCache(cache);
   }
   /**
-   * look up the primary key for a Strain term in the PRB_Strain table
-   * @param term the term to translate
-   * @return
+   * look up the primary key for a Strain term in the PRB_Source table
+   * @param term the term to look up
+   * @return the key value
    */
-  public Integer lookup(String term)
-      throws CacheException, DBException, TranslationException, ConfigException
+  public Integer lookup(String term) throws CacheException,
+      DBException, TranslationException, ConfigException
   {
     if (translator == null)
     {
-      translator = new Translator(TranslationTypeConstants.ORGANISM,
+      translator = new Translator(TranslationTypeConstants.TISSUE,
                                   CacheConstants.FULL_CACHE);
     }
     // do a translation of the term and expect null if term is not found.
     // if the term is translated then we dont have to look it up in the
-    // MGI_Organism table since we were given it from the translator
+    // PRB_Source table since we were given it from the translator
     KeyedDataAttribute data = translator.translate(term);
     if (data != null)
     {
@@ -74,7 +80,7 @@ public class OrganismKeyLookup extends FullCachedLookup
       this.translatedTerm = data.getValue();
       return data.getKey();
     }
-    else  // no translation found so lookup in MGI_Organism
+    else  // no translation found so lookup in PRB_Strain
     {
       this.translatedTerm = term;
       return (Integer)super.cacheStrategy.lookup(term, cache);
@@ -103,11 +109,12 @@ public class OrganismKeyLookup extends FullCachedLookup
   public String getFullInitQuery()
   {
     String s = "SELECT " +
-               MGD.mgi_organism._organism_key + ", " +
-               MGD.mgi_organism.commonname + " " +
-               "FROM " + MGD.mgi_organism._name;
+               MGD.prb_tissue._tissue_key + ", " +
+               MGD.prb_tissue.tissue + " " +
+               "FROM " + MGD.prb_tissue._name;
     return s;
   }
+
 
   /**
    * get the RowDataInterpreter which is required by the CacheStrategy to
@@ -125,4 +132,5 @@ public class OrganismKeyLookup extends FullCachedLookup
     }
     return new Interpreter();
   }
+
 }
