@@ -19,12 +19,18 @@ public class TestOrganismKeyLookup
     super.setUp();
     sqlMgr = new SQLDataManager();
     sqlMgr.executeUpdate(
-        "insert into mgi_organism values (-50, 'mouse', 'Mus musculus', " +
+        "delete from mgi_organism where _organism_key = -50"
+        );
+    sqlMgr.executeUpdate(
+        "delete from mgi_translation where _translation_key = -70"
+        );
+    sqlMgr.executeUpdate(
+        "insert into mgi_organism values (-50, 'mouse2', 'Mus musculus', " +
         "1200, 1200, getDate(), getDate())"
         );
     sqlMgr.executeUpdate(
         "insert into mgi_translation values (-70, 1001, -50, " +
-        "'Mus musculus orgainsm', 1, 1200, 1200, getDate(), getDate())"
+        "'Mus musculus organism', 1, 1200, 1200, getDate(), getDate())"
         );
     organismKeyLookup = new OrganismKeyLookup();
   }
@@ -44,10 +50,10 @@ public class TestOrganismKeyLookup
   public void testLookup() throws Exception {
     assertNull(organismKeyLookup.getTranslatedTerm());
     assertEquals(new Integer(-50),
-                 organismKeyLookup.lookup("Mus musculus orgainsm"));
-    assertEquals("mouse", this.organismKeyLookup.getTranslatedTerm());
-    assertEquals(new Integer(-50), organismKeyLookup.lookup("mouse"));
-    assertEquals("mouse", this.organismKeyLookup.getTranslatedTerm());
+                 organismKeyLookup.lookup("Mus musculus organism"));
+    assertEquals("mouse2", this.organismKeyLookup.getTranslatedTerm());
+    assertEquals(new Integer(-50), organismKeyLookup.lookup("mouse2"));
+    assertEquals("mouse2", this.organismKeyLookup.getTranslatedTerm());
 
   }
 

@@ -19,6 +19,12 @@ public class TestTissueKeyLookup
     super.setUp();
     sqlMgr = new SQLDataManager();
     sqlMgr.executeUpdate(
+        "delete prb_tissue where _tissue_key = -50"
+        );
+    sqlMgr.executeUpdate(
+        "delete mgi_translation where _translation_key = -50"
+        );
+    sqlMgr.executeUpdate(
         "insert into prb_tissue values (-50, 'placenta 21', " +
         "1, getDate(), getDate())"
         );

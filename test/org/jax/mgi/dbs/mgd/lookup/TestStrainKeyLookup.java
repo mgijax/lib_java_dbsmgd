@@ -20,6 +20,12 @@ public class TestStrainKeyLookup
     super.setUp();
     sqlMgr = new SQLDataManager();
     sqlMgr.executeUpdate(
+        "delete prb_strain where _strain_key = -50"
+        );
+    sqlMgr.executeUpdate(
+        "delete mgi_translation where _translation_key = -50"
+        );
+    sqlMgr.executeUpdate(
         "insert into prb_strain values (-50, 'CB100', 1, 0, 0, " +
         "getDate(), getDate())"
         );

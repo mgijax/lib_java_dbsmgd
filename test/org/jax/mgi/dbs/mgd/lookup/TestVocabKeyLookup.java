@@ -25,6 +25,25 @@ public class TestVocabKeyLookup
     cellLineKeyLookup = new VocabKeyLookup(VocabularyTypeConstants.CELLLINE);
     sqlMgr = new SQLDataManager();
     sqlMgr.executeUpdate(
+        "delete from voc_term where _term_key = -50"
+        );
+    sqlMgr.executeUpdate(
+        "delete from mgi_translation where _translation_key = -90"
+        );
+    sqlMgr.executeUpdate(
+        "delete from voc_term where _term_key = -60"
+        );
+    sqlMgr.executeUpdate(
+        "delete from mgi_translation where _translation_key = -100"
+        );
+    sqlMgr.executeUpdate(
+        "delete from voc_term where _term_key = -70"
+        );
+    sqlMgr.executeUpdate(
+        "delete from mgi_translation where _translation_key = -110"
+        );
+
+    sqlMgr.executeUpdate(
         "insert into voc_term values (-50, 15, 'Female', 'F', 1, 0, 1200, " +
         "1200, getDate(), getDate())"
         );

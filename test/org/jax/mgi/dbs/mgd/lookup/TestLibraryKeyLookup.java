@@ -19,6 +19,12 @@ public class TestLibraryKeyLookup
     super.setUp();
     sqlMgr = new SQLDataManager();
     sqlMgr.executeUpdate(
+        "delete from prb_source where _source_key = -50"
+        );
+    sqlMgr.executeUpdate(
+        "delete from mgi_translation where _translation_key = -80"
+        );
+    sqlMgr.executeUpdate(
         "insert into prb_source values (-50, 63470, 76017, 1, 11966, -1, " +
         "74831, 75982, 64221, 'RPCI-2', null, 'Not Specified', -1.0, " +
         "-1.0, 1, 1060, 1060, getDate(), getDate())"
