@@ -23,4 +23,5 @@ public class TranslationTypeConstants
     public static final int CELL = 1005;
     public static final int LIBRARY = 1006;
     public static final int STRAIN = 1007;
+    public static final int ORGANISM_TO_STRAIN = 1008;
 }
