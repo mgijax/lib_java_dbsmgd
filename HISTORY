@@ -5,6 +5,11 @@ RELEASE: dev
 CHANGES:
 1) updates and fixes for the next development build
 
+DATE: 03/25/2004
+STAFF: sc
+CHANGES:
+1) removed LOAD from MGIRefAssocConstants
+
 TAG: lib_java_dbsmgd-1-0-15
 DATE: 03/19/2004
 STAFF: mbw
