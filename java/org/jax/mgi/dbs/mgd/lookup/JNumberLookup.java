@@ -6,14 +6,14 @@ package org.jax.mgi.dbs.mgd.lookup;
 import org.jax.mgi.dbs.mgd.LogicalDBConstants;
 import org.jax.mgi.dbs.mgd.MGITypeConstants;
 import org.jax.mgi.shr.cache.CacheException;
-import org.jax.mgi.shr.types.KeyValue;
-import org.jax.mgi.shr.cache.RowDataCacheHandler;
+import org.jax.mgi.shr.cache.LazyCachedLookup;
+import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.exception.MGIException;
+import org.jax.mgi.shr.types.KeyValue;
 
 /**
  * @is An object that knows how to look up a J-Number to find its
@@ -28,7 +28,7 @@ import org.jax.mgi.shr.exception.MGIException;
  * @version 1.0
  */
 
-public class JNumberLookup extends RowDataCacheHandler
+public class JNumberLookup extends LazyCachedLookup
 {
     /**
      * Constructs a JNumberLookup object.
@@ -38,9 +38,10 @@ public class JNumberLookup extends RowDataCacheHandler
      * @throws Nothing
      */
     public JNumberLookup ()
-        throws ConfigException, DBException, CacheException
+        throws  CacheException, ConfigException, DBException
     {
-        super(LAZY_CACHE, SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        super.setOkToAllowNulls(true);
     }
 
 
@@ -54,27 +55,13 @@ public class JNumberLookup extends RowDataCacheHandler
     * @throws Nothing
     */
     public Integer lookup (String jNumber)
-        throws DBException, CacheException
+        throws LookupException
     {
-        Object obj = cacheStrategy.lookup(jNumber, cache);
+        Object obj = super.lookup(jNumber);
         if (obj != null)
             return (Integer)obj;
         else
             return null;
-    }
-
-
-    /**
-     * Get the query to fully initialize the cache.
-     * @assumes Nothing
-     * @effects Nothing
-     * @param None
-     * @return The query to fully initialize the cache.
-     * @throws Nothing
-     */
-    public String getFullInitQuery ()
-    {
-        throw MGIException.getUnsupportedMethodException();
     }
 
 
@@ -125,47 +112,23 @@ public class JNumberLookup extends RowDataCacheHandler
      */
     public RowDataInterpreter getRowDataInterpreter()
     {
-        return new InnerInterpreter();
-    }
-
-
-    /**
-     * @is An object that knows how to create a KeyValue object for a row of
-     *     data retrieved by this lookup.
-     * @has Nothing
-     * @does
-     *   <UL>
-     *   <LI> Provides a RowDataInterpreter implementation.
-     *   </UL>
-     * @company The Jackson Laboratory
-     * @author dbm
-     * @version 1.0
-     */
-
-    private class InnerInterpreter implements RowDataInterpreter
-    {
-        /**
-         * Create a KeyValue object from a row of data.
-         * @assumes nothing
-         * @effects nothing
-         * @param row The row reference.
-         * @return The KeyValue object.
-         * @throws Nothing
-         */
-        public Object interpret (RowReference row)
-            throws DBException
+        class Interpreter implements RowDataInterpreter
         {
-            String key = row.getString(1);
-            Integer value = row.getInt(2);
-
-            KeyValue keyValue = new KeyValue(key, value);
-            return keyValue;
+            public Object interpret (RowReference row)
+                throws DBException
+            {
+                return new KeyValue(row.getString(1), row.getInt(2));
+            }
         }
+        return new Interpreter();
     }
 }
 
 
 //  $Log$
+//  Revision 1.5  2003/09/30 17:02:42  dbm
+//  Use Integer instead of int for values
+//
 //  Revision 1.4  2003/09/25 20:23:43  mbw
 //  fixed imports for KeyValue
 //

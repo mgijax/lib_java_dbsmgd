@@ -4,14 +4,14 @@
 package org.jax.mgi.dbs.mgd.lookup;
 
 import org.jax.mgi.shr.cache.CacheException;
-import org.jax.mgi.shr.types.KeyValue;
-import org.jax.mgi.shr.cache.RowDataCacheHandler;
+import org.jax.mgi.shr.cache.FullCachedLookup;
+import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.exception.MGIException;
+import org.jax.mgi.shr.types.KeyValue;
 
 /**
  * @is An object that knows how to look up a logical DB.
@@ -25,7 +25,7 @@ import org.jax.mgi.shr.exception.MGIException;
  * @version 1.0
  */
 
-public class LogicalDBLookup extends RowDataCacheHandler
+public class LogicalDBLookup extends FullCachedLookup
 {
     /**
      * Constructs a LogicalDBLookup object.
@@ -35,9 +35,10 @@ public class LogicalDBLookup extends RowDataCacheHandler
      * @throws Nothing
      */
     public LogicalDBLookup ()
-        throws ConfigException, DBException, CacheException
+        throws CacheException, ConfigException, DBException
     {
-        super(FULL_CACHE, SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        super.setOkToAllowNulls(true);
     }
 
 
@@ -51,9 +52,9 @@ public class LogicalDBLookup extends RowDataCacheHandler
      * @throws Nothing
      */
     public Integer lookup (String logicalDB)
-        throws DBException, CacheException
+        throws LookupException
     {
-        Object obj = cacheStrategy.lookup(logicalDB, cache);
+        Object obj = super.lookup(logicalDB);
         if (obj != null)
             return (Integer)obj;
         else
@@ -76,34 +77,6 @@ public class LogicalDBLookup extends RowDataCacheHandler
 
 
     /**
-     * Get the query to partially initialize the cache.
-     * @assumes Nothing
-     * @effects Nothing
-     * @param None
-     * @return The query to partially initialize the cache.
-     * @throws Nothing
-     */
-    public String getPartialInitQuery ()
-    {
-        throw MGIException.getUnsupportedMethodException();
-    }
-
-
-    /**
-     * Get the query to add an object to the database.
-     * @assumes Nothing
-     * @effects Nothing
-     * @param addObject The object to add.
-     * @return The query to add an object to the database.
-     * @throws Nothing
-     */
-    public String getAddQuery (Object addObject)
-    {
-        throw MGIException.getUnsupportedMethodException();
-    }
-
-
-    /**
      * Get a RowDataInterpreter for creating a KeyValue object from a database
      * used for creating a new cache entry.
      * @assumes nothing
@@ -114,47 +87,23 @@ public class LogicalDBLookup extends RowDataCacheHandler
      */
     public RowDataInterpreter getRowDataInterpreter()
     {
-        return new InnerInterpreter();
-    }
-
-
-    /**
-     * @is An object that knows how to create a KeyValue object for a row of
-     *     data retrieved by this lookup.
-     * @has Nothing
-     * @does
-     *   <UL>
-     *   <LI> Provides a RowDataInterpreter implementation.
-     *   </UL>
-     * @company The Jackson Laboratory
-     * @author dbm
-     * @version 1.0
-     */
-
-    private class InnerInterpreter implements RowDataInterpreter
-    {
-        /**
-         * Create a KeyValue object from a row of data.
-         * @assumes nothing
-         * @effects nothing
-         * @param row The row reference.
-         * @return The KeyValue object.
-         * @throws Nothing
-         */
-        public Object interpret (RowReference row)
-            throws DBException
+        class Interpreter implements RowDataInterpreter
         {
-            String key = row.getString(1);
-            Integer value = row.getInt(2);
-
-            KeyValue keyValue = new KeyValue(key, value);
-            return keyValue;
+            public Object interpret (RowReference row)
+                throws DBException
+            {
+                return new KeyValue(row.getString(1), row.getInt(2));
+            }
         }
+        return new Interpreter();
     }
 }
 
 
 //  $Log$
+//  Revision 1.4  2003/09/30 17:02:43  dbm
+//  Use Integer instead of int for values
+//
 //  Revision 1.3  2003/09/25 20:23:43  mbw
 //  fixed imports for KeyValue
 //
