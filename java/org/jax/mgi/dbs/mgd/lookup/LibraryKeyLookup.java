@@ -57,7 +57,7 @@ public class LibraryKeyLookup extends FullCachedLookup
     setCache(cache);
   }
   /**
-   * look up the primary key for a Strain term in the PRB_Source table
+   * look up the primary key for a Library name in the PRB_Source table
    * @param term the term to look up
    * @return the key value
    */
@@ -65,9 +65,11 @@ public class LibraryKeyLookup extends FullCachedLookup
       DBException, TranslationException, ConfigException,
       KeyNotFoundException
   {
+    // since a Translator is not obtained until this method is called,
+    // we need to check for null
     if (translator == null)
     {
-      translator = new Translator(TranslationTypeConstants.STRAIN,
+      translator = new Translator(TranslationTypeConstants.LIBRARY,
                                   CacheConstants.FULL_CACHE);
     }
     // do a translation of the term and expect null if term is not found.
@@ -77,6 +79,7 @@ public class LibraryKeyLookup extends FullCachedLookup
     if (data != null)
     {
       // a translation was successful so cache the translated term
+      // in case the client asks for it and return the value
       this.translatedTerm = data.getValue();
       return data.getKey();
     }
@@ -111,7 +114,8 @@ public class LibraryKeyLookup extends FullCachedLookup
     String s = "SELECT " +
                MGD.prb_source._source_key + ", " +
                MGD.prb_source.name + " " +
-               "FROM " + MGD.prb_source._name;
+               "FROM " + MGD.prb_source._name + 
+               "WHERE " + MGD.prb_source.name + " != null";
     return s;
   }
 
