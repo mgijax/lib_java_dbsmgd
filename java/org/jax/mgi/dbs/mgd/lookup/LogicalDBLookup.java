@@ -5,13 +5,13 @@ package org.jax.mgi.dbs.mgd.lookup;
 
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.FullCachedLookup;
+import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.types.KeyValue;
 
 /**
  * @is An object that knows how to look up a logical DB.
@@ -38,7 +38,6 @@ public class LogicalDBLookup extends FullCachedLookup
         throws CacheException, ConfigException, DBException
     {
         super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
-        super.setOkToAllowNulls(true);
     }
 
 
@@ -54,7 +53,7 @@ public class LogicalDBLookup extends FullCachedLookup
     public Integer lookup (String logicalDB)
         throws LookupException
     {
-        Object obj = super.lookup(logicalDB);
+        Object obj = super.lookup(logicalDB, true);
         if (obj != null)
             return (Integer)obj;
         else
@@ -101,6 +100,9 @@ public class LogicalDBLookup extends FullCachedLookup
 
 
 //  $Log$
+//  Revision 1.5  2003/10/02 18:47:20  dbm
+//  Changed to extends subclass of CachedLookup
+//
 //  Revision 1.4  2003/09/30 17:02:43  dbm
 //  Use Integer instead of int for values
 //

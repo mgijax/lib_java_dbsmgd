@@ -7,8 +7,8 @@ import org.jax.mgi.shr.dbutils.SQLDataManager;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowReference;
+import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.RowDataCacheHandler;
-import org.jax.mgi.shr.types.KeyValue;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.types.Converter;
 import org.jax.mgi.dbs.mgd.TranslationTypeConstants;
@@ -45,7 +45,7 @@ public class OrganismKeyLookup extends RowDataCacheHandler
    */
   public Integer lookup(String term) throws CacheException, DBException
   {
-    return (Integer)super.cacheStrategy.lookup(term, this.cache);
+    return (Integer)super.cacheStrategy.lookup(term, cache);
   }
 
   public String getFullInitQuery()

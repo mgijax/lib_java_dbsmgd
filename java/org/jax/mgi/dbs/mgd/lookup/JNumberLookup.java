@@ -6,6 +6,7 @@ package org.jax.mgi.dbs.mgd.lookup;
 import org.jax.mgi.dbs.mgd.LogicalDBConstants;
 import org.jax.mgi.dbs.mgd.MGITypeConstants;
 import org.jax.mgi.shr.cache.CacheException;
+import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LazyCachedLookup;
 import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
@@ -13,7 +14,6 @@ import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.types.KeyValue;
 
 /**
  * @is An object that knows how to look up a J-Number to find its
@@ -41,7 +41,6 @@ public class JNumberLookup extends LazyCachedLookup
         throws  CacheException, ConfigException, DBException
     {
         super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
-        super.setOkToAllowNulls(true);
     }
 
 
@@ -57,7 +56,7 @@ public class JNumberLookup extends LazyCachedLookup
     public Integer lookup (String jNumber)
         throws LookupException
     {
-        Object obj = super.lookup(jNumber);
+        Object obj = super.lookup(jNumber, true);
         if (obj != null)
             return (Integer)obj;
         else
@@ -126,6 +125,9 @@ public class JNumberLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.6  2003/10/02 18:47:20  dbm
+//  Changed to extends subclass of CachedLookup
+//
 //  Revision 1.5  2003/09/30 17:02:42  dbm
 //  Use Integer instead of int for values
 //
