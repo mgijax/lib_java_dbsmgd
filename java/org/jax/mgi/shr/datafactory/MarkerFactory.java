@@ -8,6 +8,7 @@ package org.jax.mgi.shr.datafactory;
 import java.util.Map;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -1102,8 +1103,6 @@ public class MarkerFactory
 
 	int lastTermKeyInt = -1;	// term key for the previous term
 	int lastIsNotInt = -1;		// isNot value for previous term
-	String lastEvidence = null;	// evidence code for previous term
-	String lastInferred = null;	// inferred field for previous term
 
 	Integer thisTermKey = null;	// term key for current term
 	int thisTermKeyInt = -1;	// int value of 'thisTermKey'
@@ -1111,6 +1110,15 @@ public class MarkerFactory
 	int thisIsNotInt = -1;		// int value of 'thisIsNot'
 	String thisEvidence = null;	// evidence code for current term
 	String thisInferred = null;	// inferred field for current term
+
+	Integer refsKey = null;		// reference key for evidence
+	Integer evidenceKey = null;	// evidence code key
+
+	String  evidenceLookup = null;	// string used to look up evidence
+
+	String Lookup = "Lookup";	// name for use in DTO, but only
+					// within this method, to help find
+					// evidence for an annotation.
 
 	// top-level DTO.  Each fieldname is the abbreviation for one GO DAG.
 	// The value for each fieldname is one 'dagAnnotations' Vector.
@@ -1129,90 +1137,269 @@ public class MarkerFactory
 	{
 	    this.sqlDM.executeUpdate (GO_UPDATE_1);
 	    this.sqlDM.executeUpdate (GO_UPDATE_2);
-	    this.sqlDM.executeUpdate (GO_UPDATE_3);
 	}
 	nav = this.sqlDM.executeQuery (GO_SELECT);
+
+    	// GO_SELECT gets:  ontology, term, accID, isNot, _Term_key, dagName,
+	//	_Annot_key
 
 	while (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
 
-	    // pull out pieces we need to compare
+	    // create a record for this particular annotation
 
-	    thisTermKey = rr.getInt(7);
-	    thisTermKeyInt = thisTermKey.intValue();
-	    thisIsNot = rr.getInt(6);
-	    thisIsNotInt = thisIsNot.intValue();
-	    thisEvidence = rr.getString(4);
-	    thisInferred = rr.getString(5);
+	    annotation = DTO.getDTO();
+	    annotation.set (DTOConstants.GOTerm, rr.getString(2));
+	    annotation.set (DTOConstants.GOID, rr.getString(3));
+	    annotation.set (DTOConstants.IsNot, rr.getInt(4));
+	    annotation.set (DTOConstants.TermKey, rr.getInt(5));
+	    annotation.set (Lookup, rr.getInt(5) + ":" + rr.getInt(4));
 
-	    // if this is the same annotation (term key, evidence, inferred,
-	    // isNot) as the previous one, then just add the additional
-	    // reference
+	    // the abbreviation is a 'char' field rather than a 'varchar',
+	    // so we need to trim any blanks here...
 
-	    if ( (thisTermKeyInt == lastTermKeyInt)
-	    	&& (thisIsNotInt == lastIsNotInt)
-		&& StringLib.equals(thisEvidence, lastEvidence)
-		&& StringLib.equals(thisInferred, lastInferred) )
+	    abbrev = rr.getString(1).trim();
+
+            // if is a different DAG, then start a new list for the new DAG.
+
+	    if (!lastAbbrev.equals(abbrev))
 	    {
-	        refsKeys.add (rr.getInt(8));
+	        dagAnnotations = new Vector();
+		dagAnnotations.add (annotation);
+		annotations.set (abbrev, dagAnnotations);
+		lastAbbrev = abbrev;
 	    }
-	    else	// otherwise, this is a new annotation...
-	    { 
-		count++;
-	        
-	        refsKeys = new ArrayList();
-	        refsKeys.add (rr.getInt(8));
-		
-	        // the abbreviation is a 'char' field rather than a 'varchar',
-	        // so we need to trim any blanks here...
+	    else		// just add to the current DAG's annotations
+	    {
+	        dagAnnotations.add (annotation);
+	    }
 
-	        abbrev = rr.getString(1).trim();
-
-	        // create a record for this particular annotation
-
-                annotation = DTO.getDTO();
-	        annotation.set (DTOConstants.GOTerm, rr.getString(2));
-	        annotation.set (DTOConstants.GOID, rr.getString(3));
-	        annotation.set (DTOConstants.EvidenceCode, thisEvidence);
-	        annotation.set (DTOConstants.InferredFrom, thisInferred);
-	        annotation.set (DTOConstants.IsNot, thisIsNot);
-	        annotation.set (DTOConstants.TermKey, thisTermKey);
-	        annotation.set (DTOConstants.RefsKeys, refsKeys);
-
-                // if is a different DAG, then start a new list for the new
-		// DAG.
-
-	        if (!lastAbbrev.equals(abbrev))
-	        {
-	            dagAnnotations = new Vector();
-		    dagAnnotations.add (annotation);
-		    annotations.set (abbrev, dagAnnotations);
-		    lastAbbrev = abbrev;
-	        }
-	        else		// just add to the current DAG's annotations
-	        {
-	            dagAnnotations.add (annotation);
-	        }
-
-		// note this annotation's attributes that we will need to 
-		// compare to the next one
-
-		lastTermKeyInt = thisTermKeyInt;
-		lastIsNotInt = thisIsNotInt;
-		lastEvidence = thisEvidence;
-		lastInferred = thisInferred;
-
-	    } // else (is a new annotation)
 	} // while there are more rows
 
-	nav.close();
+	nav.close();		// done with GO_SELECT query
+
+	// now, go back and collect the evidence information for the
+	// annotations.  We need to do this as a separate step, as each
+	// annotation can have more than one piece of evidence.
+
+	nav = this.sqlDM.executeQuery (GO_EVIDENCE);
+
+	// GO_EVIDENCE gets: abbreviation, _Annot_key, _EvidenceTerm_key,
+	//	inferredFrom, _Refs_key, _Term_key, isNot
+
+	// maps annotation key (Integer) to a List of DTOs defining the
+	// following keys:
+	//	DTOConstants.EvidenceCode : String
+	//	DTOConstants.InferredFrom : String
+	//	DTOConstants.RefsKeys : List of Integers
+	HashMap evidence = new HashMap();
+
+	// list of evidence rows for one annotation key
+	ArrayList evidenceList = null;
+
+	// single logical row of evidence for an annotation (defined as having
+	// a unique pair of evidence code + inferred from)
+	DTO evidenceDTO = null;
+
+	// number of elements in one 'evidenceList'
+	int evidenceCount = 0;
+
+	// did we find an 'evidenceDTO' to match the current row?
+	boolean foundMatch;
+	
+	// 'evidence code' and 'inferred from' for the DTO being examined
+	String dtoEvidenceCode = null;
+	String dtoInferredFrom = null;
+
+	boolean evidenceMatch = false;	// did evidence codes match?
+	boolean inferredMatch = false;	// did inferred from match?
+
+	while (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+
+	    thisEvidence = rr.getString(1);
+	    evidenceKey = rr.getInt(3);
+	    thisInferred = rr.getString(4);
+	    refsKey = rr.getInt(5);
+
+	    // term key : isNot -- used to look up evidence for an annotation
+	    evidenceLookup = rr.getInt(6) + ":" + rr.getInt(7);
+
+	    // if we've no evidence for this annotation yet, then just add
+	    // it from scratch.
+
+	    if (!evidence.containsKey(evidenceLookup))
+	    {
+	        refsKeys = new ArrayList();	// build 1-item list of refs
+		refsKeys.add (refsKey);
+
+	        evidenceDTO = DTO.getDTO();
+		evidenceDTO.set (DTOConstants.EvidenceCode, thisEvidence);
+		evidenceDTO.set (DTOConstants.InferredFrom, thisInferred);
+		evidenceDTO.set (DTOConstants.RefsKeys, refsKeys);
+
+		evidenceList = new ArrayList();	// build 1-item evidence list
+		evidenceList.add (evidenceDTO);
+
+		evidence.put (evidenceLookup, evidenceList);
+	    }
+	    else
+	    {
+		// otherwise, we need to walk the list of current evidence
+		// rows to see if we have one to which we can just add this
+		// reference.
+
+	        evidenceList = (ArrayList) evidence.get(evidenceLookup);
+		evidenceCount = evidenceList.size();
+		foundMatch = false;
+
+		for (int i = 0; i < evidenceCount; i++)
+		{
+		    evidenceDTO = (DTO) evidenceList.get(i);
+		    dtoEvidenceCode =
+		        (String) evidenceDTO.get(DTOConstants.EvidenceCode);
+		    dtoInferredFrom =
+		        (String) evidenceDTO.get(DTOConstants.InferredFrom);
+
+		    // if we found a matching 'evidence code' and 'inferred
+		    // from' field, then we can just add the reference
+
+		    if ( (thisEvidence == dtoEvidenceCode) ||
+			 ( (thisEvidence != null) &&
+			   (dtoEvidenceCode != null) &&
+			   dtoEvidenceCode.equals(thisEvidence) ) )
+		    {
+			evidenceMatch = true;
+		    }
+		    else
+		    {
+			evidenceMatch = false;
+		    }
+
+		    if ( (thisInferred == dtoInferredFrom) ||
+			 ( (thisInferred != null) &&
+			   (dtoInferredFrom != null) &&
+			   dtoInferredFrom.equals(thisInferred) ) )
+		    {
+			inferredMatch = true;
+		    }
+		    else
+		    {
+			inferredMatch = false;
+		    }
+
+		    if (evidenceMatch && inferredMatch)
+		    {
+		        refsKeys = (ArrayList)
+			    evidenceDTO.get(DTOConstants.RefsKeys);
+			refsKeys.add (refsKey);
+			foundMatch = true;
+			break;
+		    }
+
+		} // end of for loop
+
+		// if we didn't find a match, then we can just go ahead and
+		// add this new evidence to the back of the list
+
+		if (!foundMatch)
+		{
+	            refsKeys = new ArrayList();
+		    refsKeys.add (refsKey);
+
+	            evidenceDTO = DTO.getDTO();
+		    evidenceDTO.set (DTOConstants.EvidenceCode, thisEvidence);
+		    evidenceDTO.set (DTOConstants.InferredFrom, thisInferred);
+		    evidenceDTO.set (DTOConstants.RefsKeys, refsKeys);
+
+		    evidenceList.add (evidenceDTO);
+		} // end of if
+	    } // end of else
+	} // end of while
+
+	nav.close();		// done with GO_EVIDENCE query
+
 	this.sqlDM.execute (GO_CLEANUP);
+
+	// So, at this point, we have 'evidence' and 'annotations' to
+	// consolidate.
+
+	DTO mergedAnnotations = DTO.getDTO();
+	String[] abbreviations = annotations.getFields();
+	Vector oldDagAnnotations = null;
+	int oldAnnotLength = 0;
+	DTO oldAnnotation = null;
+	DTO newAnnotation = null;
+	HashMap handled = new HashMap();
+
+	for (int i = 0; i < abbreviations.length; i++)
+	{
+	    oldDagAnnotations = (Vector) annotations.get(abbreviations[i]);
+	    oldAnnotLength = oldDagAnnotations.size();
+	    dagAnnotations = new Vector();
+
+	    for (int j = 0; j < oldAnnotLength; j++)
+	    {
+	        oldAnnotation = (DTO) oldDagAnnotations.get(j);
+		evidenceLookup = (String) oldAnnotation.get (Lookup);
+
+		if (handled.containsKey(evidenceLookup))
+		{
+		    continue;
+		}
+		handled.put (evidenceLookup, "1");
+
+		evidenceList = (ArrayList) evidence.get(evidenceLookup);
+		if (evidenceList == null)
+		{
+		    // if no associated evidence, just add empty evidence
+		    // and add the annotation to the new list
+
+		    oldAnnotation.set (DTOConstants.EvidenceCode, "");
+		    oldAnnotation.set (DTOConstants.InferredFrom, "");
+		    oldAnnotation.set (DTOConstants.RefsKeys, null);
+		    dagAnnotations.add (oldAnnotation);
+		    count++;
+		}
+		else if (evidenceList.size() == 1)
+		{
+		    // if only one piece of evidence, merge it into the
+		    // annotation, and add that annotation to the new list
+
+		    oldAnnotation.merge ((DTO) evidenceList.get(0));
+		    dagAnnotations.add (oldAnnotation);
+		    count++;
+		}
+		else
+		{
+		    // if multiple pieces of evidence, we must take care to
+		    // add multiple annotations -- one copy with each piece
+		    // of evidence
+
+		    for (int k = 0; k < evidenceList.size(); k++)
+		    {
+		        newAnnotation = (DTO) oldAnnotation.clone();
+			newAnnotation.merge ((DTO) evidenceList.get(k));
+			dagAnnotations.add (newAnnotation);
+		        count++;
+		    }
+		    DTO.putDTO (oldAnnotation);
+		}
+	    }
+	    mergedAnnotations.set (abbreviations[i], dagAnnotations);
+	}
+
+	// need to duplicate items in 'annotations' wherever there are
+	// multiple items in 'evidence' for that annotation.  note that DTO
+	// has a working clone() method.
+
 
 	if (count > 0)
 	{
 	    marker.set (DTOConstants.GOAnnotationCount, new Integer(count));
-	    marker.set (DTOConstants.GOAnnotations, annotations);
+	    marker.set (DTOConstants.GOAnnotations, mergedAnnotations);
 	}
 	return marker;
     }
@@ -2824,10 +3011,7 @@ public class MarkerFactory
 		+ " accID		varchar(30)	null, "
 		+ " ontology		varchar(10)	null, "
 		+ " dagName		varchar(255)	null, "
-		+ " _EvidenceTerm_key	int		null, "
-		+ " evidenceCode	varchar(10)	null, "
-		+ " inferredFrom	varchar(255)	null, "
-		+ " _Refs_key		int		null)";
+		+ " _EvidenceTerm_key	int		null)";
 
     // fill in the temp table (from GO_CREATE_TEMP) with the initial set of
     // data about GO annotations.  fills in four of the columns.
@@ -2865,27 +3049,32 @@ public class MarkerFactory
 		+ "	AND dn._DAG_key = dd._DAG_key "
 		+ "	AND dd._MGIType_key = " + DBConstants.MGIType_VocTerm;
 
-    // fill in the temp table (from GO_CREATE_TEMP) with the corresponding
-    // evidence key, evidence code, inferred from field, and reference key.
-    // fill in: nothing
-    private static final String GO_UPDATE_3 =
-    	"UPDATE #GO_Annotations "
-		+ " SET _EvidenceTerm_key = ve._EvidenceTerm_key, "
-		+ "	evidenceCode = vt2.abbreviation, "
-		+ "	inferredFrom = ve.inferredFrom, "
-		+ "	_Refs_key = ve._Refs_key "
-		+ " FROM #GO_Annotations ga, VOC_Evidence ve, VOC_Term vt2 "
-		+ " WHERE ga._Annot_key = ve._Annot_key "
-		+ "	AND ve._EvidenceTerm_key = vt2._Term_key";
-
     // retrieve the GO data from the temp table (from GO_CREATE_TEMP).
     // fill in: nothing
     private static final String GO_SELECT =
-    	"SELECT DISTINCT ontology, term, accID, evidenceCode, inferredFrom, "
-	+ "	isNot, _Term_key, _Refs_key, dagName "
+    	"SELECT DISTINCT ontology, term, accID, isNot, _Term_key, dagName, "
+		+ "_Annot_key "
 	+ " FROM #GO_Annotations "
-	+ " ORDER BY dagName, term, _Term_key, evidenceCode, inferredFrom";
+	+ " ORDER BY dagName, term, _Term_key";
 
+    // retrieve the evidence associated with the GO annotations stored in
+    // the #GO_Annotations temp table.
+    // fill in: nothing
+    private static final String GO_EVIDENCE =
+    	"SELECT vt.abbreviation, "		// evidence code
+		+ " ve._Annot_key, "		// annotation key
+		+ " ve._EvidenceTerm_key, "	// key for evidence code
+		+ " ve.inferredFrom, "		// inferred from what?
+		+ " ve._Refs_key, "		// reference key
+		+ " ga._Term_key, "		// key of GO term
+		+ " ga.isNot "			// is it a "NOT" annotation?
+	+ "FROM #GO_Annotations ga, "		// temp table of annotations
+		+ " VOC_Evidence ve, "		// evidence table
+		+ " VOC_Term vt "		// evidence code table
+	+ "WHERE ga._Annot_key = ve._Annot_key "
+		+ " AND ve._EvidenceTerm_key = vt._Term_key "
+	+ "ORDER BY vt.abbreviation, ve.inferredFrom";
+	
     // clean up by deleting the temp table (from GO_CREATE_TEMP).
     // fill in: nothing
     private static final String GO_CLEANUP =
@@ -3152,6 +3341,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.5  2004/05/03 10:39:04  jsb
+* fixed ordering of GO associations
+*
 * Revision 1.4  2004/03/12 19:00:44  jsb
 * Added code to retrieve expression data by tissue for a marker
 *
