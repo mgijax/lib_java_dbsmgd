@@ -12,6 +12,7 @@ import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.CacheConstants;
+import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.shr.types.Converter;
 import org.jax.mgi.dbs.mgd.TranslationTypeConstants;
 import org.jax.mgi.dbs.mgd.trans.Translator;
@@ -63,7 +64,8 @@ public class LibraryKeyLookup extends FullCachedLookup
    * @return the key value
    */
   public Integer lookup(String term) throws CacheException,
-      DBException, TranslationException, ConfigException
+      DBException, TranslationException, ConfigException,
+      LookupException, KeyNotFoundException
   {
     if (translator == null)
     {
@@ -83,7 +85,7 @@ public class LibraryKeyLookup extends FullCachedLookup
     else  // no translation found so lookup in PRB_Strain
     {
       this.translatedTerm = term;
-      return (Integer)super.cacheStrategy.lookup(term, cache);
+      return (Integer)super.lookup(term);
     }
   }
 

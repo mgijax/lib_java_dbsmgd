@@ -8,7 +8,6 @@ import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.shr.cache.KeyValue;
-import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
@@ -56,7 +55,7 @@ public class LogicalDBLookup extends FullCachedLookup
      * @throws LookupException
      */
     public Integer lookup (String logicalDB)
-        throws KeyNotFoundException, LookupException
+        throws KeyNotFoundException, DBException, CacheException
     {
         return (Integer)super.lookup(logicalDB);
     }
@@ -101,6 +100,9 @@ public class LogicalDBLookup extends FullCachedLookup
 
 
 //  $Log$
+//  Revision 1.9  2003/10/20 19:00:59  dbm
+//  Use schema constants
+//
 //  Revision 1.8  2003/10/10 15:30:15  dbm
 //  Update javadocs
 //

@@ -7,7 +7,6 @@ import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LazyCachedLookup;
-import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
@@ -53,9 +52,9 @@ public class TermNameLookup extends LazyCachedLookup
     * @throws LookupException
     */
     public String lookup (Integer termKey)
-        throws LookupException
+    throws CacheException, DBException
     {
-        return (String)super.lookup(termKey, true);
+        return (String)super.lookupNullsOk(termKey);
     }
 
 
@@ -112,6 +111,9 @@ public class TermNameLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.1  2003/10/20 19:01:54  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *
