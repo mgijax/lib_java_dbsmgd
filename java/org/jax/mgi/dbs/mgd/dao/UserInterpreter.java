@@ -24,7 +24,7 @@ public class UserInterpreter implements RowDataInterpreter
     state.setUserTypeKey(rowReference.getInt("_UserType_key"));
     state.setLogin(rowReference.getString("login"));
     state.setName(rowReference.getString("name"));
-    User user = new User(key, state);
+    UserDAO user = new UserDAO(key, state);
     return user;
   }
 

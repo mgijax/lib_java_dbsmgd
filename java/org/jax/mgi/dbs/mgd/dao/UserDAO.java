@@ -15,7 +15,7 @@ import org.jax.mgi.shr.exception.ExceptionFactory;
  * the MGI_USER table
  */
 
-public class User extends DataInstance
+public class UserDAO extends DataInstance
 {
   private UserKey userKey = null;
   private UserState userState = null;
@@ -25,7 +25,7 @@ public class User extends DataInstance
    * @param userKey the UserKey
    * @param userState the UserState
    */
-  public User(UserKey userKey, UserState userState)
+  public UserDAO(UserKey userKey, UserState userState)
   {
     this.userKey = userKey;
     this.userState = userState;
@@ -35,7 +35,7 @@ public class User extends DataInstance
    * the constructor which accepts a UserState and generates a new UserKey
    * @param userState the UserState
    */
-  public User(UserState userState) throws DBException, ConfigException
+  public UserDAO(UserState userState) throws DBException, ConfigException
   {
     this.userKey = new UserKey();
     this.userState = userState;

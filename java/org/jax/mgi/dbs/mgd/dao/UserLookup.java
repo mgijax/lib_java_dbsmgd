@@ -9,7 +9,7 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.config.ConfigException;
-import org.jax.mgi.dbs.mgd.dao.User;
+import org.jax.mgi.dbs.mgd.dao.UserDAO;
 import org.jax.mgi.dbs.mgd.dao.UserInterpreter;
 
 
@@ -52,9 +52,9 @@ public class UserLookup extends RowDataCacheHandler
    * @effects nothing
    * @return the userid
    */
-  public User lookupByName(String name) throws CacheException, DBException
+  public UserDAO lookupByName(String name) throws CacheException, DBException
   {
-    return (User)this.cacheStrategy.lookup(name, this.cache);
+    return (UserDAO)this.cacheStrategy.lookup(name, this.cache);
   }
 
   /**
@@ -111,7 +111,7 @@ public class UserLookup extends RowDataCacheHandler
     public java.lang.Object interpret(RowReference rowReference)
         throws DBException
     {
-      User user = (User)userInterpreter.interpret(rowReference);
+      UserDAO user = (UserDAO)userInterpreter.interpret(rowReference);
       KeyValue keyValue = new KeyValue(user.getState().getName(), user);
       return keyValue;
     }
