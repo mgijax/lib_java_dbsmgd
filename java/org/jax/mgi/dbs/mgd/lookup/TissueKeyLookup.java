@@ -57,9 +57,15 @@ public class TissueKeyLookup extends FullCachedLookup
     setCache(cache);
   }
   /**
-   * look up the primary key for a Strain term in the PRB_Source table
+   * look up the primary key for a Tissue term in the PRB_Tissue table
    * @param term the term to look up
    * @return the key value
+   * @throws DBException thrown if there is an error accessing the database
+   * @throws TranslationException thrown if there is an error using the
+   * Translator
+   * @throws ConfigException thrown if there is an error accessing the
+   * configuration
+   * @throws KeyNotFoundException thrown if the lookup did not find the value
    */
   public Integer lookup(String term) throws CacheException,
       DBException, TranslationException, ConfigException, KeyNotFoundException
@@ -79,10 +85,9 @@ public class TissueKeyLookup extends FullCachedLookup
       this.translatedTerm = data.getValue();
       return data.getKey();
     }
-    else  // no translation found so lookup in PRB_Strain
+    else  // no translation found so lookup directly in PRB_Tissue
     {
       this.translatedTerm = term;
-      //return (Integer)super.cacheStrategy.lookup(term, cache);
       return (Integer)super.lookup(term);
     }
   }

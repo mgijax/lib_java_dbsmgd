@@ -38,6 +38,9 @@ public class AccessionLib
     public static int lastNumericMGI = 0;
     public static int lastNumericJ = 0;
 
+    // constants for preferred bit
+    public static final int PREFERRED = 1;
+    public static final int NO_PREFERRED = 0;
 
     /**
      * Get the next available MGI ID.
@@ -208,6 +211,12 @@ public class AccessionLib
 
 
 //  $Log$
+//  Revision 1.1.2.1  2003/11/13 20:36:57  sc
+//  PREFERRED, NOT_PREFERRED constans
+//
+//  Revision 1.1  2003/10/21 13:25:45  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

@@ -1,5 +1,4 @@
 //  $Header$
-//  $Name$
 
 package org.jax.mgi.dbs.mgd.lookup;
 
@@ -55,8 +54,7 @@ public class JNumberLookup extends LazyCachedLookup
     *         a null if the J-Number was not found.
     * @throws LookupException
     */
-    public Integer lookup (String jNumber)
-    throws DBException, CacheException
+    public Integer lookup (String jNumber) throws DBException, CacheException
     {
         return (Integer)super.lookupNullsOk(jNumber);
     }
@@ -123,6 +121,9 @@ public class JNumberLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.11  2003/11/05 15:44:20  mbw
+//  modified to suit the now defunct LookupException
+//
 //  Revision 1.10  2003/10/20 19:00:59  dbm
 //  Use schema constants
 //

@@ -1,5 +1,4 @@
 //  $Header$
-//  $Name$
 
 package org.jax.mgi.dbs.mgd.lookup;
 
@@ -100,6 +99,9 @@ public class LogicalDBLookup extends FullCachedLookup
 
 
 //  $Log$
+//  Revision 1.10  2003/11/05 15:44:20  mbw
+//  modified to suit the now defunct LookupException
+//
 //  Revision 1.9  2003/10/20 19:00:59  dbm
 //  Use schema constants
 //

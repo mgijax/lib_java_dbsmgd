@@ -19,6 +19,7 @@ import org.jax.mgi.shr.dbutils.KeyedDataAttribute;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
+import org.jax.mgi.shr.dbutils.InterpretException;
 
 /**
  * @is An object that knows how to look up a PRB_Source record.
@@ -207,7 +208,7 @@ public class ProbeSourceLookup
                     new ProbeSourceInterpreter();
 
                 public Object interpret (RowReference row)
-                    throws DBException
+                    throws DBException, InterpretException
                 {
                     PRB_SourceDAO probeSrcDAO =
                         (PRB_SourceDAO) probeSrcInterpreter.interpret(row);
@@ -311,7 +312,7 @@ public class ProbeSourceLookup
                     new ProbeSourceInterpreter();
 
                 public Object interpret (RowReference row)
-                    throws DBException
+                    throws DBException, InterpretException
                 {
                     PRB_SourceDAO probeSrcDAO =
                         (PRB_SourceDAO) probeSrcInterpreter.interpret(row);
@@ -355,17 +356,18 @@ public class ProbeSourceLookup
             PRB_SourceState probeSrcState = new PRB_SourceState();
             probeSrcState.setSegmentTypeKey(row.getInt("_SegmentType_key"));
             probeSrcState.setVectorKey(row.getInt("_Vector_key"));
-            probeSrcState.setProbeSpeciesKey(row.getInt("_ProbeSpecies_key"));
+            probeSrcState.setOrganismKey(row.getInt("_ProbeSpecies_key"));
             probeSrcState.setStrainKey(row.getInt("_Strain_key"));
             probeSrcState.setTissueKey(row.getInt("_Tissue_key"));
+            probeSrcState.setGenderKey(row.getInt("_Gender_key"));
+            probeSrcState.setCellLineKey(row.getInt("_CellLine_key"));
             probeSrcState.setRefsKey(row.getInt("_Refs_key"));
             probeSrcState.setName(row.getString("name"));
             probeSrcState.setDescription(row.getString("description"));
             probeSrcState.setAge(row.getString("age"));
             probeSrcState.setAgeMin(row.getFloat("ageMin"));
             probeSrcState.setAgeMax(row.getFloat("ageMax"));
-            probeSrcState.setAge(row.getString("sex"));
-            probeSrcState.setAge(row.getString("cellLine"));
+            probeSrcState.setIsCuratorEdited(row.getBoolean("isCuratorEdited"));
             PRB_SourceDAO probeSrcDAO =
                 new PRB_SourceDAO(probeSrcKey, probeSrcState);
             return probeSrcDAO;
@@ -375,6 +377,9 @@ public class ProbeSourceLookup
 
 
 //  $Log$
+//  Revision 1.1  2003/12/10 13:31:51  dbm
+//  New
+//
 //
 /**************************************************************************
 *

@@ -1,48 +1,37 @@
-//  $Header$
-//  $Name$
+//  $Header
+//  $Name
 
 package org.jax.mgi.dbs.mgd;
 
 /**
- * @is An object that contains constant definitions for logical databases.
+ * @is An object that contains constant definitions for
+ *     MGI Reference Associationtypes.
  * @has
  *   <UL>
  *   <LI> Constant definitions
  *   </UL>
  * @does Nothing
  * @company The Jackson Laboratory
- * @author dbm
+ * @author sc
  * @version 1.0
  */
 
-public class LogicalDBConstants
-{
-    // Constants
-    //
-    public static final int MGI = 1;
-    public static final int SEQUENCE = 9;
-    public static final int SWISSPROT = 13;
-    public static final int REFSEQ = 27;
-    public static final int TREMBL = 41;
-    public static final int TIGR = 35;
-    public static final int DOTS = 36;
-
-    public static final int PUBMED = 29;
-    public static final int MEDLINE = 7;
+public class MGIRefAssocTypeConstants {
+        // Constants
+        //
+        public static final int ORIGINAL = 1000;
+        public static final int GENERAL = 1002;
+        public static final int PRIMARY = 1003;
+        public static final int BROADCAST = 1004;
+        public static final int DO_NOT_BROADCAST = 1005;
+        public static final int PROVIDER = 1006;
+        public static final int LOAD = 1007;
+        public static final int CURATOR = 1008;
 }
 
 
-//  $Log$
-//  Revision 1.1.2.2  2004/02/02 20:02:13  sc
-//  added constants for all the sequence providers
-//
-//  Revision 1.1.2.1  2003/11/13 20:37:26  sc
-//  added PUBMED and MEDLINE constants
-//
-//  Revision 1.1  2003/09/18 14:25:17  dbm
-//  Initial version
-//
-//
+//  $Log
+
 /**************************************************************************
 *
 * Warranty Disclaimer and Copyright Notice

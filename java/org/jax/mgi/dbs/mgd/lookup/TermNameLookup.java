@@ -110,7 +110,9 @@ public class TermNameLookup extends LazyCachedLookup
 }
 
 
-//  $Log$
+//  Revision 1.2  2003/11/05 15:44:21  mbw
+//  modified to suit the now defunct LookupException
+//
 //  Revision 1.1  2003/10/20 19:01:54  dbm
 //  Initial version
 //
