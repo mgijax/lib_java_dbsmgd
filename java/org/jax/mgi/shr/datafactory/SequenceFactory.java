@@ -200,9 +200,11 @@ public class SequenceFactory extends Factory {
 
     public DTO getSequenceVersion(int key) throws DBException {
         ResultsNavigator nav = null;
-        RowReference rr = null;     // one row in 'nav'
+        RowReference rr = null;         // one row in 'nav'
         DTO sequence = DTO.getDTO();    // start with a new DTO
         String version;
+        String seqrecord_date;
+        String sequence_date;
 
         nav = this.sqlDM.executeQuery(
                         Sprintf.sprintf(SEQ_VER, key));
@@ -210,7 +212,12 @@ public class SequenceFactory extends Factory {
         if (nav.next()) {
             rr = (RowReference) nav.getCurrent();
             version = rr.getString(1);
+            seqrecord_date = rr.getString(2);
+            sequence_date = rr.getString(3);
             sequence.set(DTOConstants.SequenceVersion, version);
+            sequence.set(DTOConstants.SequenceRecordDate, seqrecord_date);
+            sequence.set(DTOConstants.SequenceDate, sequence_date);
+
         }
         nav.close();
 
@@ -401,9 +408,13 @@ public class SequenceFactory extends Factory {
         this.sqlDM.execute(MARKER_TABLE);
         this.sqlDM.execute(Sprintf.sprintf(MARKER_NOMENCLATURE, key));
         this.sqlDM.execute(MARKER_GO_COUNT);
+        this.sqlDM.execute(MARKER_GO_UPDATE);
         this.sqlDM.execute(MARKER_ASSAY_COUNT);
+        this.sqlDM.execute(MARKER_ASSAY_UPDATE);
         this.sqlDM.execute(MARKER_ORTHOLOGY_COUNT);
+        this.sqlDM.execute(MARKER_ORTHOLOGY_UPDATE);
         this.sqlDM.execute(MARKER_ALLELE_COUNT);
+        this.sqlDM.execute(MARKER_ALLELE_UPDATE);
         this.sqlDM.execute(MARKER_REF);
         nav = this.sqlDM.executeQuery(MARKER_INFO);
         while (nav.next()) {
@@ -511,9 +522,10 @@ public class SequenceFactory extends Factory {
             rr = (RowReference) nav.getCurrent();
             probe.set(DTOConstants.ProbeKey, rr.getInt(1));
             probe.set(DTOConstants.ProbeName, rr.getString(2));
-            probe.set(DTOConstants.CloneID, rr.getString(3));
-            probe.set(DTOConstants.SegmentType, rr.getString(4));
-            probe.set(DTOConstants.CloneCollection, rr.getString(5));
+            probe.set(DTOConstants.AccID, rr.getString(3));
+            probe.set(DTOConstants.CloneID, rr.getString(4));
+            probe.set(DTOConstants.SegmentType, rr.getString(5));
+            probe.set(DTOConstants.CloneCollection, rr.getString(6));
             allProbes.add(probe);
             probe = DTO.getDTO();
         }
@@ -541,7 +553,7 @@ public class SequenceFactory extends Factory {
             "order by aa.accID, msm.sequenceNum";
 
     private static final String SEQ_VER =
-            "select version\n"+
+            "select version, seqrecord_date, sequence_date\n"+
             "from SEQ_Sequence\n"+
             "where _Sequence_key = %d";
 
@@ -651,10 +663,10 @@ public class SequenceFactory extends Factory {
             "CREATE TABLE #mrk(\n"+
             "_Marker_key  int NOT NULL,\n"+
             "markerType   varchar(255)  NOT NULL,\n"+
-            "assayCount   int NULL,\n"+
-            "alleleCount  int NULL,\n"+
-            "GOCount      int NULL,\n"+
-            "orthoCount   int NULL,\n"+
+            "assayCount   int default 0 NULL,\n"+
+            "alleleCount  int default 0 NULL,\n"+
+            "GOCount      int default 0 NULL,\n"+
+            "orthoCount   int default 0 NULL,\n"+
             "name         varchar(255)  NOT NULL,\n"+
             "symbol       varchar(25)   NOT NULL,\n"+
             "_Refs_key    int NULL,\n"+
@@ -670,30 +682,58 @@ public class SequenceFactory extends Factory {
             "and mt._Marker_Type_key = mm._Marker_Type_key";
 
     private static final String MARKER_GO_COUNT =
-            "update #mrk\n"+
-            "set GOCount = count(vt.term)\n"+
+            "select GOCount = count(vt.term), m._Marker_key\n"+
+            "into #goCnt\n"+
             "from VOC_Term vt, VOC_Annot va, #mrk m\n"+
             "where m._Marker_key = va._Object_key\n"+
             "and va._AnnotType_key = 1000\n"+
-            "and va._Term_key = vt._Term_key";
+            "and va._Term_key = vt._Term_key\n"+
+            "group by m._Marker_key";
+
+    private static final String MARKER_GO_UPDATE =
+            "update #mrk\n"+
+            "set goCount = gc.goCount\n"+
+            "from #mrk m, #goCnt gc\n"+
+            "where m._Marker_key = gc._Marker_key\n";
 
     private static final String MARKER_ASSAY_COUNT =
-            "update #mrk\n"+
-            "set assayCount = count(ga._Assay_key)\n"+
+            "select assayCount = count(ga._Assay_key), m._Marker_key\n"+
+            "into #assayCnt\n"+
             "from #mrk m, GXD_Assay ga\n"+
-            "where m._Marker_key = ga._Marker_key";
+            "where m._Marker_key = ga._Marker_key\n"+
+            "group by m._Marker_key";
+
+    private static final String MARKER_ASSAY_UPDATE =
+            "update #mrk\n"+
+            "set assayCount = ac.assayCount\n"+
+            "from #mrk m, #assayCnt ac\n"+
+            "where m._Marker_key = ac._Marker_key\n";
 
     private static final String MARKER_ORTHOLOGY_COUNT =
-            "update #mrk\n"+
-            "set orthoCount = count(hhm._Homology_key)\n"+
+            "select orthoCount = count(hhm._Homology_key), m._Marker_key\n"+
+            "into #orthoCnt\n"+
             "from HMD_Homology_Marker hhm, #mrk m\n"+
-            "where m._Marker_key = hhm._Marker_key";
+            "where m._Marker_key = hhm._Marker_key\n"+
+            "group by m._Marker_key";
+
+    private static final String MARKER_ORTHOLOGY_UPDATE =
+            "update #mrk\n"+
+            "set orthoCount = oc.orthoCount\n"+
+            "from #mrk m, #orthoCnt oc\n"+
+            "where m._Marker_key = oc._Marker_key\n";
 
     private static final String MARKER_ALLELE_COUNT =
-            "update #mrk\n"+
-            "set alleleCount = count(al._Allele_key)\n"+
+            "select alleleCount = count(al._Allele_key), m._Marker_key\n"+
+            "into #alleleCnt\n"+
             "from #mrk m, ALL_Allele al\n"+
-            "where m._Marker_key = al._Marker_key";
+            "where m._Marker_key = al._Marker_key\n"+
+            "group by m._Marker_key";
+
+    private static final String MARKER_ALLELE_UPDATE =
+            "update #mrk\n"+
+            "set alleleCount = ac.alleleCount\n"+
+            "from #mrk m, #alleleCnt ac\n"+
+            "where m._Marker_key = ac._Marker_key\n";
 
     private static final String MARKER_REF =
             "update #mrk\n"+
@@ -702,12 +742,15 @@ public class SequenceFactory extends Factory {
             "where smc._Refs_key = aa._Object_key\n"+
             "and m._Marker_key = smc._Marker_key\n"+
             "and aa._MGIType_key = 1\n"+
+            "and aa.prefixPart = 'J:'\n"+
             "and aa.preferred = 1";
 
     private static final String MARKER_INFO =
             "select _Marker_key, symbol, name, markerType,\n"+
-            "alleleCount,assayCount,GOCount,orthoCount, _Refs_key, refID\n"+
-            "from #mrk";
+            "alleleCount,assayCount,GOCount,orthoCount,\n"+
+            "_Refs_key, refID\n"+
+            "from #mrk\n"+
+            "order by symbol";
 
     private static final String REFS =
             "SELECT br._Refs_key, aa.accID, br.authors, br.authors2,\n"+
@@ -726,6 +769,7 @@ public class SequenceFactory extends Factory {
             "CREATE TABLE #prbs(\n"+
             "_Probe_key   int NOT NULL,\n"+
             "name         varchar(40)  NOT NULL,\n"+
+            "mgiID        varchar(30)  NOT NULL,\n"+
             "accID        varchar(30)  NULL,\n"+
             "segmentType  varchar(255) NULL,\n"+
             "collection   varchar(80)  NULL\n"+
@@ -733,11 +777,15 @@ public class SequenceFactory extends Factory {
 
 
     private static final String PROBES =
-            "insert #prbs(name,_Probe_key,segmentType)\n"+
-            "select distinct pp.name, pp._Probe_key, vt.term\n"+
-            "from PRB_Probe pp, SEQ_Probe_Cache sqc, VOC_Term vt\n"+
+            "insert #prbs(name,_Probe_key,segmentType, mgiID)\n"+
+            "select distinct pp.name, pp._Probe_key, vt.term, aa.accID\n"+
+            "from PRB_Probe pp, SEQ_Probe_Cache sqc, VOC_Term vt, ACC_Accession aa\n"+
             "where sqc._Sequence_key = %d\n"+
             "and pp._Probe_key = sqc._Probe_key\n"+
+            "and aa._Object_key = pp._Probe_key\n"+
+            "and aa._MGIType_key = 3\n"+
+            "and aa.preferred = 1\n"+
+            "and aa.prefixPart = 'MGI:'\n"+
             "and vt._Term_key = pp._SegmentType_key";
 
     private static final String CLONE_COLLECTION =
@@ -752,6 +800,6 @@ public class SequenceFactory extends Factory {
             "                          where _Set_key = 1000)";
 
     private static final String PROBE_INFO =
-            "select _Probe_key, name, accID,segmentType, collection\n"+
+            "select _Probe_key, name, mgiID, accID,segmentType, collection\n"+
             "from #prbs";
 }
