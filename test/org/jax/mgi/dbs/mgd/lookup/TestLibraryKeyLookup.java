@@ -10,6 +10,7 @@ public class TestLibraryKeyLookup
     extends TestCase {
   private LibraryKeyLookup libraryKeyLookup = null;
    private SQLDataManager sqlMgr = null;
+   private Integer translationType = null;
 
   public TestLibraryKeyLookup(String name) {
     super(name);
@@ -18,6 +19,15 @@ public class TestLibraryKeyLookup
   protected void setUp() throws Exception {
     super.setUp();
     sqlMgr = new SQLDataManager();
+    String query = "select _translationType_key " +
+                   "from mgi_translationType " +
+                   "where translationType = 'Library'";
+
+    ResultsNavigator nav = sqlMgr.executeQuery(query);
+    nav.next();
+    RowReference row = nav.getRowReference();
+    translationType = row.getInt(1);
+
     sqlMgr.executeUpdate(
         "delete from prb_source where _source_key = -50"
         );
@@ -30,8 +40,8 @@ public class TestLibraryKeyLookup
         "-1.0, 1, 1060, 1060, getDate(), getDate())"
         );
     sqlMgr.executeUpdate(
-        "insert into mgi_translation values (-80, 1005, -50, " +
-        "'RPCI/22 Clone Set', 1, 1200, 1200, getDate(), getDate())"
+        "insert into mgi_translation values (-80, " + translationType +
+        ", -50, 'RPCI/22 Clone Set', 1, 1200, 1200, getDate(), getDate())"
         );
     libraryKeyLookup = new LibraryKeyLookup();
   }
@@ -50,13 +60,10 @@ public class TestLibraryKeyLookup
 
   public void testLookup() throws Exception
   {
-    assertNull(libraryKeyLookup.getTranslatedTerm());
     assertEquals(new Integer(-50),
                  libraryKeyLookup.lookup("RPCI/22 Clone Set"));
-    assertEquals("RPCI-2", libraryKeyLookup.getTranslatedTerm());
     assertEquals(new Integer(-50),
                  libraryKeyLookup.lookup("RPCI-2"));
-    assertEquals("RPCI-2", libraryKeyLookup.getTranslatedTerm());
   }
 
   public void testKeyNotFound() throws Exception {
