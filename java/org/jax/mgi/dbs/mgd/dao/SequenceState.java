@@ -28,25 +28,25 @@ public class SequenceState
     // Sequence attributes.
     //
     private Integer sequenceKey = null;
-    private Integer  sequenceTypeKey  = null;
+    private Integer sequenceTypeKey  = null;
     private Integer sequenceQualityKey = null;
     private Integer sequenceStatusKey = null;
     private Integer segmentTypeKey = null;
-    private Integer  sequenceProviderKey  = null;
-    private Integer  length  = null;
+    private Integer sequenceProviderKey  = null;
+    private Integer length  = null;
     private String description = null;
     private String version = null;
-    private String  division  = null;
-    private Boolean virtual = null;
-    private String  rawType  = null;
+    private String division  = null;
+    private String virtual = null;
+    private String rawType  = null;
     private String rawLibrary = null;
     private String rawOrganism = null;
-    private String  rawStrain  = null;
-    private String  rawTissue  = null;
-    private String  rawAge  = null;
-    private String  rawSex  = null;
-    private String  rawCellLine  = null;
-    private Integer  numberOfOrganisms  = null;
+    private String rawStrain  = null;
+    private String rawTissue  = null;
+    private String rawAge  = null;
+    private String rawSex  = null;
+    private String rawCellLine  = null;
+    private Integer numberOfOrganisms  = null;
     private Timestamp seqrecordDate  = null;
     private Timestamp sequenceDate  = null;
 
@@ -95,7 +95,7 @@ public class SequenceState
       return division;
     }
 
-    public Boolean getVirtual ()
+    public String getVirtual ()
     {
       return virtual;
     }
@@ -200,7 +200,7 @@ public class SequenceState
       division = in;
     }
 
-    public void setVirtual(Boolean in)
+    public void setVirtual(String in)
     {
       virtual = in;
     }
@@ -289,6 +289,9 @@ public class SequenceState
 
 
 //  $Log$
+//  Revision 1.2  2003/09/30 16:58:10  dbm
+//  Use Integer instead of int for attributes
+//
 //
 /**************************************************************************
 *

@@ -33,8 +33,8 @@ public class AccessionState
     private Integer logicalDBKey = null;
     private Integer objectKey = null;
     private Integer mgiTypeKey = null;
-    private Integer privateAcc = null;
-    private Integer preferred = null;
+    private String privateAcc = null;
+    private String preferred = null;
 
     // Accession reference attributes.
     //
@@ -101,7 +101,7 @@ public class AccessionState
      * @return The privateAcc attribute
      * @throws Nothing
      */
-    public Integer getPrivateAcc () { return privateAcc; }
+    public String getPrivateAcc () { return privateAcc; }
 
     /**
      * Get the preferred attribute from this object.
@@ -111,7 +111,7 @@ public class AccessionState
      * @return The preferred attribute
      * @throws Nothing
      */
-    public Integer getPreferred () { return preferred; }
+    public String getPreferred () { return preferred; }
 
     /**
      * Get the refsKey attribute from this object.
@@ -171,7 +171,7 @@ public class AccessionState
      * @return Nothing
      * @throws Nothing
      */
-    public void setPrivateAcc (Integer pPrivateAcc) { privateAcc = pPrivateAcc; }
+    public void setPrivateAcc (String pPrivateAcc) { privateAcc = pPrivateAcc; }
 
     /**
      * Set the preferred attribute of this object to the given value.
@@ -181,7 +181,7 @@ public class AccessionState
      * @return Nothing
      * @throws Nothing
      */
-    public void setPreferred (Integer pPreferred) { preferred = pPreferred; }
+    public void setPreferred (String pPreferred) { preferred = pPreferred; }
 
     /**
      * Set the refsKey attribute of this object to the given value.
@@ -216,6 +216,9 @@ public class AccessionState
 
 
 //  $Log$
+//  Revision 1.1  2003/09/18 13:37:21  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

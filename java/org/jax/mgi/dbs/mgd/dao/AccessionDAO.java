@@ -5,7 +5,7 @@ package org.jax.mgi.dbs.mgd.dao;
 
 import java.util.Vector;
 
-import org.jax.mgi.dbs.mgd.MGITypeConstants;
+import org.jax.mgi.dbs.mgd.LogicalDBConstants;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.dao.DAO;
 import org.jax.mgi.shr.dbutils.DBException;
@@ -119,7 +119,7 @@ public class AccessionDAO extends DAO
         // records are not created for MGI IDs.
         //
         v.add("ACC_Accession");
-        if (accessionState.getMGITypeKey().intValue() != MGITypeConstants.REF)
+        if (accessionState.getLogicalDBKey().intValue() != LogicalDBConstants.MGI)
             v.add("ACC_AccessionReference");
 
         // Return the vector.
@@ -284,6 +284,9 @@ public class AccessionDAO extends DAO
 
 
 //  $Log$
+//  Revision 1.5  2003/09/30 16:58:06  dbm
+//  Use Integer instead of int for attributes
+//
 //  Revision 1.4  2003/09/25 17:52:55  dbm
 //  Continued development
 //

@@ -126,7 +126,7 @@ public class ProbeReferenceLookup
          */
         public String getPartialInitQuery()
         {
-            throw MGIException.getUnsupportedMethodException();
+            return null;
         }
 
         /**
@@ -205,6 +205,9 @@ public class ProbeReferenceLookup
 
 
 //  $Log$
+//  Revision 1.3  2003/09/30 16:58:09  dbm
+//  Use Integer instead of int for attributes
+//
 //  Revision 1.2  2003/09/25 20:24:21  mbw
 //  fixed import for KeyValue
 //

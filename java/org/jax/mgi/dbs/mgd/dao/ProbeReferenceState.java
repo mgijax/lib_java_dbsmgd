@@ -31,8 +31,8 @@ public class ProbeReferenceState
     private Integer probeKey = null;
     private Integer refsKey = null;
     private String holder = null;
-    private Integer hasRmap = null;
-    private Integer hasSequence = null;
+    private String hasRmap = null;
+    private String hasSequence = null;
 
 
     /**
@@ -85,7 +85,7 @@ public class ProbeReferenceState
      * @return The hasRmap attribute
      * @throws Nothing
      */
-    public Integer getHasRmap () { return hasRmap; }
+    public String getHasRmap () { return hasRmap; }
 
     /**
      * Get the hasSequence attribute from this object.
@@ -95,7 +95,7 @@ public class ProbeReferenceState
      * @return The hasSequence attribute
      * @throws Nothing
      */
-    public Integer getHasSequence () { return hasSequence; }
+    public String getHasSequence () { return hasSequence; }
 
     /**
      * Set the probeKey attribute of this object to the given value.
@@ -135,7 +135,7 @@ public class ProbeReferenceState
      * @return Nothing
      * @throws Nothing
      */
-    public void setHasRmap (Integer pHasRmap) { hasRmap = pHasRmap; }
+    public void setHasRmap (String pHasRmap) { hasRmap = pHasRmap; }
 
     /**
      * Set the hasSequence attribute of this object to the given value.
@@ -145,7 +145,7 @@ public class ProbeReferenceState
      * @return Nothing
      * @throws Nothing
      */
-    public void setHasSequence (Integer pHasSequence) { hasSequence = pHasSequence; }
+    public void setHasSequence (String pHasSequence) { hasSequence = pHasSequence; }
 
 
     /**
@@ -168,6 +168,9 @@ public class ProbeReferenceState
 
 
 //  $Log$
+//  Revision 1.1  2003/09/18 13:37:22  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

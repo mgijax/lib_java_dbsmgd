@@ -41,7 +41,7 @@ public class ProbeSourceState
     private String age = null;
     private Float ageMin = null;
     private Float ageMax = null;
-    private Integer isCuratorEdited = null;
+    private String isCuratorEdited = null;
 
 
     /**
@@ -194,7 +194,7 @@ public class ProbeSourceState
      * @return The isCuratorEdited attribute
      * @throws Nothing
      */
-    public Integer getIsCuratorEdited () { return isCuratorEdited; }
+    public String getIsCuratorEdited () { return isCuratorEdited; }
 
     /**
      * Set the segmentTypeKey attribute of this object to the given value.
@@ -334,7 +334,7 @@ public class ProbeSourceState
      * @return Nothing
      * @throws Nothing
      */
-    public void setIsCuratorEdited (Integer pIsCuratorEdited) { isCuratorEdited = pIsCuratorEdited; }
+    public void setIsCuratorEdited (String pIsCuratorEdited) { isCuratorEdited = pIsCuratorEdited; }
 
 
     /**
@@ -366,6 +366,9 @@ public class ProbeSourceState
 
 
 //  $Log$
+//  Revision 1.2  2003/09/30 16:52:31  dbm
+//  Changed Double to Float
+//
 //  Revision 1.1  2003/09/19 17:43:24  dbm
 //  Initial version
 //

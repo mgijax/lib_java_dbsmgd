@@ -41,7 +41,7 @@ public class ProbeState
     private String insertSize = null;
     private String repeatUnit = null;
     private String productSize = null;
-    private Integer moreProduct = null;
+    private String moreProduct = null;
 
 
     /**
@@ -194,7 +194,7 @@ public class ProbeState
      * @return The moreProduct attribute
      * @throws Nothing
      */
-    public Integer getMoreProduct () { return moreProduct; }
+    public String getMoreProduct () { return moreProduct; }
 
     /**
      * Set the name attribute of this object to the given value.
@@ -334,7 +334,7 @@ public class ProbeState
      * @return Nothing
      * @throws Nothing
      */
-    public void setMoreProduct (Integer pMoreProduct) { moreProduct = pMoreProduct; }
+    public void setMoreProduct (String pMoreProduct) { moreProduct = pMoreProduct; }
 
 
     /**
@@ -366,6 +366,9 @@ public class ProbeState
 
 
 //  $Log$
+//  Revision 1.1  2003/09/18 13:37:23  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *
