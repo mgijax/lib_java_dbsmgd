@@ -25,6 +25,7 @@ public class DBConstants
     public static final int LogicalDB_TIGR = 35;
     public static final int LogicalDB_DoTS = 36;
     public static final int LogicalDB_TrEMBL = 41;
+    public static final int LogicalDB_NIA = 53;
 
     // from ACC_ActualDB
 
@@ -67,6 +68,9 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.2  2004/02/10 17:48:50  jsb
+* Added more MGIType definitions
+*
 * Revision 1.1  2003/12/30 16:38:48  mbw
 * initial import into this product
 *
