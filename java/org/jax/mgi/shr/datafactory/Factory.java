@@ -69,6 +69,41 @@ public abstract class Factory {
         }
     }
 
+
+
+
+
+    /** combine 's' and 't' into one String, gracefully handling nulls.
+    * @param s String to be at the left of the result String
+    * @param t String to be at the right of the result String
+    * @return String 's' + 't', will be null if both 's' and 't' are null
+    * @assumes nothing
+    * @effects nothing
+    * @throws nothing
+    */
+    protected static String combine (String s, String t)
+    {
+    // if 's' is null, then we can just return 't' whether null or not
+
+    if (s == null)
+    {
+        return t;
+    }
+
+    // we know that 's' is not null, so if 't' is null, just return 's'
+
+    else if (t == null)
+    {
+        return s;
+    }
+
+        // otherwise, 's' and 't' are both non-null, so we use both
+
+    return s + t;
+    }
+
+
+
     /** find a unique key identifying the database object specified by
     *   the given 'parms'(object dependant on the implementing class)
     * @param parms set of parameters specifying which database object
