@@ -3305,7 +3305,7 @@ public class MarkerFactory
     // get data for sequences associated with a marker
     // fill in: marker key (int)
     private static final String SEQUENCES =
-    		"SELECT seq._Sequence_key, aa.accID, typ.term, seq.length"
+    		"SELECT DISTINCT seq._Sequence_key, aa.accID, typ.term, seq.length"
 		+	", aa._LogicalDB_key, st.strain, seq.rawStrain"
 		+ " FROM SEQ_Marker_Cache smc"
 		+	", ACC_Accession aa"
@@ -3349,6 +3349,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.7  2004/05/24 15:14:51  jsb
+* fixed bug regarding display of interim nomenclature
+*
 * Revision 1.6  2004/05/18 17:57:21  jsb
 * fixed retrieval of GO annotations, to handle cases with multiple evidence rows
 *
