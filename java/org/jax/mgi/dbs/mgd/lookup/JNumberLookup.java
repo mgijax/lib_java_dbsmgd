@@ -56,11 +56,7 @@ public class JNumberLookup extends LazyCachedLookup
     public Integer lookup (String jNumber)
         throws LookupException
     {
-        Object obj = super.lookup(jNumber, true);
-        if (obj != null)
-            return (Integer)obj;
-        else
-            return null;
+        return (Integer)super.lookup(jNumber, true);
     }
 
 
@@ -125,6 +121,9 @@ public class JNumberLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.7  2003/10/03 16:38:36  mbw
+//  changed to suit the new CachedLookup base class
+//
 //  Revision 1.6  2003/10/02 18:47:20  dbm
 //  Changed to extends subclass of CachedLookup
 //

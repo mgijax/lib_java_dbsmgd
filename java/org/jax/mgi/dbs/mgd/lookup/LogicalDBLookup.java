@@ -5,6 +5,7 @@ package org.jax.mgi.dbs.mgd.lookup;
 
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.FullCachedLookup;
+import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
@@ -51,13 +52,9 @@ public class LogicalDBLookup extends FullCachedLookup
      * @throws Nothing
      */
     public Integer lookup (String logicalDB)
-        throws LookupException
+        throws KeyNotFoundException, LookupException
     {
-        Object obj = super.lookup(logicalDB, true);
-        if (obj != null)
-            return (Integer)obj;
-        else
-            return null;
+        return (Integer)super.lookup(logicalDB);
     }
 
 
@@ -100,6 +97,9 @@ public class LogicalDBLookup extends FullCachedLookup
 
 
 //  $Log$
+//  Revision 1.6  2003/10/03 16:38:37  mbw
+//  changed to suit the new CachedLookup base class
+//
 //  Revision 1.5  2003/10/02 18:47:20  dbm
 //  Changed to extends subclass of CachedLookup
 //
