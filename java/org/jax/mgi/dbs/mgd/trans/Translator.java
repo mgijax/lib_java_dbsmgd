@@ -82,39 +82,31 @@ public class Translator extends CachedLookup
     super(cacheType,
           SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
     this.translationType = new Integer(translationType);
-
-    /**
-     * lookup the MGIType from the database
-     */
-    MGITypeLookup lookup = new MGITypeLookup();
-    HashMap map = null;
-    try {
-      map = lookup.lookup(translationType);
-    }
-    catch (KeyNotFoundException e) {
-      TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
-      TranslationException e2 =
-          (TranslationException) eFactory.getException(BadTranslationType);
-      e2.bind(translationType);
-      throw e2;
-    }
-    Integer mgiType = (Integer) map.get(MGD.mgi_translationtype._mgitype_key);
-
-    /**
-     * lookup the table information from the ACC_MGIType table
-     */
-    MGITypeTableLookup lookup2 = new MGITypeTableLookup();
-    try {
-      map = lookup2.lookup(mgiType.intValue());
-    }
-    catch (KeyNotFoundException e) {
-      LookupExceptionFactory eFactory = new LookupExceptionFactory();
-      throw eFactory.getLookupException(e);
-    }
-    targetTable = (String) map.get(MGD.acc_mgitype.tablename);
-    targetIdentity = (String) map.get(MGD.acc_mgitype.identitycolumnname);
-    targetPrimaryKey = (String)map.get(MGD.acc_mgitype.primarykeyname);
+    setup();
   }
+
+  /**
+   * constructor
+   * @assumes nothing
+   * @effects nothing
+   * @throws CacheException thrown if there is an error accessing cache
+   * @throws DBException thrown if there is an error with the db
+   * @throws ConfigException thrown if there is an error accessing the
+   * configuration
+   * @lookupException thrown if there is an error using the
+   */
+  public Translator(String translationType, int cacheType)
+  throws CacheException, DBException,
+         ConfigException, LookupException, TranslationException
+  {
+    super(cacheType,
+          SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+    TranslationTypeKeyLookup ttkLookup = new TranslationTypeKeyLookup();
+    this.translationType = ttkLookup.lookup(translationType);
+    setup();
+
+  }
+
 
   /**
    * translate the given term into the known vocabulary term and its object
@@ -202,6 +194,58 @@ public class Translator extends CachedLookup
     return new Interpreter();
   }
 
+  /**
+   * lookup and set the instance variables of this class through database
+   * queries
+   * @assumes nothing
+   * @effects clas instance variables will be set
+   * @throws TranslationException thrown if there is the given translation
+   * type is not found in the database
+   * @throws LookupException thrown if there is the mgi type for the given
+   * translation type was not found in the database
+   * @throws ConfigException thrown if there is an error with lookup
+   * configuration
+   * @throws DBException thrown if there is an error accessing the database
+   * @throws CacheException thrown if there is an error handling the cache
+   */
+  private void setup()
+      throws TranslationException, LookupException, ConfigException,
+             DBException, CacheException
+  {
+    /**
+     * lookup the MGIType from the database
+     */
+    MGITypeLookup lookup = new MGITypeLookup();
+    HashMap map = null;
+    try {
+      map = (HashMap)lookup.lookup(translationType);
+    }
+    catch (KeyNotFoundException e) {
+      TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
+      TranslationException e2 =
+          (TranslationException) eFactory.getException(BadTranslationType);
+      e2.bind(translationType.intValue());
+      throw e2;
+    }
+    Integer mgiType = (Integer) map.get(MGD.mgi_translationtype._mgitype_key);
+
+    /**
+     * lookup the table information from the ACC_MGIType table
+     */
+    MGITypeTableLookup lookup2 = new MGITypeTableLookup();
+    try {
+      map = lookup2.lookup(mgiType.intValue());
+    }
+    catch (KeyNotFoundException e) {
+      LookupExceptionFactory eFactory = new LookupExceptionFactory();
+      throw eFactory.getLookupException(e);
+    }
+    targetTable = (String) map.get(MGD.acc_mgitype.tablename);
+    targetIdentity = (String) map.get(MGD.acc_mgitype.identitycolumnname);
+    targetPrimaryKey = (String)map.get(MGD.acc_mgitype.primarykeyname);
+
+  }
+
 
   /**
    *
@@ -214,7 +258,7 @@ public class Translator extends CachedLookup
    * @author not attributable
    * @version 1.0
    */
-  public class MGITypeLookup
+  private class MGITypeLookup
       extends FullCachedLookup {
 
     /**
@@ -374,7 +418,7 @@ public class Translator extends CachedLookup
      * @throws ConfigException
      */
     public TranslationTypeKeyLookup() throws CacheException, DBException,
-        ConfigException, KeyNotFoundException {
+        ConfigException {
       super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
     }
 
