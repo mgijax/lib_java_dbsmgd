@@ -1,3 +1,8 @@
+DATE: 02/12/2004
+STAFF: mbw
+RELEASE: dev
+CHANGES: reviewed and fixed code where close() methods were not getting called for ResultsNavigator
+
 TAG: lib_java_dbsmgd-1-0-8
 DATE: 02/11/2004
 STAFF: sc
