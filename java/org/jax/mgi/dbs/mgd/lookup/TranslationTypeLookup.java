@@ -79,8 +79,7 @@ public class TranslationTypeLookup extends FullCachedLookup
   {
     class Interpreter implements RowDataInterpreter {
       public Object interpret(RowReference row) throws DBException {
-       return new KeyValue(new Integer(row.getInt(1)),
-                           new Integer(row.getInt(2)));
+       return new KeyValue(row.getInt(1), row.getInt(2));
       }
     }
     return new Interpreter();

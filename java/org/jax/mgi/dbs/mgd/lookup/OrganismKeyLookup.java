@@ -69,7 +69,7 @@ public class OrganismKeyLookup extends RowDataCacheHandler
   {
     class Interpreter implements RowDataInterpreter {
       public Object interpret(RowReference row) throws DBException {
-       return new KeyValue(row.getString(2), Converter.wrap(row.getInt(1)));
+       return new KeyValue(row.getString(2), row.getInt(1));
       }
     }
     return new Interpreter();
