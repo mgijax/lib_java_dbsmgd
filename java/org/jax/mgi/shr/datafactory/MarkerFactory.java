@@ -1045,7 +1045,10 @@ public class MarkerFactory
     * @throws DBException if there are problems querying the database or
     *    stepping through the results
     * @notes This method should probably be moved into a ReferenceFactory
-    *    class which knows how to retrieve data about references.
+    *    class which knows how to retrieve data about references.  This method
+    *    excludes from the count references which are listed in four different
+    *    MGI Sets:  Load References, Personal References, Genbank References,
+    *    and Curatorial References.
     */
     public DTO getReferenceCount (int key) throws DBException
     {
@@ -1053,8 +1056,70 @@ public class MarkerFactory
 	RowReference rr = null;			    // one row in 'nav'
 	DTO marker = DTO.getDTO();		    // start with a new DTO
 
+	// cache of already-generated objects
+	ExpiringObjectCache cache = ExpiringObjectCache.getSharedCache();
+
+	// key for 'excludedKeys' in 'cache'
+	String cacheKey = "org.jax.mgi.shr.datafactory.MarkerFactory.RC";
+
+	// comma-delimited String of _Set_keys for sets of references to not
+	// be displayed by the "All" link for references
+	String excludedKeys = (String) cache.get(cacheKey);
+
+	// if the cached value has expired (or not yet been generated), then
+	// we need to query the database to build it
+
+	if (excludedKeys == null)
+	{
+	    Integer setKey = null;		// MGI_Set._Set_key
+	    String name = null;			// MGI_Set.name
+	    ArrayList list = new ArrayList(4);	// List of keys to be excluded
+
+	    nav = this.sqlDM.executeQuery (REFERENCE_NOT_ALL);
+	    while (nav.next())
+	    {
+	        rr = (RowReference) nav.getCurrent();
+		name = rr.getString(2);
+
+		// there are four sets of references to be excluded for the
+		// "All" link...
+
+		if (name.equals("Load References") ||
+		    name.equals("Personal References") ||
+		    name.equals("Genbank References") ||
+		    name.equals("Curatorial References") )
+		{
+		    setKey = rr.getInt(1);
+		    list.add (setKey.toString());
+		}
+	    }
+	    nav.close();
+
+	    // if we found some sets, then make them a comma-delimited String
+
+	    if (list.size() > 0)
+	    {
+	        excludedKeys = StringLib.join (list, ",");
+	    }
+	    else
+	    {
+		// otherwise, use a dummy value (so no sets are excluded), and
+		// we'll just check again when the cache times out
+
+	        excludedKeys = "-1";
+	    }
+
+	    // store the new value in the cache for one hour
+
+	    cache.put (cacheKey, excludedKeys, 60 * 60);
+	}
+
+	// finally, do the actual query to get the count of references,
+	// excluding those as-needed
+
 	nav = this.sqlDM.executeQuery (
-	        Sprintf.sprintf (REFERENCE_COUNT, key) );
+	        Sprintf.sprintf (REFERENCE_COUNT, Integer.toString(key),
+			excludedKeys) );
 	if (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
@@ -3277,7 +3342,11 @@ public class MarkerFactory
     private static final String REFERENCE_COUNT =
 		"select count (1) "
 		+ "from MRK_Reference "
-		+ "where _Marker_key = %d";
+		+ "where _Marker_key = %s "
+		+    "AND _Refs_key NOT IN "
+		+	"(SELECT _Object_key "
+		+	" FROM MGI_SetMember "
+		+	" WHERE _Set_key IN (%s) )";
 
     // get info about the marker's oldest reference, defined as the one
     // with the lowest J: number for the oldest year (which is NOT a load
@@ -3299,6 +3368,13 @@ public class MarkerFactory
 	+ "  AND aa.preferred = 1 "
 	+ "  AND aa.prefixPart = 'J:' "
 	+ " ORDER BY br.year, aa.numericPart";
+
+    // get the _Set_key values for references which are excluded from display
+    // via the "All" link for references
+    private static final String REFERENCE_NOT_ALL = 
+        "SELECT _Set_key, name "
+	+ " FROM MGI_Set "
+	+ " WHERE name LIKE '%References'";
 
     // get all sequence IDs associated with a marker (now unused - can delete)
     // fill in:  marker key (int)
@@ -3365,6 +3441,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.10  2004/06/25 18:01:23  jsb
+* Updated ordering of ALLELE_COUNTS query, per TR5750
+*
 * Revision 1.9  2004/06/25 11:11:25  jsb
 * Updated handling of allele counts, per TR5750
 *
