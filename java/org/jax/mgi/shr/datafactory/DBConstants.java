@@ -60,6 +60,7 @@ public class DBConstants
 
     public static final int Marker_Approved = 1;
     public static final int Marker_Withdrawn = 2;
+    public static final int Marker_Interim = 3;
 
     // from BIB_ReviewStatus
 
@@ -68,6 +69,9 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.3  2004/04/06 16:50:59  jsb
+* added LogicalDB_NIA
+*
 * Revision 1.2  2004/02/10 17:48:50  jsb
 * Added more MGIType definitions
 *
