@@ -61,7 +61,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The name attribute
+     * @return The name attribute.
      * @throws Nothing
      */
     public String getName () { return name; }
@@ -71,7 +71,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The derivedFrom attribute
+     * @return The derivedFrom attribute.
      * @throws Nothing
      */
     public Integer getDerivedFrom () { return derivedFrom; }
@@ -81,7 +81,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The sourceKey attribute
+     * @return The sourceKey attribute.
      * @throws Nothing
      */
     public Integer getSourceKey () { return sourceKey; }
@@ -91,7 +91,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The vectorKey attribute
+     * @return The vectorKey attribute.
      * @throws Nothing
      */
     public Integer getVectorKey () { return vectorKey; }
@@ -101,7 +101,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The segmentTypeKey attribute
+     * @return The segmentTypeKey attribute.
      * @throws Nothing
      */
     public Integer getSegmentTypeKey () { return segmentTypeKey; }
@@ -111,7 +111,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The primerSequence1 attribute
+     * @return The primerSequence1 attribute.
      * @throws Nothing
      */
     public String getPrimerSequence1 () { return primerSequence1; }
@@ -121,7 +121,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The primerSequence2 attribute
+     * @return The primerSequence2 attribute.
      * @throws Nothing
      */
     public String getPrimerSequence2 () { return primerSequence2; }
@@ -131,7 +131,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The regionCovered attribute
+     * @return The regionCovered attribute.
      * @throws Nothing
      */
     public String getRegionCovered () { return regionCovered; }
@@ -141,7 +141,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The regionCovered2 attribute
+     * @return The regionCovered2 attribute.
      * @throws Nothing
      */
     public String getRegionCovered2 () { return regionCovered2; }
@@ -151,7 +151,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The insertSite attribute
+     * @return The insertSite attribute.
      * @throws Nothing
      */
     public String getInsertSite () { return insertSite; }
@@ -161,7 +161,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The insertSize attribute
+     * @return The insertSize attribute.
      * @throws Nothing
      */
     public String getInsertSize () { return insertSize; }
@@ -171,7 +171,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The repeatUnit attribute
+     * @return The repeatUnit attribute.
      * @throws Nothing
      */
     public String getRepeatUnit () { return repeatUnit; }
@@ -181,7 +181,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The productSize attribute
+     * @return The productSize attribute.
      * @throws Nothing
      */
     public String getProductSize () { return productSize; }
@@ -191,7 +191,7 @@ public class ProbeState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The moreProduct attribute
+     * @return The moreProduct attribute.
      * @throws Nothing
      */
     public Boolean getMoreProduct () { return moreProduct; }
@@ -200,7 +200,7 @@ public class ProbeState
      * Set the name attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pName value to set the attribute to
+     * @param pName The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -210,7 +210,7 @@ public class ProbeState
      * Set the derivedFrom attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pDerivedFrom value to set the attribute to
+     * @param pDerivedFrom The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -220,7 +220,7 @@ public class ProbeState
      * Set the sourceKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pSourceKey value to set the attribute to
+     * @param pSourceKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -230,7 +230,7 @@ public class ProbeState
      * Set the vectorKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pVectorKey value to set the attribute to
+     * @param pVectorKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -240,7 +240,7 @@ public class ProbeState
      * Set the segmentTypeKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pSegmentTypeKey value to set the attribute to
+     * @param pSegmentTypeKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -250,7 +250,7 @@ public class ProbeState
      * Set the primerSequence1 attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pPrimerSequence1 value to set the attribute to
+     * @param pPrimerSequence1 The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -260,7 +260,7 @@ public class ProbeState
      * Set the primerSequence2 attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pPrimerSequence2 value to set the attribute to
+     * @param pPrimerSequence2 The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -270,7 +270,7 @@ public class ProbeState
      * Set the regionCovered attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pRegionCovered value to set the attribute to
+     * @param pRegionCovered The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -280,7 +280,7 @@ public class ProbeState
      * Set the regionCovered2 attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pRegionCovered2 value to set the attribute to
+     * @param pRegionCovered2 The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -290,7 +290,7 @@ public class ProbeState
      * Set the insertSite attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pInsertSite value to set the attribute to
+     * @param pInsertSite The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -300,7 +300,7 @@ public class ProbeState
      * Set the insertSize attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pInsertSize value to set the attribute to
+     * @param pInsertSize The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -310,7 +310,7 @@ public class ProbeState
      * Set the repeatUnit attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pRepeatUnit value to set the attribute to
+     * @param pRepeatUnit The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -320,7 +320,7 @@ public class ProbeState
      * Set the productSize attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pProductSize value to set the attribute to
+     * @param pProductSize The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -330,7 +330,7 @@ public class ProbeState
      * Set the moreProduct attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pMoreProduct value to set the attribute to
+     * @param pMoreProduct The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -340,7 +340,7 @@ public class ProbeState
     /**
      * Clear the attributes of this object.
      * @assumes Nothing
-     * @effects Nothing
+     * @effects Clears the attributes of this object.
      * @param None
      * @return Nothing
      * @throws Nothing
@@ -366,6 +366,9 @@ public class ProbeState
 
 
 //  $Log$
+//  Revision 1.3  2003/10/08 18:47:00  dbm
+//  Use Boolean attributes instead of String for bit fields
+//
 //  Revision 1.2  2003/10/01 14:52:17  dbm
 //  Use Strings to represent bit columns in DAO classes
 //

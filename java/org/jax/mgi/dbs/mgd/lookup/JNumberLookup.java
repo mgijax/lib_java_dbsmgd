@@ -35,7 +35,9 @@ public class JNumberLookup extends LazyCachedLookup
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @throws Nothing
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws DBException
      */
     public JNumberLookup ()
         throws  CacheException, ConfigException, DBException
@@ -51,7 +53,7 @@ public class JNumberLookup extends LazyCachedLookup
     * @param jNumber The J-Number to look up.
     * @return An Integer object containing the reference key for the J-Number or
     *         a null if the J-Number was not found.
-    * @throws Nothing
+    * @throws LookupException
     */
     public Integer lookup (String jNumber)
         throws LookupException
@@ -121,6 +123,9 @@ public class JNumberLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.8  2003/10/06 19:43:07  dbm
+//  Support changes to frameworks classes
+//
 //  Revision 1.7  2003/10/03 16:38:36  mbw
 //  changed to suit the new CachedLookup base class
 //

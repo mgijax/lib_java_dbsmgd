@@ -50,8 +50,9 @@ public class AccessionDAO extends DAO
      * and a generated AccessionKey object.
      * @assumes Nothing
      * @effects Nothing
-     * @param pState The AccessionState object
-     * @throws Nothing
+     * @param pState The AccessionState object.
+     * @throws ConfigException
+     * @throws DBException
      */
     public AccessionDAO (AccessionState pState)
         throws ConfigException, DBException
@@ -66,8 +67,8 @@ public class AccessionDAO extends DAO
      * AccessionState objects.
      * @assumes Nothing
      * @effects Nothing
-     * @param pKey The AccessionKey object
-     * @param pState The AccessionState object
+     * @param pKey The AccessionKey object.
+     * @param pState The AccessionState object.
      * @throws Nothing
      */
     public AccessionDAO (AccessionKey pKey, AccessionState pState)
@@ -82,7 +83,7 @@ public class AccessionDAO extends DAO
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The accessionState attribute
+     * @return The accessionState attribute.
      * @throws Nothing
      */
     public AccessionState getAccessionState () { return accessionState; }
@@ -93,7 +94,7 @@ public class AccessionDAO extends DAO
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The accessionKey attribute
+     * @return The accessionKey attribute.
      * @throws Nothing
      */
     public AccessionKey getAccessionKey () { return accessionKey; }
@@ -135,8 +136,8 @@ public class AccessionDAO extends DAO
      * @assumes Nothing
      * @effects Nothing
      * @param table The name of the database table that the vector of
-     *        attributes is being targeted for
-     * @return A vector for the bcp record to be written
+     *        attributes is being targeted for.
+     * @return A vector for the bcp record to be written.
      * @throws Nothing
      */
     public Vector getBCPVector (Table table)
@@ -192,7 +193,7 @@ public class AccessionDAO extends DAO
      * @effects Nothing
      * @param None
      * @return A string representing the SQL statement.
-     * @throws Nothing
+     * @throws MGIException
      */
     public String getInsertSQL()
     {
@@ -207,7 +208,7 @@ public class AccessionDAO extends DAO
      * @effects Nothing
      * @param None
      * @return A string representing the SQL statement.
-     * @throws Nothing
+     * @throws MGIException
      */
     public String getUpdateSQL()
     {
@@ -222,7 +223,7 @@ public class AccessionDAO extends DAO
      * @effects Nothing
      * @param None
      * @return A string representing the SQL statement.
-     * @throws Nothing
+     * @throws MGIException
      */
     public String getDeleteSQL()
     {
@@ -234,7 +235,7 @@ public class AccessionDAO extends DAO
      * Split an accession ID into its prefix and numeric parts.
      * @assumes Nothing
      * @effects Nothing
-     * @param accID The accession ID to be split
+     * @param accID The accession ID to be split.
      * @return A vector containing the prefix part (String) and numeric
      *         part (Integer) of the accession ID.
      * @throws Nothing
@@ -284,6 +285,9 @@ public class AccessionDAO extends DAO
 
 
 //  $Log$
+//  Revision 1.6  2003/10/01 14:52:14  dbm
+//  Use Strings to represent bit columns in DAO classes
+//
 //  Revision 1.5  2003/09/30 16:58:06  dbm
 //  Use Integer instead of int for attributes
 //

@@ -37,7 +37,8 @@ public class SequenceKey
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @throws Nothing
+     * @throws ConfigException
+     * @throws DBException
      */
     public SequenceKey ()
         throws ConfigException, DBException
@@ -52,7 +53,7 @@ public class SequenceKey
      * Constructs a new SequenceKey object.
      * @assumes Nothing
      * @effects Nothing
-     * @param pKey value to set the primary key
+     * @param pKey value to set the primary key.
      * @throws Nothing
      */
     public SequenceKey (Integer pKey)
@@ -66,7 +67,7 @@ public class SequenceKey
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The primaryKey attribute
+     * @return The primaryKey attribute.
      * @throws Nothing
      */
     public Integer getPrimaryKey () { return primaryKey; }
@@ -74,6 +75,9 @@ public class SequenceKey
 
 
 //  $Log$
+//  Revision 1.3  2003/10/02 18:50:00  dbm
+//  Changed to use getInstance() method on Table class
+//
 //  Revision 1.2  2003/09/30 17:53:53  dbm
 //  Change int to Integer for primary key
 //

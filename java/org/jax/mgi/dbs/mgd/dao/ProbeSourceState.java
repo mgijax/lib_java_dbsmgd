@@ -61,7 +61,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The segmentTypeKey attribute
+     * @return The segmentTypeKey attribute.
      * @throws Nothing
      */
     public Integer getSegmentTypeKey () { return segmentTypeKey; }
@@ -71,7 +71,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The vectorKey attribute
+     * @return The vectorKey attribute.
      * @throws Nothing
      */
     public Integer getVectorKey () { return vectorKey; }
@@ -81,7 +81,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The organismKey attribute
+     * @return The organismKey attribute.
      * @throws Nothing
      */
     public Integer getOrganismKey () { return organismKey; }
@@ -91,7 +91,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The strainKey attribute
+     * @return The strainKey attribute.
      * @throws Nothing
      */
     public Integer getStrainKey () { return strainKey; }
@@ -101,7 +101,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The tissueKey attribute
+     * @return The tissueKey attribute.
      * @throws Nothing
      */
     public Integer getTissueKey () { return tissueKey; }
@@ -111,7 +111,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The genderKey attribute
+     * @return The genderKey attribute.
      * @throws Nothing
      */
     public Integer getGenderKey () { return genderKey; }
@@ -121,7 +121,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The cellLineKey attribute
+     * @return The cellLineKey attribute.
      * @throws Nothing
      */
     public Integer getCellLineKey () { return cellLineKey; }
@@ -131,7 +131,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The refsKey attribute
+     * @return The refsKey attribute.
      * @throws Nothing
      */
     public Integer getRefsKey () { return refsKey; }
@@ -141,7 +141,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The name attribute
+     * @return The name attribute.
      * @throws Nothing
      */
     public String getName () { return name; }
@@ -151,7 +151,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The description attribute
+     * @return The description attribute.
      * @throws Nothing
      */
     public String getDescription () { return description; }
@@ -161,7 +161,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The age attribute
+     * @return The age attribute.
      * @throws Nothing
      */
     public String getAge () { return age; }
@@ -171,7 +171,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The ageMin attribute
+     * @return The ageMin attribute.
      * @throws Nothing
      */
     public Float getAgeMin () { return ageMin; }
@@ -181,7 +181,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The ageMax attribute
+     * @return The ageMax attribute.
      * @throws Nothing
      */
     public Float getAgeMax () { return ageMax; }
@@ -191,7 +191,7 @@ public class ProbeSourceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The isCuratorEdited attribute
+     * @return The isCuratorEdited attribute.
      * @throws Nothing
      */
     public Boolean getIsCuratorEdited () { return isCuratorEdited; }
@@ -200,7 +200,7 @@ public class ProbeSourceState
      * Set the segmentTypeKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pSegmentTypeKey value to set the attribute to
+     * @param pSegmentTypeKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -210,7 +210,7 @@ public class ProbeSourceState
      * Set the vectorKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pVectorKey value to set the attribute to
+     * @param pVectorKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -220,7 +220,7 @@ public class ProbeSourceState
      * Set the organismKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pOrganismKey value to set the attribute to
+     * @param pOrganismKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -230,7 +230,7 @@ public class ProbeSourceState
      * Set the strainKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pStrainKey value to set the attribute to
+     * @param pStrainKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -240,7 +240,7 @@ public class ProbeSourceState
      * Set the tissueKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pTissueKey value to set the attribute to
+     * @param pTissueKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -250,7 +250,7 @@ public class ProbeSourceState
      * Set the genderKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pGenderKey value to set the attribute to
+     * @param pGenderKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -260,7 +260,7 @@ public class ProbeSourceState
      * Set the cellLineKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pCellLineKey value to set the attribute to
+     * @param pCellLineKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -270,7 +270,7 @@ public class ProbeSourceState
      * Set the refsKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pRefsKey value to set the attribute to
+     * @param pRefsKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -280,7 +280,7 @@ public class ProbeSourceState
      * Set the name attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pName value to set the attribute to
+     * @param pName The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -290,7 +290,7 @@ public class ProbeSourceState
      * Set the description attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pPrimerSequence1 value to set the attribute to
+     * @param pPrimerSequence1 The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -300,7 +300,7 @@ public class ProbeSourceState
      * Set the age attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pAge value to set the attribute to
+     * @param pAge The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -310,7 +310,7 @@ public class ProbeSourceState
      * Set the ageMin attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pAgeMin value to set the attribute to
+     * @param pAgeMin The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -320,7 +320,7 @@ public class ProbeSourceState
      * Set the ageMax attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pAgeMax value to set the attribute to
+     * @param pAgeMax The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -330,7 +330,7 @@ public class ProbeSourceState
      * Set the isCuratorEdited attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pIsCuratorEdited value to set the attribute to
+     * @param pIsCuratorEdited The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -340,7 +340,7 @@ public class ProbeSourceState
     /**
      * Clear the attributes of this object.
      * @assumes Nothing
-     * @effects Nothing
+     * @effects Clears the attributes of this object.
      * @param None
      * @return Nothing
      * @throws Nothing
@@ -366,6 +366,9 @@ public class ProbeSourceState
 
 
 //  $Log$
+//  Revision 1.4  2003/10/08 18:46:59  dbm
+//  Use Boolean attributes instead of String for bit fields
+//
 //  Revision 1.3  2003/10/01 14:52:17  dbm
 //  Use Strings to represent bit columns in DAO classes
 //

@@ -45,8 +45,9 @@ public class SequenceDAO extends DAO
      * and a generated SequenceKey object.
      * @assumes Nothing
      * @effects Nothing
-     * @param pState The SequenceState object
-     * @throws Nothing
+     * @param pState The SequenceState object.
+     * @throws ConfigException
+     * @throws DBException
      */
     public SequenceDAO (SequenceState pState)
         throws ConfigException, DBException
@@ -61,8 +62,8 @@ public class SequenceDAO extends DAO
      * SequenceState objects.
      * @assumes Nothing
      * @effects Nothing
-     * @param pKey The SequenceKey object
-     * @param pState The SequenceState object
+     * @param pKey The SequenceKey object.
+     * @param pState The SequenceState object.
      * @throws Nothing
      */
     public SequenceDAO (SequenceKey pKey, SequenceState pState)
@@ -77,7 +78,7 @@ public class SequenceDAO extends DAO
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The sequenceKey attribute
+     * @return The sequenceKey attribute.
      * @throws Nothing
      */
     public SequenceKey getSequenceKey () { return sequenceKey; }
@@ -88,7 +89,7 @@ public class SequenceDAO extends DAO
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The sequenceState attribute
+     * @return The sequenceState attribute.
      * @throws Nothing
      */
     public SequenceState getSequenceState () { return sequenceState; }
@@ -127,8 +128,8 @@ public class SequenceDAO extends DAO
      * @assumes Nothing
      * @effects Nothing
      * @param table The name of the database table that the vector of
-     *        attributes is being targeted for
-     * @return A vector for the bcp record to be written
+     *        attributes is being targeted for.
+     * @return A vector for the bcp record to be written.
      * @throws Nothing
      */
     public Vector getBCPVector (Table table)
@@ -182,7 +183,7 @@ public class SequenceDAO extends DAO
      * @effects Nothing
      * @param None
      * @return A string representing the SQL statement.
-     * @throws Nothing
+     * @throws MGIException
      */
     public String getInsertSQL()
     {
@@ -197,7 +198,7 @@ public class SequenceDAO extends DAO
      * @effects Nothing
      * @param None
      * @return A string representing the SQL statement.
-     * @throws Nothing
+     * @throws MGIException
      */
     public String getUpdateSQL()
     {
@@ -212,7 +213,7 @@ public class SequenceDAO extends DAO
      * @effects Nothing
      * @param None
      * @return A string representing the SQL statement.
-     * @throws Nothing
+     * @throws MGIException
      */
     public String getDeleteSQL()
     {
@@ -222,6 +223,9 @@ public class SequenceDAO extends DAO
 
 
 //  $Log$
+//  Revision 1.2  2003/09/30 16:58:08  dbm
+//  Use Integer instead of int for attributes
+//
 //
 /**************************************************************************
 *

@@ -3,7 +3,8 @@
 
 package org.jax.mgi.dbs.mgd.dao;
 
-import org.jax.mgi.shr.cache.CacheException;import org.jax.mgi.shr.cache.KeyValue;
+import org.jax.mgi.shr.cache.CacheException;
+import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LazyCachedLookup;
 import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
@@ -47,7 +48,10 @@ public class ProbeReferenceLookup
      * @param refsKey The refs key to look up.
      * @return A ProbeReferenceDAO object that represents the PRB_Reference
      *         record.
-     * @throws Nothing
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws DBException
+     * @throws LookupException
      */
     public ProbeReferenceDAO findByPrbRef (Integer probeKey, Integer refsKey)
         throws CacheException, ConfigException, DBException, LookupException
@@ -76,7 +80,9 @@ public class ProbeReferenceLookup
          * @assumes Nothing
          * @effects Nothing
          * @param None
-         * @throws Nothing
+         * @throws CacheException
+         * @throws ConfigException
+         * @throws DBException
          */
         public ProbeRefLookup()
            throws CacheException, ConfigException, DBException
@@ -92,7 +98,7 @@ public class ProbeReferenceLookup
          * @param refsKey The refs key to look up.
          * @return A ProbeReferenceDAO object that represents the PRB_Reference
          *         record.
-         * @throws Nothing
+         * @throws LookupException
          */
         public ProbeReferenceDAO lookup(Integer probeKey, Integer refsKey)
             throws LookupException
@@ -168,6 +174,9 @@ public class ProbeReferenceLookup
 
 
 //  $Log$
+//  Revision 1.6  2003/10/03 16:35:25  mbw
+//  modified to suit changes to the CachedLookup base class
+//
 //  Revision 1.5  2003/10/02 18:48:54  dbm
 //  Changed to extend subclass of CachedLookup
 //

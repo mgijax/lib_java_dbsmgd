@@ -74,7 +74,10 @@ public class ProbeSourceLookup
      * @effects Nothing
      * @param name The source name to look up.
      * @return A ProbeSourceDAO object that represents the PRB_Source record.
-     * @throws Nothing
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws DBException
+     * @throws LookupException
      */
     public ProbeSourceDAO findByName (String name)
         throws CacheException, ConfigException, DBException, LookupException
@@ -98,7 +101,10 @@ public class ProbeSourceLookup
      * @effects Nothing
      * @param name The source key to look up.
      * @return A ProbeSourceDAO object that represents the PRB_Source record.
-     * @throws Nothing
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws DBException
+     * @throws LookupException
      */
     public ProbeSourceDAO findByKey (Integer key)
         throws CacheException, ConfigException, DBException, LookupException
@@ -127,10 +133,12 @@ public class ProbeSourceLookup
          * @assumes Nothing
          * @effects Nothing
          * @param None
-         * @throws Nothing
+         * @throws CacheException
+         * @throws ConfigException
+         * @throws DBException
          */
         public NamedSourceLookup()
-           throws ConfigException, DBException, CacheException
+           throws CacheException, ConfigException, DBException
         {
             super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
         }
@@ -141,7 +149,7 @@ public class ProbeSourceLookup
          * @effects Nothing
          * @param name The source name to look up.
          * @return A ProbeSourceDAO object that represents the PRB_Source record.
-         * @throws Nothing
+         * @throws LookupException
          */
         public ProbeSourceDAO lookup(String name)
             throws LookupException
@@ -170,7 +178,7 @@ public class ProbeSourceLookup
          * @assumes nothing
          * @effects nothing
          * @param None
-         * @return The RowDataInterpreter object
+         * @return The RowDataInterpreter object.
          * @throws Nothing
          */
         public RowDataInterpreter getRowDataInterpreter()
@@ -213,10 +221,12 @@ public class ProbeSourceLookup
          * @assumes Nothing
          * @effects Nothing
          * @param None
-         * @throws Nothing
+         * @throws CacheException
+         * @throws ConfigException
+         * @throws DBException
          */
         public KeyedSourceLookup()
-           throws ConfigException, DBException, CacheException
+           throws CacheException, ConfigException, DBException
         {
             super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
         }
@@ -227,7 +237,7 @@ public class ProbeSourceLookup
          * @effects Nothing
          * @param key The source key to look up.
          * @return A ProbeSourceDAO object that represents the PRB_Source record.
-         * @throws Nothing
+         * @throws LookupException
          */
         public ProbeSourceDAO lookup(Integer key)
             throws LookupException
@@ -272,7 +282,7 @@ public class ProbeSourceLookup
          * @assumes nothing
          * @effects nothing
          * @param None
-         * @return The RowDataInterpreter object
+         * @return The RowDataInterpreter object.
          * @throws Nothing
          */
         public RowDataInterpreter getRowDataInterpreter()
@@ -298,6 +308,9 @@ public class ProbeSourceLookup
 
 
 //  $Log$
+//  Revision 1.7  2003/10/06 19:40:27  dbm
+//  Added translator to the lookup
+//
 //  Revision 1.6  2003/10/03 16:35:25  mbw
 //  modified to suit changes to the CachedLookup base class
 //

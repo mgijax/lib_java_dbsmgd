@@ -40,7 +40,8 @@ public class ProbeSourceKey
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @throws Nothing
+     * @throws ConfigException
+     * @throws DBException
      */
     public ProbeSourceKey ()
         throws ConfigException, DBException
@@ -54,7 +55,7 @@ public class ProbeSourceKey
      * Constructs a new ProbeSourceKey object.
      * @assumes Nothing
      * @effects Nothing
-     * @param pKey value to set the primary key
+     * @param pKey The value to set the primary key.
      * @throws Nothing
      */
     public ProbeSourceKey (Integer pKey)
@@ -68,7 +69,7 @@ public class ProbeSourceKey
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The primaryKey attribute
+     * @return The primaryKey attribute.
      * @throws Nothing
      */
     public Integer getPrimaryKey () { return primaryKey; }
@@ -76,6 +77,9 @@ public class ProbeSourceKey
 
 
 //  $Log$
+//  Revision 1.4  2003/10/02 18:49:59  dbm
+//  Changed to use getInstance() method on Table class
+//
 //  Revision 1.3  2003/09/30 17:53:53  dbm
 //  Change int to Integer for primary key
 //

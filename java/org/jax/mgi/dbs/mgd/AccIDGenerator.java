@@ -50,7 +50,8 @@ public class AccIDGenerator
      * @effects Nothing
      * @param None
      * @return The next available MGI ID.
-     * @throws Nothing
+     * @throws ConfigException
+     * @throws DBException
      */
     public static String getNextMGIID ()
         throws ConfigException, DBException
@@ -79,7 +80,8 @@ public class AccIDGenerator
      * @effects Nothing
      * @param None
      * @return The next available J-Number.
-     * @throws Nothing
+     * @throws ConfigException
+     * @throws DBException
      */
     public static String getNextJNum ()
         throws ConfigException, DBException
@@ -108,7 +110,8 @@ public class AccIDGenerator
      * @effects Nothing
      * @param None
      * @return The next available J-Number.
-     * @throws Nothing
+     * @throws ConfigException
+     * @throws DBException
      */
     public static AccessionState getNextAccState ()
         throws ConfigException, DBException
@@ -126,7 +129,8 @@ public class AccIDGenerator
      * @effects Nothing
      * @param None
      * @return Nothing
-     * @throws Nothing
+     * @throws ConfigException
+     * @throws DBException
      */
     public static void close ()
         throws ConfigException, DBException
@@ -157,6 +161,9 @@ public class AccIDGenerator
 
 
 //  $Log$
+//  Revision 1.3  2003/09/30 17:04:34  dbm
+//  Support int to Integer change
+//
 //  Revision 1.2  2003/09/25 17:50:48  dbm
 //  Continued development
 //

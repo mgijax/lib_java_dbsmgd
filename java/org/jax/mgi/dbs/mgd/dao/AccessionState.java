@@ -58,7 +58,7 @@ public class AccessionState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The accID attribute
+     * @return The accID attribute.
      * @throws Nothing
      */
     public String getAccID () { return accID; }
@@ -68,7 +68,7 @@ public class AccessionState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The logicalDBKey attribute
+     * @return The logicalDBKey attribute.
      * @throws Nothing
      */
     public Integer getLogicalDBKey () { return logicalDBKey; }
@@ -78,7 +78,7 @@ public class AccessionState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The objectKey attribute
+     * @return The objectKey attribute.
      * @throws Nothing
      */
     public Integer getObjectKey () { return objectKey; }
@@ -88,7 +88,7 @@ public class AccessionState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The mgiTypeKey attribute
+     * @return The mgiTypeKey attribute.
      * @throws Nothing
      */
     public Integer getMGITypeKey () { return mgiTypeKey; }
@@ -98,7 +98,7 @@ public class AccessionState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The privateAcc attribute
+     * @return The privateAcc attribute.
      * @throws Nothing
      */
     public Boolean getPrivateAcc () { return privateAcc; }
@@ -108,7 +108,7 @@ public class AccessionState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The preferred attribute
+     * @return The preferred attribute.
      * @throws Nothing
      */
     public Boolean getPreferred () { return preferred; }
@@ -118,7 +118,7 @@ public class AccessionState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The refsKey attribute
+     * @return The refsKey attribute.
      * @throws Nothing
      */
     public Integer getRefsKey () { return refsKey; }
@@ -127,7 +127,7 @@ public class AccessionState
      * Set the accID attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pAccID value to set the attribute to
+     * @param pAccID The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -137,7 +137,7 @@ public class AccessionState
      * Set the logicalDBKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pLogicalDBKey value to set the attribute to
+     * @param pLogicalDBKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -147,7 +147,7 @@ public class AccessionState
      * Set the objectKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pObjectKey value to set the attribute to
+     * @param pObjectKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -157,7 +157,7 @@ public class AccessionState
      * Set the mgiTypeKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pMGITypeKey value to set the attribute to
+     * @param pMGITypeKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -167,7 +167,7 @@ public class AccessionState
      * Set the privateAcc attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pPrivateAcc value to set the attribute to
+     * @param pPrivateAcc The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -177,7 +177,7 @@ public class AccessionState
      * Set the preferred attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pPreferred value to set the attribute to
+     * @param pPreferred The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -187,7 +187,7 @@ public class AccessionState
      * Set the refsKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pRefsKey value to set the attribute to
+     * @param pRefsKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -197,7 +197,7 @@ public class AccessionState
     /**
      * Clear the attributes of this object.
      * @assumes Nothing
-     * @effects Nothing
+     * @effects Clears the attributes of this object.
      * @param None
      * @return Nothing
      * @throws Nothing
@@ -216,6 +216,9 @@ public class AccessionState
 
 
 //  $Log$
+//  Revision 1.3  2003/10/08 18:46:58  dbm
+//  Use Boolean attributes instead of String for bit fields
+//
 //  Revision 1.2  2003/10/01 14:52:14  dbm
 //  Use Strings to represent bit columns in DAO classes
 //

@@ -52,7 +52,7 @@ public class ProbeReferenceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The probeKey attribute
+     * @return The probeKey attribute.
      * @throws Nothing
      */
     public Integer getProbeKey () { return probeKey; }
@@ -62,7 +62,7 @@ public class ProbeReferenceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The refsKey attribute
+     * @return The refsKey attribute.
      * @throws Nothing
      */
     public Integer getRefsKey () { return refsKey; }
@@ -72,7 +72,7 @@ public class ProbeReferenceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The holder attribute
+     * @return The holder attribute.
      * @throws Nothing
      */
     public String getHolder () { return holder; }
@@ -82,7 +82,7 @@ public class ProbeReferenceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The hasRmap attribute
+     * @return The hasRmap attribute.
      * @throws Nothing
      */
     public Boolean getHasRmap () { return hasRmap; }
@@ -92,7 +92,7 @@ public class ProbeReferenceState
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The hasSequence attribute
+     * @return The hasSequence attribute.
      * @throws Nothing
      */
     public  Boolean getHasSequence () { return hasSequence; }
@@ -101,7 +101,7 @@ public class ProbeReferenceState
      * Set the probeKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pProbeKey value to set the attribute to
+     * @param pProbeKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -111,7 +111,7 @@ public class ProbeReferenceState
      * Set the refsKey attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pRefsKey value to set the attribute to
+     * @param pRefsKey The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -121,7 +121,7 @@ public class ProbeReferenceState
      * Set the holder attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pHolder value to set the attribute to
+     * @param pHolder The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -131,7 +131,7 @@ public class ProbeReferenceState
      * Set the hasRmap attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pHasRmap value to set the attribute to
+     * @param pHasRmap The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -141,7 +141,7 @@ public class ProbeReferenceState
      * Set the hasSequence attribute of this object to the given value.
      * @assumes Nothing
      * @effects Nothing
-     * @param pHasSequence value to set the attribute to
+     * @param pHasSequence The value to set the attribute to.
      * @return Nothing
      * @throws Nothing
      */
@@ -151,7 +151,7 @@ public class ProbeReferenceState
     /**
      * Clear the attributes of this object.
      * @assumes Nothing
-     * @effects Nothing
+     * @effects Clears the attributes of this object.
      * @param None
      * @return Nothing
      * @throws Nothing
@@ -168,6 +168,9 @@ public class ProbeReferenceState
 
 
 //  $Log$
+//  Revision 1.3  2003/10/08 18:46:58  dbm
+//  Use Boolean attributes instead of String for bit fields
+//
 //  Revision 1.2  2003/10/01 14:52:16  dbm
 //  Use Strings to represent bit columns in DAO classes
 //

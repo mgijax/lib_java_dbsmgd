@@ -48,8 +48,9 @@ public class ProbeDAO extends DAO
      * a generated ProbeKey object.
      * @assumes Nothing
      * @effects Nothing
-     * @param pState The ProbeState object
-     * @throws Nothing
+     * @param pState The ProbeState object.
+     * @throws ConfigException
+     * @throws DBException
      */
     public ProbeDAO (ProbeState pState)
         throws ConfigException, DBException
@@ -64,8 +65,8 @@ public class ProbeDAO extends DAO
      * objects.
      * @assumes Nothing
      * @effects Nothing
-     * @param pKey The ProbeKey object
-     * @param pState The ProbeState object
+     * @param pKey The ProbeKey object.
+     * @param pState The ProbeState object.
      * @throws Nothing
      */
     public ProbeDAO (ProbeKey pKey, ProbeState pState)
@@ -80,7 +81,7 @@ public class ProbeDAO extends DAO
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The probeKey attribute
+     * @return The probeKey attribute.
      * @throws Nothing
      */
     public ProbeKey getProbeKey () { return probeKey; }
@@ -91,7 +92,7 @@ public class ProbeDAO extends DAO
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The probeState attribute
+     * @return The probeState attribute.
      * @throws Nothing
      */
     public ProbeState getProbeState () { return probeState; }
@@ -130,8 +131,8 @@ public class ProbeDAO extends DAO
      * @assumes Nothing
      * @effects Nothing
      * @param table The name of the database table that the vector of
-     *        attributes is being targeted for
-     * @return A vector for the bcp record to be written
+     *        attributes is being targeted for.
+     * @return A vector for the bcp record to be written.
      * @throws Nothing
      */
     public Vector getBCPVector (Table table)
@@ -178,7 +179,7 @@ public class ProbeDAO extends DAO
      * @effects Nothing
      * @param None
      * @return A string representing the SQL statement.
-     * @throws Nothing
+     * @throws MGIException
      */
     public String getInsertSQL()
     {
@@ -193,7 +194,7 @@ public class ProbeDAO extends DAO
      * @effects Nothing
      * @param None
      * @return A string representing the SQL statement.
-     * @throws Nothing
+     * @throws MGIException
      */
     public String getUpdateSQL()
     {
@@ -208,7 +209,7 @@ public class ProbeDAO extends DAO
      * @effects Nothing
      * @param None
      * @return A string representing the SQL statement.
-     * @throws Nothing
+     * @throws MGIException
      */
     public String getDeleteSQL()
     {
@@ -218,6 +219,9 @@ public class ProbeDAO extends DAO
 
 
 //  $Log$
+//  Revision 1.4  2003/09/30 16:58:07  dbm
+//  Use Integer instead of int for attributes
+//
 //  Revision 1.3  2003/09/24 15:12:56  dbm
 //  Changed DataInstance to DAO
 //

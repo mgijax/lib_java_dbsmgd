@@ -33,7 +33,9 @@ public class LogicalDBLookup extends FullCachedLookup
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @throws Nothing
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws DBException
      */
     public LogicalDBLookup ()
         throws CacheException, ConfigException, DBException
@@ -49,7 +51,8 @@ public class LogicalDBLookup extends FullCachedLookup
      * @param logicalDB The logicalDB to look up.
      * @return An Integer object containing the key for the logical DB or a null
      *         if the logical DB was not found.
-     * @throws Nothing
+     * @throws KeyNotFoundException
+     * @throws LookupException
      */
     public Integer lookup (String logicalDB)
         throws KeyNotFoundException, LookupException
@@ -78,7 +81,7 @@ public class LogicalDBLookup extends FullCachedLookup
      * @assumes nothing
      * @effects nothing
      * @param None
-     * @return The RowDataInterpreter object
+     * @return The RowDataInterpreter object.
      * @throws Nothing
      */
     public RowDataInterpreter getRowDataInterpreter()
@@ -97,6 +100,9 @@ public class LogicalDBLookup extends FullCachedLookup
 
 
 //  $Log$
+//  Revision 1.7  2003/10/06 19:43:07  dbm
+//  Support changes to frameworks classes
+//
 //  Revision 1.6  2003/10/03 16:38:37  mbw
 //  changed to suit the new CachedLookup base class
 //
