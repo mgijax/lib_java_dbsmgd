@@ -255,7 +255,7 @@ public class MGD
 		public static final String pgs = "pgs";
 		public static final String dbs = "dbs";
 		public static final String nlmstatus = "NLMstatus";
-		public static final String abstract = "abstract";
+		public static final String abstractJ = "abstract";
 		public static final String isreviewarticle = "isReviewArticle";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -454,7 +454,7 @@ public class MGD
 	{
 		public static final String _name = "GXD_AntibodyClass";
 		public static final String _antibodyclass_key = "_AntibodyClass_key";
-		public static final String class = "class";
+		public static final String classJ = "class";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
 		
@@ -1116,7 +1116,7 @@ public class MGD
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String _mgitype_key = "_MGIType_key";
 		public static final String notetype = "noteType";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
 		public static final String creation_date = "creation_date";
@@ -2027,7 +2027,7 @@ public class MGD
 		public static final String strain = "strain";
 		public static final String standard = "standard";
 		public static final String needsreview = "needsReview";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
 		
@@ -2383,7 +2383,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -2413,7 +2413,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -2439,7 +2439,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -2509,7 +2509,7 @@ public class MGD
 		public static final String _allele_key = "_Allele_key";
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String sequencenum = "sequenceNum";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String note = "note";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -2523,7 +2523,7 @@ public class MGD
 		public static final String _allele_key = "_Allele_key";
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String sequencenum = "sequenceNum";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String note = "note";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -2537,7 +2537,7 @@ public class MGD
 		public static final String _allele_key = "_Allele_key";
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String sequencenum = "sequenceNum";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String note = "note";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -2551,7 +2551,7 @@ public class MGD
 		public static final String _allele_key = "_Allele_key";
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String sequencenum = "sequenceNum";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String note = "note";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -2565,7 +2565,7 @@ public class MGD
 		public static final String _allele_key = "_Allele_key";
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String sequencenum = "sequenceNum";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String note = "note";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -2655,7 +2655,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -2696,7 +2696,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -2724,7 +2724,7 @@ public class MGD
 		public static final String pgs = "pgs";
 		public static final String dbs = "dbs";
 		public static final String nlmstatus = "NLMstatus";
-		public static final String abstract = "abstract";
+		public static final String abstractJ = "abstract";
 		public static final String isreviewarticle = "isReviewArticle";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -2754,7 +2754,7 @@ public class MGD
 		public static final String pgs = "pgs";
 		public static final String dbs = "dbs";
 		public static final String nlmstatus = "NLMstatus";
-		public static final String abstract = "abstract";
+		public static final String abstractJ = "abstract";
 		public static final String isreviewarticle = "isReviewArticle";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -2776,7 +2776,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -2797,7 +2797,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -2828,7 +2828,7 @@ public class MGD
 		public static final String pgs = "pgs";
 		public static final String dbs = "dbs";
 		public static final String nlmstatus = "NLMstatus";
-		public static final String abstract = "abstract";
+		public static final String abstractJ = "abstract";
 		public static final String isreviewarticle = "isReviewArticle";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -2928,7 +2928,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -2947,7 +2947,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -2978,7 +2978,7 @@ public class MGD
 		public static final String mgiid = "mgiID";
 		public static final String prefixpart = "prefixPart";
 		public static final String numericpart = "numericPart";
-		public static final String class = "class";
+		public static final String classJ = "class";
 		public static final String antibodytype = "antibodyType";
 		public static final String antibodyspecies = "antibodySpecies";
 		public static final String antigenname = "antigenName";
@@ -3085,7 +3085,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3104,7 +3104,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3152,7 +3152,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3171,7 +3171,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3325,7 +3325,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3344,7 +3344,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3544,7 +3544,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3566,7 +3566,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3585,7 +3585,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3754,7 +3754,7 @@ public class MGD
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String _mgitype_key = "_MGIType_key";
 		public static final String notetype = "noteType";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
 		public static final String creation_date = "creation_date";
@@ -3767,7 +3767,7 @@ public class MGD
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String _mgitype_key = "_MGIType_key";
 		public static final String notetype = "noteType";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
 		public static final String creation_date = "creation_date";
@@ -3780,7 +3780,7 @@ public class MGD
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String _mgitype_key = "_MGIType_key";
 		public static final String notetype = "noteType";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
 		public static final String creation_date = "creation_date";
@@ -3793,7 +3793,7 @@ public class MGD
 		public static final String _notetype_key = "_NoteType_key";
 		public static final String _mgitype_key = "_MGIType_key";
 		public static final String notetype = "noteType";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
 		public static final String creation_date = "creation_date";
@@ -3810,7 +3810,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -3917,7 +3917,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -4153,7 +4153,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -4498,7 +4498,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -4523,7 +4523,7 @@ public class MGD
 		public static final String strain = "strain";
 		public static final String standard = "standard";
 		public static final String needsreview = "needsReview";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		
 		}
 	public class mlp_straintypes_view
@@ -4546,7 +4546,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -4566,7 +4566,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -4588,7 +4588,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -4820,7 +4820,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -4842,7 +4842,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -4861,7 +4861,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -4883,7 +4883,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -4994,7 +4994,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5013,7 +5013,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5034,7 +5034,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5055,7 +5055,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5205,7 +5205,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5224,7 +5224,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -5288,7 +5288,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5322,7 +5322,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -5342,7 +5342,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5364,7 +5364,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -5465,7 +5465,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5484,7 +5484,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5615,7 +5615,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -5650,7 +5650,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5909,7 +5909,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String creation_date = "creation_date";
 		public static final String modification_date = "modification_date";
@@ -5959,7 +5959,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -5981,7 +5981,7 @@ public class MGD
 		public static final String _logicaldb_key = "_LogicalDB_key";
 		public static final String _object_key = "_Object_key";
 		public static final String _mgitype_key = "_MGIType_key";
-		public static final String private = "private";
+		public static final String privateJ = "private";
 		public static final String preferred = "preferred";
 		public static final String _createdby_key = "_CreatedBy_key";
 		public static final String _modifiedby_key = "_ModifiedBy_key";
@@ -6025,10 +6025,10 @@ public class MGD
 
 	public class translationTypes
 	{
-				public static final int Gender = 1000
-				public static final int Organisms = 1001
-				public static final int Sequence Types = 1002
-				public static final int Strains = 1003
+				public static final int Gender = 1000;
+				public static final int Organisms = 1001;
+				public static final int SequenceTypes = 1002;
+				public static final int Strains = 1003;
 		}
 
 }
