@@ -1,3 +1,10 @@
+TAG: lib_java_dbsmgd-jsam-1-0-0
+DATE: 11/04/2003
+STAFF: sc
+RELEASE: jsam branch (mgd 3.0)
+CHANGES: removed PRB_SourceInterpreter.java PRB_SourceLookup.java 
+         PRB_ReferenceInterpreter.java PRB_ReferenceLookup.javS
+
 TAG: lib_java_dbsmgd-jsam_BP
 DATE: 11/04/2003
 STAFF: lec
