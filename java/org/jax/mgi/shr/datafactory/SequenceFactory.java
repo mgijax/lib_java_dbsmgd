@@ -194,7 +194,6 @@ public class SequenceFactory extends Factory {
         sequence.merge (section);
         DTO.putDTO (section);
         this.timeStamp("returned probe info");
-        System.out.println(this.timer.toString());
         return sequence;
     }
 
