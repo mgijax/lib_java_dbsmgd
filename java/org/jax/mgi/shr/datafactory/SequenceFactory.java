@@ -1250,7 +1250,7 @@ public class SequenceFactory extends Factory {
     // loads #prbs with the logicaldb name of the collection this probe
     // belongs to, if any and the providers accID for the probe.
     private static final String CLONE_COLLECTION_TABLE =
-            "select collection = msclv.name, p._Probe_key\n"+
+            "select distinct collection = msclv.name, p._Probe_key\n"+
             "into #collection\n"+
             "from #prbs p, PRB_Probe pp,\n"+
             "MGI_SetMember msm, MGI_Set_CloneLibrary_View msclv\n"+
