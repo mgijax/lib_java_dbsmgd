@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-patch302-1
+DATE: 11/09/2004
+STAFF: jsb
+CHANGES:
+1) fixes to SequencerFactory.java for 3.02 release, for multi-clone coll.
+
 TAG: lib_java_dbsmgd-1-0-32
 DATE: 10/22/2004
 STAFF: sc
