@@ -11,6 +11,7 @@ import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.CacheConstants;
+import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.dbs.mgd.TranslationTypeConstants;
 import org.jax.mgi.dbs.mgd.trans.Translator;
 import org.jax.mgi.dbs.mgd.trans.TranslationException;
@@ -54,7 +55,8 @@ public class OrganismKeyLookup extends FullCachedLookup
    * @return
    */
   public Integer lookup(String term)
-      throws CacheException, DBException, TranslationException, ConfigException
+      throws CacheException, DBException, TranslationException,
+             ConfigException, KeyNotFoundException
   {
     if (translator == null)
     {
@@ -74,7 +76,7 @@ public class OrganismKeyLookup extends FullCachedLookup
     else  // no translation found so lookup in MGI_Organism
     {
       this.translatedTerm = term;
-      return (Integer)super.cacheStrategy.lookup(term, cache);
+      return (Integer)super.lookup(term);
     }
   }
 

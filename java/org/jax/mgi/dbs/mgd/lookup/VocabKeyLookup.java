@@ -89,7 +89,7 @@ public class VocabKeyLookup extends LazyCachedLookup
    * @return the key value
    */
   public Integer lookup(String term) throws CacheException,
-      DBException, TranslationException, ConfigException
+      DBException, TranslationException, ConfigException, KeyNotFoundException
   {
     Integer key = null;
     if (translatable)  // do a translation first
@@ -107,7 +107,7 @@ public class VocabKeyLookup extends LazyCachedLookup
     if (key == null) // was not found through translation
     {
         this.translatedTerm = term;
-        key = (Integer)super.cacheStrategy.lookup(term, cache);
+        key = (Integer)super.lookup(term);
     }
     return key;
   }
