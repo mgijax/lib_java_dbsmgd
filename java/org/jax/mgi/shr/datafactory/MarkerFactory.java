@@ -1511,8 +1511,11 @@ public class MarkerFactory
     /** get counts of various allele types for the given marker.  Wild-type
     *    alleles are excluded from the counts.
     * @param key the marker key of the marker whose data we seek
-    * @return DTO which maps DTOConstants.AlleleCounts to a DTO.  That DTO has
-    *    lowercase allele types as keys, each mapped to an Integer count.
+    * @return DTO which maps DTOConstants.AlleleCounts to a List.  That List
+    *    contains DTOs, each of which defines three fields (all from
+    *    DTOConstants):  AlleleTypeName, AlleleTypeCount, AlelleTypeKey.
+    *    These map to a String, Integer, and Integer, respectively.  The List
+    *    will be empty if the marker has no alleles.
     * @assumes nothing
     * @effects queries the database
     * @throws DBException if there are problems querying the database or
@@ -1525,13 +1528,21 @@ public class MarkerFactory
 	ResultsNavigator nav = null;    	// set of query results
 	RowReference rr = null;	        	// one row in 'nav'
 	DTO marker = DTO.getDTO();		// start with a new DTO
-        DTO alleleCounts = DTO.getDTO();	// as described in notes above
+
+	ArrayList alleleCounts = new ArrayList(6);	// see @return above
+	DTO typeData = null;			// data for one allele type
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (ALLELE_COUNTS, key));
 	while (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
-	    alleleCounts.set (rr.getString(1).toLowerCase(), rr.getInt(2) );
+
+	    typeData = DTO.getDTO();
+	    typeData.set (DTOConstants.AlleleTypeName, rr.getString(1));
+	    typeData.set (DTOConstants.AlleleTypeKey, rr.getInt(2));
+	    typeData.set (DTOConstants.AlleleTypeCount, rr.getInt(3));
+
+	    alleleCounts.add (typeData);
 	}
 	nav.close();
 
@@ -2885,12 +2896,17 @@ public class MarkerFactory
     //	wild types
     // fill in: marker key (int)
     private static final String ALLELE_COUNTS =
-		"select ty.alleleType, count(1) "
-		+ "from ALL_Allele aa, ALL_Type ty "
-		+ "where aa._Marker_key = %d "
-		+    "and aa._Allele_Type_key = ty._Allele_Type_key "
-		+    "and aa.name != 'wild type' "
-		+ "group by ty.alleleType";
+		"SELECT ms.name, ms._Set_key, count(1) "
+		+ "FROM MGI_Set ms, MGI_SetMember msm, ALL_Allele aa, "
+		+	"ACC_MGIType amt "
+		+ "WHERE ms._Set_key = msm._Set_key "
+		+	"AND msm._Object_key = aa._Allele_Type_key "
+		+	"AND aa.name != 'wild type' "
+		+	"AND aa._Marker_key = %d "
+		+	"AND ms._MGIType_key = amt._MGIType_key "
+		+	"AND amt.name = 'Allele Type' "
+		+ "GROUP BY ms.name, ms._Set_key "
+		+ "ORDER BY ms._Set_key";
 
     // get a count of the antibodies associated with the marker
     // fill in: marker key (int)
@@ -3349,6 +3365,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.8  2004/05/27 15:53:35  jsb
+* updated sequence retrieval to ensure DISTINCT sequences
+*
 * Revision 1.7  2004/05/24 15:14:51  jsb
 * fixed bug regarding display of interim nomenclature
 *
