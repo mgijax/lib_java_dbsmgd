@@ -17,30 +17,49 @@ public class TestTissueKeyLookup
 
   protected void setUp() throws Exception {
     super.setUp();
-    tissueKeyLookup = new TissueKeyLookup();
     sqlMgr = new SQLDataManager();
+    sqlMgr.executeUpdate(
+        "insert into prb_tissue values (-50, 'placenta1', " +
+        "1, getDate(), getDate())"
+        );
+    sqlMgr.executeUpdate(
+        "insert into mgi_translation values (-50, 1003, -50, " +
+        "'placenta day 20', 1, 1200, 1200, getDate(), getDate())"
+        );
+    tissueKeyLookup = new TissueKeyLookup();
   }
 
   protected void tearDown() throws Exception {
+    sqlMgr.executeUpdate(
+        "delete prb_tissue where _tissue_key = -50"
+        );
+    sqlMgr.executeUpdate(
+        "delete mgi_translation where _translation_key = -50"
+        );
     tissueKeyLookup = null;
     sqlMgr = null;
     super.tearDown();
   }
 
-  public void testLookup() throws CacheException, DBException,
-      TranslationException, ConfigException {
-    String sql = "SELECT _tissue_key " +
-        "FROM prb_tissue " +
-        "WHERE tissue = 'brain'";
-    ResultsNavigator nav = sqlMgr.executeQuery(sql);
-    nav.next();
-    RowReference row = (RowReference) nav.getCurrent();
-    Integer key = row.getInt(1);
+  public void testLookup() throws Exception {
+    assertNull(tissueKeyLookup.getTranslatedTerm());
+    assertEquals(new Integer(-50), tissueKeyLookup.lookup("placenta day 20"));
+    assertEquals("placenta1", tissueKeyLookup.getTranslatedTerm());
+    assertEquals(new Integer(-50), tissueKeyLookup.lookup("placenta1"));
+    assertEquals("placenta1", tissueKeyLookup.getTranslatedTerm());
+  }
 
-    String term = "brain";
-    Integer expectedReturn = key;
-    Integer actualReturn = tissueKeyLookup.lookup(term);
-    assertEquals("return value", expectedReturn, actualReturn);
+  public void testKeyNotFound() throws Exception
+  {
+    try
+    {
+      tissueKeyLookup.lookup("something that we know is not in there");
+      assertTrue(false); // we should not get here
+    }
+    catch (KeyNotFoundException e)
+    {
+      assertTrue(true);
+    }
   }
 
 }
