@@ -8,6 +8,7 @@ package org.jax.mgi.shr.datafactory;
 import java.util.Map;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -432,11 +433,6 @@ public class MarkerFactory
 	marker.merge (section);
 	DTO.putDTO (section);
 	this.timeStamp ("Retrieved non-MGI, non-sequence acc IDs");
-
-        section = this.getSeqIDs (key);
-	marker.merge (section);
-	DTO.putDTO (section);
-	this.timeStamp ("Retrieved sequence acc IDs");
 
         section = this.getSequences (key);
 	marker.merge (section);
@@ -1740,117 +1736,6 @@ public class MarkerFactory
 
     /* -------------------------------------------------------------------- */
 
-    /** get "sequence IDs" associated with the marker with the given 'key'.
-    * @param key the marker key of the marker whose data we seek
-    * @return DTO which defines two fields:  DTOConstants.ProteinSeqIDs and
-    *    DTOConstants.NucleotideSeqIDs, each of which maps to a Vector of
-    *    DTOs.  The contents of each of those DTOs is defined in the notes
-    *    section.  If the marker has no associated seq IDs, then an empty
-    *    DTO is returned.
-    * @assumes nothing
-    * @effects queries the database
-    * @throws DBException if there are problems querying the database or
-    *    stepping through the results
-    * @notes
-    *    Each DTO contained in one of the Vectors above defines three fields:
-    *    DTOConstants.LogicalDbKey (an Integer), DTOConstants.URL (a String),
-    *    and DTOConstants.SeqID (a String).
-    *    <P>This method should probably be moved into an SequenceFactory
-    *    which knows how to retrieve sequence data.
-    */
-    public DTO getSeqIDs (int key) throws DBException
-    {
-	DTO marker = DTO.getDTO();	// start with a new DTO
-
-	ResultsNavigator nav = null;	// set of query results
-	RowReference rr = null;	   	// one row in 'nav'
-
-	Vector nucSeqs = null;		// nucleotide sequences; preferred at
-					// the beginning of the 'nucSeqs'
-
-	Vector proSeqs = null;		// protein sequences; preferred at the
-					// beginning of 'proSeqs'
-
-	DTO seqInfo = null;		// seq ID, logical db key, URL for
-					// the current sequence
-
-	int ldbKey = -1;		// logical database key for this seqID
-
-	String id = null;		// the seq ID we are examining
-
-	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SEQ_IDS, key));
-	if (nav.next())
-	{
-	    nucSeqs = new Vector();
-	    proSeqs = new Vector();
-
-	    do
-	    {
-	        rr = (RowReference) nav.getCurrent();
-		
-		ldbKey = rr.getInt(4).intValue();
-
-		// collect data for this sequence
-
-		id = rr.getString(1);
-
-		seqInfo = DTO.getDTO();
-		seqInfo.set (DTOConstants.SeqID, id);
-		seqInfo.set (DTOConstants.LogicalDbKey, new Integer (ldbKey));
-		seqInfo.set (DTOConstants.URL, rr.getString(3));
-
-		// Determine whether this is a protein or nucleotide sequence
-		// and whether or not it is preferred.  Preferred IDs go to
-		// the beginning of their respective Vectors.  Non-preferred
-		// IDs go to the end.
-
-                switch (ldbKey)
-		{
-		    case DBConstants.LogicalDB_SequenceDB:
-		    case DBConstants.LogicalDB_DoTS:
-		    case DBConstants.LogicalDB_TIGR:
-			    // non-preferred nucleotide sequence ID --> end
-			    nucSeqs.add (seqInfo);
-		            break;
-
-		    case DBConstants.LogicalDB_RefSeq:
-			    // preferred nucleotide sequence ID --> beginning
-			    nucSeqs.add (0, seqInfo);
-		            break;
-
-		    case DBConstants.LogicalDB_TrEMBL:
-			    // non-preferred protein sequence ID --> end
-			    proSeqs.add (seqInfo);
-		            break;
-
-		    case DBConstants.LogicalDB_SwissProt:
-		            // Swiss-Prot defines both non-preferred and
-			    // preferred protein IDs, so we need to determine
-			    // which this is...
-			    if (isPreferredProteinID (id))
-			    {
-				proSeqs.add (0, seqInfo);    // --> end
-			    }
-			    else
-			    {
-				proSeqs.add (seqInfo);	     // --> beginning
-			    }
-		            break;
-		}
-
-	    } while (nav.next());
-
-	    // finally add the completed Vectors to the 'marker' DTO
-
-	    marker.set (DTOConstants.ProteinSeqIDs, proSeqs);
-	    marker.set (DTOConstants.NucleotideSeqIDs, nucSeqs);
-	}
-	nav.close();
-	return marker;
-    }
-
-    /* -------------------------------------------------------------------- */
-
     /** get the URL to a minimap for the marker with the given 'key'
     * @param key the marker key of the marker whose data we seek
     * @param url the non-null URL which can be used to generate a marker's
@@ -1969,6 +1854,7 @@ public class MarkerFactory
     *	    <LI> LogicalDbKey : Integer
     *	    <LI> Strain : String
     *	    <LI> RawStrain : String
+    *	    <LI> ActualDBs : List of DTO objects
     *	    </OL><BR>
     *	 If the marker has no associated sequences, then an empty DTO is
     *	 returned.
@@ -1976,6 +1862,8 @@ public class MarkerFactory
     * @effects queries the database
     * @throws DBException if there are problems querying the database or
     *    stepping through the results
+    * @notes Each DTO in the List for ActualDBs defines two fields from
+    *    DTOConstants:  ActualDB (String name), URL (String).
     */
     public DTO getSequences(int key) throws DBException
     {
@@ -2001,6 +1889,8 @@ public class MarkerFactory
 		seq.set (DTOConstants.LogicalDbKey, rr.getInt(5));
 		seq.set (DTOConstants.Strain, rr.getString(6));
 		seq.set (DTOConstants.RawStrain, rr.getString(7));
+		seq.set (DTOConstants.ActualDBs,
+		    this.getActualDBs (rr.getInt(5).intValue()));
 
 	        sequences.add (seq);
 
@@ -2397,6 +2287,77 @@ public class MarkerFactory
 
     /* -------------------------------------------------------------------- */
 
+    /** get information about the actual databases associated with the given
+    *    logical database.
+    * @param logicalDBkey primary key in ACC_LogicalDB, uniquely identifying 
+    *    the desired logical database
+    * @return List of DTO objects.  Each DTO defines two keys:
+    *    DTOConstants.ActualDB and DTOConstants.URL, each of which refer to a
+    *    String value.
+    * @assumes nothing
+    * @effects nothing
+    * @throws nothing
+    * @notes Once retrieved from the database, values are cached in memory for
+    *    four hours before needing to hit the database again.
+    */
+    private List getActualDBs (int logicalDBkey) throws DBException
+    {
+	// cache of shared objects
+	ExpiringObjectCache cache = ExpiringObjectCache.getSharedCache();
+
+	// unique key into 'cache' for finding data about this logical db
+	String cacheKey = "MarkerFactory.ldbKey=" + logicalDBkey;
+
+	// list of DTOs, each defining one actual database for this logical db
+	List actualDBs = (List) cache.get(cacheKey);
+	
+	// if we can get the data from cache, then go ahead and return it
+	if (actualDBs != null)
+	{
+	    return actualDBs;
+	}
+
+	actualDBs = new ArrayList();
+
+	ResultsNavigator nav = null;	// set of results returned from query
+	RowReference rr = null;		// single row from 'nav'
+	DTO adb = null;			// data for a single actual database
+
+	nav = this.sqlDM.executeQuery (
+	        Sprintf.sprintf (ACTUAL_DBS, logicalDBkey));
+
+	if (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+
+	    // walk through each row and make an actualDB entry for each
+
+	    do
+	    {
+	    	adb = DTO.getDTO();
+		adb.set (DTOConstants.ActualDB, rr.getString(2));
+		adb.set (DTOConstants.URL, rr.getString(3));
+
+		actualDBs.add (adb);
+
+	    } while (nav.next());
+
+	    // actual database data changes infrequently, so set a four hour
+	    // timeout for the cached data
+
+	    cache.put (cacheKey, actualDBs, 60 * 60 * 4);
+	}
+
+	nav.close();
+
+	this.timeStamp ("Retrieved actualDB info for logicalDBkey=" + 
+	    logicalDBkey);
+
+	return actualDBs;
+    }
+
+    /* -------------------------------------------------------------------- */
+
     /////////////////////////
     // private static methods
     /////////////////////////
@@ -2506,6 +2467,13 @@ public class MarkerFactory
 			    DBConstants.LogicalDB_TrEMBL + ", " +
 			    DBConstants.LogicalDB_SequenceDB + ") "
 		+ " order by ldb.name, a.accID";
+
+    // get actual database info for a given logical database
+    // fill in: logical database key (int)
+    private static final String ACTUAL_DBS =
+    		"SELECT adb._LogicalDB_key, adb.name, adb.url "
+		+ "FROM ACC_ActualDB adb "
+		+ "WHERE adb._LogicalDB_key = %d";
 
     // get aliases
     // fill in: marker key (int)
@@ -2901,7 +2869,7 @@ public class MarkerFactory
 	+ "  AND aa.prefixPart = 'J:' "
 	+ " ORDER BY br.year, aa.numericPart";
 
-    // get all sequence IDs associated with a marker
+    // get all sequence IDs associated with a marker (now unused - can delete)
     // fill in:  marker key (int)
     private static final String SEQ_IDS = 
 		"select a.accID, ldb.name, adb.url, ldb._LogicalDB_key "
@@ -2966,6 +2934,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.2  2004/02/10 17:49:38  jsb
+* Many changes
+*
 * Revision 1.1  2003/12/30 16:38:50  mbw
 * initial import into this product
 *
