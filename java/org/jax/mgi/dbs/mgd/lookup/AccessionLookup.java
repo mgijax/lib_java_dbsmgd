@@ -5,7 +5,7 @@ package org.jax.mgi.dbs.mgd.lookup;
 
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
-import org.jax.mgi.shr.cache.LazyCachedLookup;
+import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.config.ConfigException;
@@ -28,7 +28,8 @@ import org.jax.mgi.dbs.SchemaConstants;
  * @version 1.0
  */
 
-public class AccessionLookup extends LazyCachedLookup {
+
+public class AccessionLookup extends FullCachedLookup {
     private int logicalDBKey;
     private int mgiTypeKey;
     private int preferred;
@@ -54,39 +55,24 @@ public class AccessionLookup extends LazyCachedLookup {
     }
 
     /**
-     * Get the query to partially initialize the cache.
+     * Get the query to fully initialize the cache.
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return null this lookup does not prime the cache.
+     * @return the query to fully initialize the cache
      * @throws Nothing
      */
 
-    public String getPartialInitQuery() {
-         return null;
+    public String getFullInitQuery() {
+        String query = "select accID, _Object_key " +
+                        "from ACC_Accession " +
+                        "where _LogicalDB_key = " + logicalDBKey +
+                        " and " + "_MGIType_key = " + mgiTypeKey +
+                        " and " + "preferred = " + preferred;
+
+          return query;
+
     }
-
-    /**
-     * Get the query to add an object to the cache
-     * @assumes Nothing
-     * @effects Nothing
-     * @param accid The accid to add to the query, expects a String or an object
-     *        with a toString method.
-     * @return The query to add an object to the cache
-     * @throws Nothing
-     */
-
-    public String getAddQuery (Object accid)
-       {
-           String query = "select accID, _Object_key " +
-                         "from ACC_Accession " +
-                         "where accID = '" + accid + "' and " +
-                         "_LogicalDB_key = " + logicalDBKey + " and " +
-                         "_MGIType_key = " + mgiTypeKey + " and " +
-                         "preferred = " + preferred;
-
-           return query;
-       }
 
     /**
     * Get a RowDataInterpreter for creating a KeyValue object from a database
