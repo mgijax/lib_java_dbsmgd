@@ -5,11 +5,8 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import org.jax.mgi.shr.log.Logger;
 import org.jax.mgi.shr.dto.DTO;
-import org.jax.mgi.shr.cache.ExpiringObjectCache;
 import org.jax.mgi.shr.timing.TimeStamper;
 import org.jax.mgi.shr.dbutils.SQLDataManager;
-import org.jax.mgi.shr.dbutils.ResultsNavigator;
-import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.DBException;
 
 public abstract class Factory {

@@ -1,7 +1,5 @@
 package org.jax.mgi.shr.datafactory;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Vector;
 import java.util.HashMap;
@@ -10,8 +8,6 @@ import org.jax.mgi.shr.stringutil.StringLib;
 import org.jax.mgi.shr.log.Logger;
 import org.jax.mgi.shr.dto.DTO;
 import org.jax.mgi.shr.dto.DTOConstants;
-import org.jax.mgi.shr.cache.ExpiringObjectCache;
-import org.jax.mgi.shr.timing.TimeStamper;
 import org.jax.mgi.shr.dbutils.SQLDataManager;
 import org.jax.mgi.shr.dbutils.ResultsNavigator;
 import org.jax.mgi.shr.dbutils.RowReference;
