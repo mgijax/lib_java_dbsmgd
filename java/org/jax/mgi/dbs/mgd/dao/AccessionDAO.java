@@ -16,8 +16,8 @@ import org.jax.mgi.shr.dbutils.Table;
  *     ACC_AccessionReference tables.
  * @has
  *   <UL>
- *   <LI> AccessionState object
  *   <LI> AccessionKey object
+ *   <LI> AccessionState object
  *   </UL>
  * @does
  *   <UL>
@@ -35,27 +35,44 @@ public class AccessionDAO extends DataInstance
     //  Variables  //
     /////////////////
 
-    // AccessionState object.
-    //
-    private AccessionState accessionState = null;
-
     // AccessionKey object.
     //
     private AccessionKey accessionKey = null;
 
+    // AccessionState object.
+    //
+    private AccessionState accessionState = null;
+
 
     /**
-     * Constructs a new AccessionDAO object.
+     * Constructs a new AccessionDAO object from a given AccessionState object
+     * and a generated AccessionKey object.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
+     * @param pState The AccessionState object
      * @throws Nothing
      */
-    public AccessionDAO (AccessionState pAccessionState)
+    public AccessionDAO (AccessionState pState)
         throws ConfigException, DBException
     {
-        accessionState = pAccessionState;
         accessionKey = new AccessionKey();
+        accessionState = pState;
+    }
+
+
+    /**
+     * Constructs a new AccessionDAO object from given AccessionKey and
+     * AccessionState objects.
+     * @assumes Nothing
+     * @effects Nothing
+     * @param pKey The AccessionKey object
+     * @param pState The AccessionState object
+     * @throws Nothing
+     */
+    public AccessionDAO (AccessionKey pKey, AccessionState pState)
+    {
+        accessionKey = pKey;
+        accessionState = pState;
     }
 
 
@@ -178,8 +195,8 @@ public class AccessionDAO extends DataInstance
      */
     public String getInsertSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getInsertSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getInsertSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -195,8 +212,8 @@ public class AccessionDAO extends DataInstance
      */
     public String getUpdateSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getUpdateSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getUpdateSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -212,8 +229,8 @@ public class AccessionDAO extends DataInstance
      */
     public String getDeleteSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getDeleteSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getDeleteSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -272,6 +289,9 @@ public class AccessionDAO extends DataInstance
 
 
 //  $Log$
+//  Revision 1.1  2003/09/19 17:43:18  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

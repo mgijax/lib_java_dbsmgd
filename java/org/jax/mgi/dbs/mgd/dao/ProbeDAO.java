@@ -14,8 +14,8 @@ import org.jax.mgi.shr.dbutils.Table;
  * @is An object that represents a record in the PRB_Probe table.
  * @has
  *   <UL>
- *   <LI> ProbeState object
  *   <LI> ProbeKey object
+ *   <LI> ProbeState object
  *   </UL>
  * @does
  *   <UL>
@@ -33,39 +33,45 @@ public class ProbeDAO extends DataInstance
     //  Variables  //
     /////////////////
 
-    // ProbeState object.
-    //
-    private ProbeState probeState = null;
-
     // ProbeKey object.
     //
     private ProbeKey probeKey = null;
 
+    // ProbeState object.
+    //
+    private ProbeState probeState = null;
+
 
     /**
-     * Constructs a new ProbeDAO object.
+     * Constructs a new ProbeDAO object from a given ProbeState object and
+     * a generated ProbeKey object.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
+     * @param pState The ProbeState object
      * @throws Nothing
      */
-    public ProbeDAO (ProbeState pProbeState)
+    public ProbeDAO (ProbeState pState)
         throws ConfigException, DBException
     {
-        probeState = pProbeState;
         probeKey = new ProbeKey();
+        probeState = pState;
     }
 
 
     /**
-     * Get the probeState attribute from this object.
+     * Constructs a new ProbeDAO object from given ProbeKey and ProbeState
+     * objects.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
-     * @return The probeState attribute
+     * @param pKey The ProbeKey object
+     * @param pState The ProbeState object
      * @throws Nothing
      */
-    public ProbeState getProbeState () { return probeState; }
+    public ProbeDAO (ProbeKey pKey, ProbeState pState)
+    {
+        probeKey = pKey;
+        probeState = pState;
+    }
 
 
     /**
@@ -77,6 +83,17 @@ public class ProbeDAO extends DataInstance
      * @throws Nothing
      */
     public ProbeKey getProbeKey () { return probeKey; }
+
+
+    /**
+     * Get the probeState attribute from this object.
+     * @assumes Nothing
+     * @effects Nothing
+     * @param None
+     * @return The probeState attribute
+     * @throws Nothing
+     */
+    public ProbeState getProbeState () { return probeState; }
 
 
     /**
@@ -164,8 +181,8 @@ public class ProbeDAO extends DataInstance
      */
     public String getInsertSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getInsertSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getInsertSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -181,8 +198,8 @@ public class ProbeDAO extends DataInstance
      */
     public String getUpdateSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getUpdateSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getUpdateSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -198,14 +215,17 @@ public class ProbeDAO extends DataInstance
      */
     public String getDeleteSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getDeleteSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getDeleteSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 }
 
 
 //  $Log$
+//  Revision 1.1  2003/09/19 17:43:20  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

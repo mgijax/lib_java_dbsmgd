@@ -42,7 +42,8 @@ public class ProbeReferenceKey
      * @param None
      * @throws Nothing
      */
-    public ProbeReferenceKey () throws ConfigException, DBException
+    public ProbeReferenceKey ()
+        throws ConfigException, DBException
     {
         SQLDataManager sqlMgr = SQLDataManagerFactory.getShared("MGD");
         primaryKey = new Table("PRB_Reference",sqlMgr).getNextKey();
@@ -75,6 +76,9 @@ public class ProbeReferenceKey
 
 
 //  $Log$
+//  Revision 1.1  2003/09/19 17:43:22  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

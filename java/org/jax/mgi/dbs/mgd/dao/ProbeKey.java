@@ -42,7 +42,8 @@ public class ProbeKey
      * @param None
      * @throws Nothing
      */
-    public ProbeKey () throws ConfigException, DBException
+    public ProbeKey ()
+        throws ConfigException, DBException
     {
         SQLDataManager sqlMgr = SQLDataManagerFactory.getShared("MGD");
         primaryKey = new Table("PRB_Probe",sqlMgr).getNextKey();
@@ -75,6 +76,9 @@ public class ProbeKey
 
 
 //  $Log$
+//  Revision 1.1  2003/09/19 17:43:21  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

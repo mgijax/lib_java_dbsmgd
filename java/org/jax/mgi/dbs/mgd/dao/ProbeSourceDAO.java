@@ -14,8 +14,8 @@ import org.jax.mgi.shr.dbutils.Table;
  * @is An object that represents a record in the PRB_Source table.
  * @has
  *   <UL>
- *   <LI> ProbeSourceState object
  *   <LI> ProbeSourceKey object
+ *   <LI> ProbeSourceState object
  *   </UL>
  * @does
  *   <UL>
@@ -33,39 +33,45 @@ public class ProbeSourceDAO extends DataInstance
     //  Variables  //
     /////////////////
 
-    // ProbeSourceState object.
-    //
-    private ProbeSourceState probeSrcState = null;
-
     // ProbeSourceKey object.
     //
     private ProbeSourceKey probeSrcKey = null;
 
+    // ProbeSourceState object.
+    //
+    private ProbeSourceState probeSrcState = null;
+
 
     /**
-     * Constructs a new ProbeSourceDAO object.
+     * Constructs a new ProbeSourceDAO object from a given ProbeSourceState
+     * object and a generated ProbeSourceKey object.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
+     * @param pState The ProbeSourceState object
      * @throws Nothing
      */
-    public ProbeSourceDAO (ProbeSourceState pProbeSrcState)
+    public ProbeSourceDAO (ProbeSourceState pState)
         throws ConfigException, DBException
     {
-        probeSrcState = pProbeSrcState;
         probeSrcKey = new ProbeSourceKey();
+        probeSrcState = pState;
     }
 
 
     /**
-     * Get the probeSrcState attribute from this object.
+     * Constructs a new ProbeSourceDAO object from given ProbeSourceKey and
+     * ProbeSourceState objects.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
-     * @return The probeSrcState attribute
+     * @param pKey The ProbeSourceKey object
+     * @param pState The ProbeSourceState object
      * @throws Nothing
      */
-    public ProbeSourceState getProbeSrcState () { return probeSrcState; }
+    public ProbeSourceDAO (ProbeSourceKey pKey, ProbeSourceState pState)
+    {
+        probeSrcKey = pKey;
+        probeSrcState = pState;
+    }
 
 
     /**
@@ -77,6 +83,17 @@ public class ProbeSourceDAO extends DataInstance
      * @throws Nothing
      */
     public ProbeSourceKey getProbeSrcKey () { return probeSrcKey; }
+
+
+    /**
+     * Get the probeSrcState attribute from this object.
+     * @assumes Nothing
+     * @effects Nothing
+     * @param None
+     * @return The probeSrcState attribute
+     * @throws Nothing
+     */
+    public ProbeSourceState getProbeSrcState () { return probeSrcState; }
 
 
     /**
@@ -164,8 +181,8 @@ public class ProbeSourceDAO extends DataInstance
      */
     public String getInsertSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getInsertSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getInsertSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -181,8 +198,8 @@ public class ProbeSourceDAO extends DataInstance
      */
     public String getUpdateSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getUpdateSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getUpdateSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -198,14 +215,17 @@ public class ProbeSourceDAO extends DataInstance
      */
     public String getDeleteSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getDeleteSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getDeleteSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 }
 
 
 //  $Log$
+//  Revision 1.1  2003/09/19 17:43:23  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

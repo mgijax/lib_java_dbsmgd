@@ -42,7 +42,8 @@ public class AccessionKey
      * @param None
      * @throws Nothing
      */
-    public AccessionKey () throws ConfigException, DBException
+    public AccessionKey ()
+        throws ConfigException, DBException
     {
         SQLDataManager sqlMgr = SQLDataManagerFactory.getShared("MGD");
         primaryKey = new Table("ACC_Accession",sqlMgr).getNextKey();
@@ -75,6 +76,9 @@ public class AccessionKey
 
 
 //  $Log$
+//  Revision 1.1  2003/09/19 17:43:19  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

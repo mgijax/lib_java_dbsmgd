@@ -14,8 +14,8 @@ import org.jax.mgi.shr.dbutils.Table;
  * @is An object that represents a record in the PRB_Reference table.
  * @has
  *   <UL>
- *   <LI> ProbeReferenceState object
  *   <LI> ProbeReferenceKey object
+ *   <LI> ProbeReferenceState object
  *   </UL>
  * @does
  *   <UL>
@@ -33,39 +33,45 @@ public class ProbeReferenceDAO extends DataInstance
     //  Variables  //
     /////////////////
 
-    // ProbeReferenceState object.
-    //
-    private ProbeReferenceState probeReferenceState = null;
-
     // ProbeReferenceKey object.
     //
     private ProbeReferenceKey probeReferenceKey = null;
 
+    // ProbeReferenceState object.
+    //
+    private ProbeReferenceState probeReferenceState = null;
+
 
     /**
-     * Constructs a new ProbeReferenceDAO object.
+     * Constructs a new ProbeReferenceDAO object from a given ProbeReferenceState
+     * object and a generated ProbeReferenceKey object.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
+     * @param pState The ProbeReferenceState object
      * @throws Nothing
      */
-    public ProbeReferenceDAO (ProbeReferenceState pProbeReferenceState)
+    public ProbeReferenceDAO (ProbeReferenceState pState)
         throws ConfigException, DBException
     {
-        probeReferenceState = pProbeReferenceState;
         probeReferenceKey = new ProbeReferenceKey();
+        probeReferenceState = pState;
     }
 
 
     /**
-     * Get the probeReferenceState attribute from this object.
+     * Constructs a new ProbeReferenceDAO object from given ProbeReferenceKey
+     * and ProbeReferenceState objects.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
-     * @return The probeReferenceState attribute
+     * @param pKey The ProbeReferenceKey object
+     * @param pState The ProbeReferenceState object
      * @throws Nothing
      */
-    public ProbeReferenceState getProbeReferenceState () { return probeReferenceState; }
+    public ProbeReferenceDAO (ProbeReferenceKey pKey, ProbeReferenceState pState)
+    {
+        probeReferenceKey = pKey;
+        probeReferenceState = pState;
+    }
 
 
     /**
@@ -77,6 +83,17 @@ public class ProbeReferenceDAO extends DataInstance
      * @throws Nothing
      */
     public ProbeReferenceKey getProbeReferenceKey () { return probeReferenceKey; }
+
+
+    /**
+     * Get the probeReferenceState attribute from this object.
+     * @assumes Nothing
+     * @effects Nothing
+     * @param None
+     * @return The probeReferenceState attribute
+     * @throws Nothing
+     */
+    public ProbeReferenceState getProbeReferenceState () { return probeReferenceState; }
 
 
     /**
@@ -155,8 +172,8 @@ public class ProbeReferenceDAO extends DataInstance
      */
     public String getInsertSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getInsertSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getInsertSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -172,8 +189,8 @@ public class ProbeReferenceDAO extends DataInstance
      */
     public String getUpdateSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getUpdateSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getUpdateSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -189,14 +206,17 @@ public class ProbeReferenceDAO extends DataInstance
      */
     public String getDeleteSQL()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getDeleteSQL";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getDeleteSQL";
         throw new java.lang.UnsupportedOperationException(message);
     }
 }
 
 
 //  $Log$
+//  Revision 1.1  2003/09/19 17:43:21  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *
