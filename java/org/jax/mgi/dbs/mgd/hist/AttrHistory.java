@@ -12,7 +12,7 @@ import org.jax.mgi.dbs.mgd.MGD;
 import org.jax.mgi.dbs.SchemaConstants;
 
 /**
- * @is an object for looking up data in the mgi_attributeHistory table for
+ * @is an object for looking up data in the mgi_attributeHistory table
  * @has a MGI type, a connection to the MGD database, and a query
  * @does looks up data to see whether or not attributes from the prb_source
  * table have been edited by a curator
@@ -63,8 +63,8 @@ public class AttrHistory
 
     /**
      * constant definition for the voc_term value which
-     * is used to join voc_term to mgi_user to identify a dataloads user
-     * Assumption is that curator edited = ! DATALOAD_USER
+     * is used to join voc_term to mgi_user to identify a dataloads user.
+     * assumption is curator edited = ! DATALOAD_USER
      */
     protected static final String DATALOAD_USER = "Data Load";
 
