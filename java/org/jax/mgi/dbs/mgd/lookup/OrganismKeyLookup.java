@@ -27,7 +27,7 @@ import org.jax.mgi.shr.exception.MGIException;
  * cache and performing the cache lookup and has a Translator for translating
  * incoming terms before performing the lookup.
  * @does: provides a lookup method for gender translation terms stored
- * results in a cache. Also translates lookup names to known vocabulary terms.
+ * within in a cache. Also translates lookup names to known vocabulary terms.
  * @company: The Jackson Laboratory
  * @author not attributable
  * @version 1.0
