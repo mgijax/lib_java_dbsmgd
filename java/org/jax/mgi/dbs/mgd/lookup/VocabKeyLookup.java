@@ -198,7 +198,7 @@ public class VocabKeyLookup extends LazyCachedLookup
       super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
       // override the super class instance of the cache with a static one so
       // that all instances of the this class will use the same cache
-      setCache(translationTypeCache);
+      //setCache(translationTypeCache);
     }
 
     /**
