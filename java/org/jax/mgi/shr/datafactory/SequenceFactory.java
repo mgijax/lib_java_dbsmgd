@@ -74,7 +74,7 @@ public class SequenceFactory extends Factory {
         // before bothering with anything else
         if (keyStr == null)
         {
-            this.logInfo ("Could not find sequence");
+            this.logger.logInfo ("Could not find sequence");
             return sequence;
         }
         // sequence key as an int
