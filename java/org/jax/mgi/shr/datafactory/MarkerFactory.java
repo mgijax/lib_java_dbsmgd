@@ -2823,6 +2823,7 @@ public class MarkerFactory
 		+ " term		varchar(255)	null, "
 		+ " accID		varchar(30)	null, "
 		+ " ontology		varchar(10)	null, "
+		+ " dagName		varchar(255)	null, "
 		+ " _EvidenceTerm_key	int		null, "
 		+ " evidenceCode	varchar(10)	null, "
 		+ " inferredFrom	varchar(255)	null, "
@@ -2857,7 +2858,8 @@ public class MarkerFactory
     // fill in: nothing
     private static final String GO_UPDATE_2 =
     	"UPDATE #GO_Annotations "
-		+ " SET ontology = dd.abbreviation "
+		+ " SET ontology = dd.abbreviation, "
+		+ "	dagName = dd.name "
 		+ " FROM #GO_Annotations ga, DAG_Node dn, DAG_DAG dd "
 		+ " WHERE ga._Term_key = dn._Object_key "
 		+ "	AND dn._DAG_key = dd._DAG_key "
@@ -2880,9 +2882,9 @@ public class MarkerFactory
     // fill in: nothing
     private static final String GO_SELECT =
     	"SELECT DISTINCT ontology, term, accID, evidenceCode, inferredFrom, "
-	+ "	isNot, _Term_key, _Refs_key "
+	+ "	isNot, _Term_key, _Refs_key, dagName "
 	+ " FROM #GO_Annotations "
-	+ " ORDER BY ontology, term, _Term_key";
+	+ " ORDER BY dagName, term, _Term_key, evidenceCode, inferredFrom";
 
     // clean up by deleting the temp table (from GO_CREATE_TEMP).
     // fill in: nothing
@@ -3150,6 +3152,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.4  2004/03/12 19:00:44  jsb
+* Added code to retrieve expression data by tissue for a marker
+*
 * Revision 1.3  2004/02/11 16:28:00  jsb
 * Updated handling of actual databases
 *
