@@ -438,11 +438,20 @@ public class MarkerFactory
 	DTO.putDTO (section);
 	this.timeStamp ("Retrieved sequence acc IDs");
 
-// HERE -- omitted for now:
-//        section = this.getReferenceInfo (key);
-//	marker.merge (section);
-//	DTO.putDTO (section);
-//        this.timeStamp ("Retrieved reference data");
+        section = this.getSequences (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved sequences");
+
+        section = this.getInterPro (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved InterPro associations");
+
+        section = this.getReferenceInfo (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+        this.timeStamp ("Retrieved reference data");
 
 	// collect data from the minimap reader, then close it.
 
@@ -463,6 +472,109 @@ public class MarkerFactory
 	    DTO.putDTO (section);
 	    this.timeStamp ("Retrieved URL for gene family page");
 	}
+
+	return marker;
+    }
+
+    /** retrieve the the basic info avaliable for the marker specified in
+    *    'parms', as well as its Gene Ontology (GO) data.
+    * @param parms set of parameters specifying which marker we are seeking.
+    *    Three keys in 'parms' are checked, in order of preference:  "key"
+    *    (marker key as a String), "id" (marker accession ID), and "symbol"
+    *    (marker symbol).
+    * @return DTO which defines all marker data fields
+    * @assumes nothing
+    * @effects retrieves all marker data by quering a database
+    * @throws DBException if there is a problem querying the database or
+    *    processing the results
+    */
+    public DTO getBasicGOInfo (Map parms) throws DBException
+    {
+	// all data for the marker with the given 'key'
+        DTO marker = DTO.getDTO();
+
+	// data for a particular section, to merge with 'marker'
+	DTO section = null;
+
+	// marker key as a String
+	String keyStr = getKey (parms);
+
+	// if we could not find a marker key based on 'parms', then bail out
+	// before bothering with anything else
+	if (keyStr == null)
+	{
+	    this.logInfo ("Could not find marker");
+	    return marker;
+	}
+
+	// marker key as an integer
+	int key = Integer.parseInt (keyStr);
+
+	// get data for individual sections.  For the sake of efficiency, we
+	// make sure to always return the 'section' to the pool of available
+	// DTOs once we are done with it.
+	
+	section = this.getBasicInfo (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved basic marker info");
+
+        section = this.getGOAnnotations (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved GO annotations");
+
+	return marker;
+    }
+
+    /* -------------------------------------------------------------------- */
+    /** retrieve the the basic info avaliable for the marker specified in
+    *    'parms', as well as its nomenclature history.
+    * @param parms set of parameters specifying which marker we are seeking.
+    *    Three keys in 'parms' are checked, in order of preference:  "key"
+    *    (marker key as a String), "id" (marker accession ID), and "symbol"
+    *    (marker symbol).
+    * @return DTO which defines all marker data fields
+    * @assumes nothing
+    * @effects retrieves all marker data by quering a database
+    * @throws DBException if there is a problem querying the database or
+    *    processing the results
+    */
+    public DTO getBasicNomenInfo (Map parms) throws DBException
+    {
+	// all data for the marker with the given 'key'
+        DTO marker = DTO.getDTO();
+
+	// data for a particular section, to merge with 'marker'
+	DTO section = null;
+
+	// marker key as a String
+	String keyStr = getKey (parms);
+
+	// if we could not find a marker key based on 'parms', then bail out
+	// before bothering with anything else
+	if (keyStr == null)
+	{
+	    this.logInfo ("Could not find marker");
+	    return marker;
+	}
+
+	// marker key as an integer
+	int key = Integer.parseInt (keyStr);
+
+	// get data for individual sections.  For the sake of efficiency, we
+	// make sure to always return the 'section' to the pool of available
+	// DTOs once we are done with it.
+	
+	section = this.getBasicInfo (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved basic marker info");
+
+        section = this.getNomenHistory (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved nomenclature history");
 
 	return marker;
     }
@@ -846,17 +958,16 @@ public class MarkerFactory
     */
     public DTO getReferenceInfo (int key) throws DBException
     {
+	// get a count of references associated with this marker
+
         DTO refCount = getReferenceCount (key);
-	DTO firstRef = getFirstReference (key);
-	DTO lastRef = getLastReference (key);
 
-	// combine the DTOs to return them as one; free the extras for re-use
+	// get the first and last references, merge them into the main DTO,
+	// and recycle the now-redundant one.
 
-	refCount.merge (firstRef);
-	refCount.merge (lastRef);
-
-	DTO.putDTO (firstRef);
-	DTO.putDTO (lastRef);
+	DTO firstLastRefs = getFirstLastReferences (key);
+	refCount.merge (firstLastRefs);
+	DTO.putDTO (firstLastRefs);
 
 	return refCount;
     }
@@ -894,51 +1005,6 @@ public class MarkerFactory
 
     /* -------------------------------------------------------------------- */
 
-    /** get the first reference associated with the marker with the given
-    *    'key', excluding those in the <tt>PrivateRefSet</tt>.
-    * @param key the marker key of the marker whose data we seek
-    * @return DTO with the DTOConstants.FirstReference field mapped to a DTO
-    *    which has fields as outlined in the notes below.  If there is no
-    *    suitable reference, then just an empty DTO is returned.
-    * @assumes nothing
-    * @effects queries the database
-    * @throws DBException if there are problems querying the database or
-    *    stepping through the results
-    * @notes
-    *    If defined, the FirstReference DTO contains the following fields
-    *    (defined in DTOConstants):
-    *    <OL>
-    *    <LI> RefsKey : Integer
-    *    <LI> Jnum : String
-    *    <LI> Citation : String
-    *    <LI> RefsTitle : String
-    *    <LI> Authors : ArrayList (may be null if no authors)
-    *    </OL>
-    *    <P>This method should probably be moved into a ReferenceFactory class
-    *    which knows how to retrieve data about references.
-    */
-    public DTO getFirstReference (int key) throws DBException
-    {
-        return handleSelectedReference (key, REFERENCE_FIRST,
-	            DTOConstants.FirstReference);
-    }
-
-    /* -------------------------------------------------------------------- */
-
-    /** same as <tt>getLastReference (int)</tt>, except that this gets the
-    *    last reference and fills in DTOConstants.LastReference in the DTO
-    *    returned.<P>
-    *    This method should probably be moved into a ReferenceFactory class
-    *    which knows how to retrieve data about references.
-    */
-    public DTO getLastReference (int key) throws DBException
-    {
-        return handleSelectedReference (key, REFERENCE_LAST,
-	            DTOConstants.LastReference);
-    }
-
-    /* -------------------------------------------------------------------- */
-
     /** get the Gene Ontology (GO) annotations for the given marker.
     * @param key the marker key of the marker whose data we seek
     * @return DTO with the DTOConstants.GOAnnotationsCount field mapped to
@@ -960,7 +1026,7 @@ public class MarkerFactory
     *    <LI> TermKey : Integer
     *    <LI> EvidenceCode : String
     *    <LI> InferredFrom : String
-    *    <LI> RefsKey : Integer
+    *    <LI> RefsKey : ArrayList of Integers, each is a _Refs_key
     *    </OL>
     */
     public DTO getGOAnnotations (int key) throws DBException
@@ -969,16 +1035,30 @@ public class MarkerFactory
 	RowReference rr = null;	        // one row in 'nav'
 	DTO marker = DTO.getDTO();	// start with a new DTO
 
+	int num = 0;			// number of database rows updated for
+					// ...a given SQL statement
+
         int count = 0;			// count of all GO annotations
 	String abbrev = null;		// GO ontology abbreviation - this row
 	String lastAbbrev = "";		// GO ontology abbreviation - last row
 
-	// a single GO annotation, including fields GOID, GOTerm, and IsNot
-	// from the DTOConstants class
-	DTO annotation = null;
+	DTO annotation = null;		// the annotation now being processed
 
-	// all 'annotation' DTOs for one DAG
-        Vector dagAnnotations = null;
+        Vector dagAnnotations = null;	// all 'annotation' DTOs for one DAG
+
+	ArrayList refsKeys = null;	// reference keys for the current term
+
+	int lastTermKeyInt = -1;	// term key for the previous term
+	int lastIsNotInt = -1;		// isNot value for previous term
+	String lastEvidence = null;	// evidence code for previous term
+	String lastInferred = null;	// inferred field for previous term
+
+	Integer thisTermKey = null;	// term key for current term
+	int thisTermKeyInt = -1;	// int value of 'thisTermKey'
+	Integer thisIsNot = null;	// isNot value for current term
+	int thisIsNotInt = -1;		// int value of 'thisIsNot'
+	String thisEvidence = null;	// evidence code for current term
+	String thisInferred = null;	// inferred field for current term
 
 	// top-level DTO.  Each fieldname is the abbreviation for one GO DAG.
 	// The value for each fieldname is one 'dagAnnotations' Vector.
@@ -986,43 +1066,96 @@ public class MarkerFactory
 
 	// having finally defined all variables, we are now ready to go...
 
-	nav = this.sqlDM.executeQuery (Sprintf.sprintf (GO_ANNOTATIONS, key));
+	// For the sake of efficiency, we no longer retrieve a marker's GO
+	// annotations in a single query.  We now use a temp table which is
+	// populated piece-wise using several smaller queries.  This reduces
+	// the runtime for this method by around 85%.
+
+	this.sqlDM.execute (GO_CREATE_TEMP);
+	num = this.sqlDM.executeUpdate (Sprintf.sprintf (GO_FILL_TEMP, key));
+	if (num > 0)
+	{
+	    this.sqlDM.executeUpdate (GO_UPDATE_1);
+	    this.sqlDM.executeUpdate (GO_UPDATE_2);
+	    this.sqlDM.executeUpdate (GO_UPDATE_3);
+	}
+	nav = this.sqlDM.executeQuery (GO_SELECT);
+
 	while (nav.next())
 	{
-	    count++;
 	    rr = (RowReference) nav.getCurrent();
 
-	    // the abbreviation is a 'char' field rather than a 'varchar', so
-	    // we need to trim any blanks here...
+	    // pull out pieces we need to compare
 
-	    abbrev = rr.getString(1).trim();
+	    thisTermKey = rr.getInt(7);
+	    thisTermKeyInt = thisTermKey.intValue();
+	    thisIsNot = rr.getInt(6);
+	    thisIsNotInt = thisIsNot.intValue();
+	    thisEvidence = rr.getString(4);
+	    thisInferred = rr.getString(5);
 
-	    // create a record for this particular annotation
+	    // if this is the same annotation (term key, evidence, inferred,
+	    // isNot) as the previous one, then just add the additional
+	    // reference
 
-            annotation = DTO.getDTO();
-	    annotation.set (DTOConstants.GOTerm, rr.getString(2));
-	    annotation.set (DTOConstants.GOID, rr.getString(3));
-	    annotation.set (DTOConstants.EvidenceCode, rr.getString(4));
-	    annotation.set (DTOConstants.InferredFrom, rr.getString(5));
-	    annotation.set (DTOConstants.IsNot, rr.getInt(6) );
-	    annotation.set (DTOConstants.TermKey, rr.getInt(7) );
-	    annotation.set (DTOConstants.RefsKey, rr.getInt(8) );
-
-            // if is a different DAG, then start a new list for the new DAG.
-
-	    if (!lastAbbrev.equals(abbrev))
+	    if ( (thisTermKeyInt == lastTermKeyInt)
+	    	&& (thisIsNotInt == lastIsNotInt)
+		&& StringLib.equals(thisEvidence, lastEvidence)
+		&& StringLib.equals(thisInferred, lastInferred) )
 	    {
-	        dagAnnotations = new Vector();
-		dagAnnotations.add (annotation);
-		annotations.set (abbrev, dagAnnotations);
-		lastAbbrev = abbrev;
+	        refsKeys.add (rr.getInt(8));
 	    }
-	    else		// just add to the current DAG's annotations
-	    {
-	        dagAnnotations.add (annotation);
-	    }
-	}
+	    else	// otherwise, this is a new annotation...
+	    { 
+		count++;
+	        
+	        refsKeys = new ArrayList();
+	        refsKeys.add (rr.getInt(8));
+		
+	        // the abbreviation is a 'char' field rather than a 'varchar',
+	        // so we need to trim any blanks here...
+
+	        abbrev = rr.getString(1).trim();
+
+	        // create a record for this particular annotation
+
+                annotation = DTO.getDTO();
+	        annotation.set (DTOConstants.GOTerm, rr.getString(2));
+	        annotation.set (DTOConstants.GOID, rr.getString(3));
+	        annotation.set (DTOConstants.EvidenceCode, thisEvidence);
+	        annotation.set (DTOConstants.InferredFrom, thisInferred);
+	        annotation.set (DTOConstants.IsNot, thisIsNot);
+	        annotation.set (DTOConstants.TermKey, thisTermKey);
+	        annotation.set (DTOConstants.RefsKeys, refsKeys);
+
+                // if is a different DAG, then start a new list for the new
+		// DAG.
+
+	        if (!lastAbbrev.equals(abbrev))
+	        {
+	            dagAnnotations = new Vector();
+		    dagAnnotations.add (annotation);
+		    annotations.set (abbrev, dagAnnotations);
+		    lastAbbrev = abbrev;
+	        }
+	        else		// just add to the current DAG's annotations
+	        {
+	            dagAnnotations.add (annotation);
+	        }
+
+		// note this annotation's attributes that we will need to 
+		// compare to the next one
+
+		lastTermKeyInt = thisTermKeyInt;
+		lastIsNotInt = thisIsNotInt;
+		lastEvidence = thisEvidence;
+		lastInferred = thisInferred;
+
+	    } // else (is a new annotation)
+	} // while there are more rows
+
 	nav.close();
+	this.sqlDM.execute (GO_CLEANUP);
 
 	if (count > 0)
 	{
@@ -1776,6 +1909,163 @@ public class MarkerFactory
 	return marker;
     }
 
+    /** get InterPro terms associated with the marker with the given 'key'.
+    * @param key the marker key of the marker whose data we seek
+    * @return DTO which defines one field:  DTOConstants.InterProTerms which
+    *	 which maps to a List of DTOs.  Each of those sub-DTOs defines one
+    *	 associated term with four fields (all from DTOConstants): Term,
+    *    AccID, URL, and LogicalDbKey.  The first three are Strings, and the
+    *    final one is an Integer.  If the marker has no associated
+    *	 InterPro terms, then an empty DTO is returned.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
+    public DTO getInterPro(int key) throws DBException
+    {
+        DTO marker = DTO.getDTO();
+	DTO assoc = null;
+	ResultsNavigator nav = null;   	// set of query results
+	RowReference rr = null;	       	// one row in 'nav'
+	ArrayList terms = null;
+
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (INTERPRO_TERMS, key));
+	if (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+	    terms = new ArrayList();
+
+	    do
+	    {
+	        assoc = DTO.getDTO();
+		assoc.set (DTOConstants.Term, rr.getString(1));
+		assoc.set (DTOConstants.AccID, rr.getString(2));
+		assoc.set (DTOConstants.URL, rr.getString(3));
+		assoc.set (DTOConstants.LogicalDbKey, rr.getInt(4));
+
+	        terms.add (assoc);
+
+	    } while (nav.next());
+
+	    marker.set (DTOConstants.InterProTerms, terms);
+	}
+	nav.close();
+
+	return marker;
+    }
+
+    /** get data about sequences associated with the marker with the given
+    *    'key'.
+    * @param key the marker key of the marker whose data we seek
+    * @return DTO which defines one field:  DTOConstants.Sequences which
+    *	 which maps to a List of DTOs.  Each of those sub-DTOs defines one
+    *	 associated term with four fields (all from DTOConstants):<BR>
+    *	    <OL>
+    *	    <LI> AccID : String
+    *	    <LI> SequenceType : String
+    *	    <LI> SequenceKey : Integer
+    *	    <LI> SequenceLength : Integer
+    *	    <LI> LogicalDbKey : Integer
+    *	    <LI> Strain : String
+    *	    <LI> RawStrain : String
+    *	    </OL><BR>
+    *	 If the marker has no associated sequences, then an empty DTO is
+    *	 returned.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
+    public DTO getSequences(int key) throws DBException
+    {
+        DTO marker = DTO.getDTO();
+	DTO seq = null;
+	ResultsNavigator nav = null;   	// set of query results
+	RowReference rr = null;	       	// one row in 'nav'
+	ArrayList sequences = null;
+
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (SEQUENCES, key));
+	if (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+	    sequences = new ArrayList();
+
+	    do
+	    {
+	        seq = DTO.getDTO();
+		seq.set (DTOConstants.SequenceKey, rr.getInt(1));
+		seq.set (DTOConstants.AccID, rr.getString(2));
+		seq.set (DTOConstants.SequenceType, rr.getString(3));
+		seq.set (DTOConstants.SequenceLength, rr.getInt(4));
+		seq.set (DTOConstants.LogicalDbKey, rr.getInt(5));
+		seq.set (DTOConstants.Strain, rr.getString(6));
+		seq.set (DTOConstants.RawStrain, rr.getString(7));
+
+	        sequences.add (seq);
+
+	    } while (nav.next());
+
+	    marker.set (DTOConstants.Sequences, sequences);
+	}
+	nav.close();
+
+	return marker;
+    }
+
+    /* -------------------------------------------------------------------- */
+
+    /** get the marker's nomenclature history (for the marker with the given
+    *    'key')
+    * @param key the marker key of the marker whose data we seek
+    * @return DTO which defines one field:  DTOConstants.NomenEvents which
+    *	 which maps to a List of DTOs.  Each of those sub-DTOs defines one
+    *	 nomenclature event with four fields (all from DTOConstants):<BR>
+    *	    <OL>
+    *	    </OL><BR>
+    *	 If the marker has no associated nomenclature events, then an empty
+    *	 DTO is returned.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
+    public DTO getNomenHistory(int key) throws DBException
+    {
+        DTO marker = DTO.getDTO();
+	DTO event = null;
+	ResultsNavigator nav = null;   	// set of query results
+	RowReference rr = null;	       	// one row in 'nav'
+	ArrayList events = null;
+
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (NOMEN_HISTORY, key));
+	if (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+	    events = new ArrayList();
+
+	    do
+	    {
+	        event = DTO.getDTO();
+		event.set (DTOConstants.OldName, rr.getString(2));
+		event.set (DTOConstants.OldSymbol, rr.getString(3));
+		event.set (DTOConstants.Event, rr.getString(4));
+		event.set (DTOConstants.NewName, rr.getString(5));
+		event.set (DTOConstants.EventDate, rr.getString(6));
+		event.set (DTOConstants.RefsKey, rr.getInt(7));
+		event.set (DTOConstants.AccID, rr.getString(8));
+
+	        events.add (event);
+
+	    } while (nav.next());
+
+	    marker.set (DTOConstants.NomenEvents, events);
+	}
+	nav.close();
+
+	return marker;
+    }
+
     /* -------------------------------------------------------------------- */
 
     ///////////////////////////
@@ -1815,6 +2105,7 @@ public class MarkerFactory
 
 	gfm = new GeneFamilyMap (url);
 	cache.put (gfmKey, gfm, 4 * 60 * 60);
+	this.timeStamp ("retrieved and cached new GeneFamilyMap");
 	return gfm;
     }
 
@@ -1852,31 +2143,28 @@ public class MarkerFactory
 
 	prs = new PrivateRefSet (this.sqlDM);
 	cache.put (prsKey, prs, 4 * 60 * 60);
+	this.timeStamp ("retrieved and cached new PrivateRefSet");
 	return prs;
     }
 
     /* -------------------------------------------------------------------- */
 
-    /** fill 'key' into the given 'sql'; execute the resulting 'sql' query;
-    *    pick the first reference returned that is acceptable for public
-    *    display and return its data in a DTO as the given 'fieldname'.
+    /** find the first and last references for the marker with the given key.
+    *	 (include only refs which are acceptable for use as a teaser on a
+    *	 marker detail page).
     * @param key the marker key of the marker whose data we seek
-    * @param sql the SQL statement to be used to retrieve references, with one
-    *    field to be filled in by 'key'
-    * @param fieldname specifies what field should be defined in the DTO that
-    *    is to be returned
-    * @return DTO maps the given 'fieldname' to a DTO.  That DTO's fields are
-    *    defined in makeReferenceDTO().  If no reference exists, then an empty
-    *    DTO is returned.
-    * @assumes that 'sql' returns fields required by makeReferenceDTO(), which
-    *    receives one row of results from the query
+    * @return DTO maps each of DTOConstants.FirstReference and
+    *    DTOConstants.LastReference to a DTO.  Those DTOs have the same
+    *    fieldnames, which are defined in makeReferenceDTO().  If no suitable
+    *    reference exists, then an empty DTO is returned.
+    * @assumes nothing
     * @effects queries the database
     * @throws DBException if there are problems querying the database or
     *    stepping through the results
-    * @notes Fields defined in the reference's DTO are detailed in the
+    * @notes Fields defined in each reference's DTO are detailed in the
     *    comments for makeReferenceDTO().
     */
-    private DTO handleSelectedReference (int key,String sql, String fieldname)
+    private DTO getFirstLastReferences (int key)
             throws DBException
     {
 	ResultsNavigator nav = null;	// set of query results
@@ -1888,33 +2176,59 @@ public class MarkerFactory
 	// marker detail page)
 	PrivateRefSet refSet = getPrivateRefSet ();
 
-	nav = this.sqlDM.executeQuery (Sprintf.sprintf (sql, key) );
+	// note that we must temporarily turn 'scrollable' on, so that we can
+	// start at the end of the results and work backwards later on...
+
+	this.sqlDM.setScrollable(true);
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf(REFERENCE_FIRST, key));
 
 	// if at least one reference was returned by the query, then we need
 	// to walk through them to find the first one that is not in the
 	// set of references to de-emphasize.  (The set contains those which
-	// should NOT appear on a marker detail page.)
+	// should NOT appear as a teaser on a marker detail page.)
 
 	if (nav.next())
 	{
 	    rowExists = true;	// assume this row is acceptable
 
 	    // if the set of internal-only references contains the one from
-	    // this row, then we need to move on to check the next row
+	    // this row, then we need to move on to check the next row --
+	    // until we find an acceptable one or we run out of rows.
 
 	    rr = (RowReference) nav.getCurrent();
 	    while (rowExists && refSet.contains (rr.getString(2)))
 	    {
 	        rowExists = nav.next();
 	    }
-	}
 
-	// if we have a valid row at this point, then we need to add it
+	    // if we found an acceptable row, then we build a DTO for it as
+	    // the first reference.  We also know that there's at least one
+	    // acceptable reference, so we can proceed to finding the last
+	    // one as well without worrying about keeping track of 'rowExists'
+	    // for that loop.  (At worst, we'll just find the same one as the
+	    // first one)
 
-        if (rowExists)
-	{
-	    marker.set (fieldname, this.makeReferenceDTO(rr) );
-	}
+	    if (rowExists)
+	    {
+	        marker.set (DTOConstants.FirstReference,
+		    this.makeReferenceDTO(rr) );
+
+	        // now, we need to start at the end and work backwards through
+	        // the results to find the last reference that is not in the
+	        // set of internal-only references.
+
+	        nav.last();
+	        while (refSet.contains (rr.getString(2)))
+	        {
+	            nav.previous();
+	        }
+
+	        marker.set (DTOConstants.LastReference,
+	            this.makeReferenceDTO(rr) );
+	    }
+	} // if we have at least one row
+
+	this.sqlDM.setScrollable(false);
 	nav.close();
         return marker;
     }
@@ -2188,6 +2502,8 @@ public class MarkerFactory
 			    DBConstants.LogicalDB_MGI + ", " +
 			    DBConstants.LogicalDB_RefSeq + ", " +
 			    DBConstants.LogicalDB_SwissProt + ", " +
+			    DBConstants.LogicalDB_Interpro + ", " +
+			    DBConstants.LogicalDB_TrEMBL + ", " +
 			    DBConstants.LogicalDB_SequenceDB + ") "
 		+ " order by ldb.name, a.accID";
 
@@ -2256,14 +2572,18 @@ public class MarkerFactory
 		"select count (distinct pp._Probe_key)"
 		+ " from PRB_Probe pp,"
 		+ "    PRB_Source ps,"
+		+ "    VOC_Term vt,"
+		+ "    VOC_Term vt2,"
 		+ "    PRB_Marker pm"
-		+ " where pp.DNAType = 'cDNA'"
+		+ " where vt.term = 'cDNA'"
+		+ "    and vt._Term_key = pp._SegmentType_key"
 		+ "    and pp._Source_key = ps._Source_key"
-		+ "    and ps._ProbeSpecies_key = 1"
+		+ "    and ps._Organism_key = 1"
 		+ "    and pp._Probe_key = pm._Probe_key"
 		+ "    and pm.relationship in ('E', 'P')"
 		+ "    and pm._Marker_key = %d"
-		+ "    and ( (ps.cellLine is null) )";
+		+ "    and ps._CellLine_key = vt2._Term_key "
+		+ "    and vt2.term = 'Not Specified'";
 
     // get a count of expression assays for the marker by assay type
     // fill in: marker key (int)
@@ -2308,34 +2628,82 @@ public class MarkerFactory
 		+ " from GXD_Expression ge"
 		+ " where ge._Marker_key = %d";
 
-    // retrieve unique set of GO annotations.  uniqueness is defined by having
-    // the same term, the same evidence, and the same 'inferred from' field.
-    // fill in:  marker key (int)
-    private static final String GO_ANNOTATIONS =
-    		"select distinct dd.abbreviation, "
-		+    "vt1.term, acc.accID, "
-		+    "evidenceCode = vt2.abbreviation, ve.inferredFrom, "
-		+    "va.isNot, va._Term_key, ve._Refs_key "
-		+ "from VOC_Term vt1, "
-		+    "ACC_Accession acc, "
-		+    "VOC_Evidence ve, "
-		+    "VOC_Term vt2, "
-		+    "DAG_DAG dd, "
-		+    "DAG_Node dn, "
-		+    "VOC_Annot va, "
-		+    "VOC_GOMarker_AnnotType_View gm "
-		+ "where va._Object_key = %s "
-		+    "and va._AnnotType_key = gm._AnnotType_key "
-		+    "and va._Term_key = vt1._Term_key "
-		+    "and vt1._Term_key = acc._Object_key "
-		+    "and acc._MGIType_key = " + DBConstants.MGIType_VocTerm
-		+    " and acc.preferred = 1 "
-		+    "and va._Annot_key = ve._Annot_key "
-		+    "and ve._EvidenceTerm_key = vt2._Term_key "
-		+    "and va._Term_key = dn._Object_key "
-		+    "and dn._DAG_key = dd._DAG_key "
-		+    "and dd._MGIType_key = " + DBConstants.MGIType_VocTerm
-		+ " order by dd.abbreviation, vt1.term";
+    // create a temp table for use in retrieving GO annotations
+    // fill in: nothing
+    private static final String GO_CREATE_TEMP =
+    	"CREATE TABLE #GO_Annotations ( "
+		+ " _Annot_key		int		not null, "
+		+ " _AnnotType_key	int		not null, "
+		+ " _Term_key		int		not null, "
+		+ " isNot		int		null, "
+		+ " term		varchar(255)	null, "
+		+ " accID		varchar(30)	null, "
+		+ " ontology		varchar(10)	null, "
+		+ " _EvidenceTerm_key	int		null, "
+		+ " evidenceCode	varchar(10)	null, "
+		+ " inferredFrom	varchar(255)	null, "
+		+ " _Refs_key		int		null)";
+
+    // fill in the temp table (from GO_CREATE_TEMP) with the initial set of
+    // data about GO annotations.  fills in four of the columns.
+    // fill in: marker key (int)
+    private static final String GO_FILL_TEMP =
+    	"INSERT #GO_Annotations (_Annot_key, _AnnotType_key, _Term_key, isNot) "
+		+ " SELECT va._Annot_key, va._AnnotType_key, va._Term_key, "
+		+ "	va.isNot "
+		+ " FROM VOC_Annot va, VOC_GOMarker_AnnotType_View gm "
+		+ " WHERE va._Object_key = %d "
+		+ "	AND va._AnnotType_key = gm._AnnotType_key";
+
+    // fill in the temp table (from GO_CREATE_TEMP) with the corresponding
+    // vocabulary terms and GO IDs.
+    // fill in: nothing
+    private static final String GO_UPDATE_1 =
+    	"UPDATE #GO_Annotations "
+		+ " SET term = vt1.term, "
+		+ "	accID = acc.accID "
+		+ " FROM #GO_Annotations ga, VOC_Term vt1, ACC_Accession acc "
+		+ " WHERE ga._Term_key = vt1._Term_key "
+		+ "	AND vt1._Term_key = acc._Object_key "
+		+ "	AND acc._MGIType_key = " + DBConstants.MGIType_VocTerm
+		+ "	AND acc.preferred = 1";
+
+    // fill in the temp table (from GO_CREATE_TEMP) with the corresponding
+    // ontology abbreviation.
+    // fill in: nothing
+    private static final String GO_UPDATE_2 =
+    	"UPDATE #GO_Annotations "
+		+ " SET ontology = dd.abbreviation "
+		+ " FROM #GO_Annotations ga, DAG_Node dn, DAG_DAG dd "
+		+ " WHERE ga._Term_key = dn._Object_key "
+		+ "	AND dn._DAG_key = dd._DAG_key "
+		+ "	AND dd._MGIType_key = " + DBConstants.MGIType_VocTerm;
+
+    // fill in the temp table (from GO_CREATE_TEMP) with the corresponding
+    // evidence key, evidence code, inferred from field, and reference key.
+    // fill in: nothing
+    private static final String GO_UPDATE_3 =
+    	"UPDATE #GO_Annotations "
+		+ " SET _EvidenceTerm_key = ve._EvidenceTerm_key, "
+		+ "	evidenceCode = vt2.abbreviation, "
+		+ "	inferredFrom = ve.inferredFrom, "
+		+ "	_Refs_key = ve._Refs_key "
+		+ " FROM #GO_Annotations ga, VOC_Evidence ve, VOC_Term vt2 "
+		+ " WHERE ga._Annot_key = ve._Annot_key "
+		+ "	AND ve._EvidenceTerm_key = vt2._Term_key";
+
+    // retrieve the GO data from the temp table (from GO_CREATE_TEMP).
+    // fill in: nothing
+    private static final String GO_SELECT =
+    	"SELECT DISTINCT ontology, term, accID, evidenceCode, inferredFrom, "
+	+ "	isNot, _Term_key, _Refs_key "
+	+ " FROM #GO_Annotations "
+	+ " ORDER BY ontology, term, _Term_key";
+
+    // clean up by deleting the temp table (from GO_CREATE_TEMP).
+    // fill in: nothing
+    private static final String GO_CLEANUP =
+    	"DROP TABLE #GO_Annotations";
 
     // count GXD index entries which are associated with the marker
     // fill in: marker key (int)
@@ -2343,6 +2711,20 @@ public class MarkerFactory
 		"select count(1) "
 		+ "from GXD_Index "
 		+ "where _Marker_key = %d";
+
+    // find InterPro terms associated with the marker
+    // fill in: marker key (int)
+    private static final String INTERPRO_TERMS =
+		"SELECT vtv.term, vtv.accID, adb.url, adb._LogicalDB_key "
+		+ "FROM VOC_Term_View vtv, "
+		+	"VOC_Annot va, "
+		+	"ACC_ActualDB adb, "
+		+	"ACC_Accession aa "
+		+ "WHERE va._AnnotType_key = 1003 "
+		+	"AND va._Term_key = vtv._Term_key "
+		+	"AND va._Object_key = %d "
+		+	"AND aa.accID = vtv.accID "
+		+	"AND aa._LogicalDB_key = adb._LogicalDB_key";
 
     // find the marker key associated with the given accession id.
     // fill in: accession ID (String)
@@ -2357,7 +2739,7 @@ public class MarkerFactory
     private static final String KEY_FOR_SYMBOL =
 		"select _Marker_key, _Marker_Status_key "
 		+ "from MRK_Marker "
-		+ "where _Species_key = " + DBConstants.Species_Mouse + " "
+		+ "where _Organism_key = " + DBConstants.Species_Mouse + " "
 		+    "and symbol = '%s'";
     
     // get MGI map position (in centimorgans)
@@ -2392,6 +2774,32 @@ public class MarkerFactory
 		+ "from MLC_Text "
 		+ "where _Marker_key = %d";
 
+    // get the marker's nomenclature history
+    // fill in: marker key (int)
+    private static String NOMEN_HISTORY = 
+		"SELECT mh.sequenceNum"
+		+	", oldName = mh.name"
+		+	", oldSymbol = mm.symbol"
+		+	", me.event"
+		+	", newName = mm.name"
+		+	", date = CONVERT(char(10), mh.event_date, 1)"
+		+	", mh._Refs_key"
+		+	", aa.accID"
+		+ " FROM MRK_History mh"
+		+	", MRK_Marker mm"
+		+	", MRK_Event me"
+		+	", ACC_Accession aa"
+		+ " WHERE mh._Marker_key = %d"
+		+	" AND mh._Marker_Event_key = me._Marker_Event_key"
+		+	" AND mh._History_key = mm._Marker_key"
+		+	" AND mh._Refs_key *= aa._Object_key"
+		+	" AND aa._MGIType_key = 1"
+		+	" AND aa._LogicalDB_key = 1"
+		+	" AND aa.preferred = 1"
+		+	" AND aa.private = 0"
+		+	" AND aa.prefixPart = 'J:'"
+		+ " ORDER BY mh.sequenceNum";
+
     // get marker note chunks (only mouse markers, as other species' notes
     //	are private)
     // fill in: marker key (int)
@@ -2400,14 +2808,14 @@ public class MarkerFactory
 		+ "from MRK_Notes mn, MRK_Marker mm "
 		+ "where mn._Marker_key = %d "
 		+ "  and mn._Marker_key = mm._Marker_key "
-		+ "  and mm._Species_key = " + DBConstants.Species_Mouse + " "
+		+ "  and mm._Organism_key = " + DBConstants.Species_Mouse + " "
 		+ "order by mn.sequenceNum";
 
     // get orthologous species
     // fill in: marker key (int)
     private static final String ORTHOLOGOUS_SPECIES =
-    		"select distinct ms.name, ms.species, ms._Species_key"
-		+ " from MRK_Species ms,"
+		"SELECT DISTINCT mo.commonName,mo.latinName, mo._Organism_key"
+		+ " FROM MGI_Organism mo,"
 		+ "    MRK_Marker mm,"
 		+ "    HMD_Homology hh1,"
 		+ "    HMD_Homology_Marker hm1,"
@@ -2418,8 +2826,8 @@ public class MarkerFactory
 		+ "    and hh1._Class_key = hh2._Class_key"
 		+ "    and hh2._Homology_key = hm2._Homology_key"
 		+ "    and hm2._Marker_key = mm._Marker_key"
-		+ "    and mm._Species_key = ms._Species_key"
-		+ "    and ms._Species_key != " + DBConstants.Species_Mouse;
+		+ "    and mm._Organism_key = mo._Organism_key"
+		+ "    and mo._Organism_key != " + DBConstants.Species_Mouse;
 
     // count phenotypic classifications (phenoslim annotations)
     // fill in: marker key (int)
@@ -2435,12 +2843,14 @@ public class MarkerFactory
     // get counts of polymorphisms by type
     // fill in: marker key (int)
     private static final String POLYMORPHISM_COUNTS =
-		"select pp.DNAType, count (pr._Reference_key) "
-		+ "from PRB_Probe pp, PRB_RFLV pr, PRB_Reference ref "
+		"select vt.term, count (pr._Reference_key) "
+		+ "from PRB_Probe pp, PRB_RFLV pr, PRB_Reference ref, "
+		+    "VOC_Term vt "
 		+ "where pr._Marker_key = %d "
+		+    "and pp._SegmentType_key = vt._Term_key "
 		+    "and pr._Reference_key = ref._Reference_key "
 		+    "and ref._Probe_key = pp._Probe_key "
-		+ "group by pp.DNAtype";
+		+ "group by vt.term";
 
     // get the primary MGI ID for a given marker.
     // fill in:  marker key (int)
@@ -2456,11 +2866,12 @@ public class MarkerFactory
     // find how many probes are associatd with this marker, by type 
     // fill in: marker key (int)
     private static final String PROBE_COUNTS =
-		"select pp.DNAType, count (distinct pp._Probe_key) "
-		+ "from PRB_Marker pm, PRB_Probe pp "
+		"select vt.term, count (distinct pp._Probe_key) "
+		+ "from PRB_Marker pm, PRB_Probe pp, VOC_Term vt "
 		+ "where pm._Marker_key = %d "
+		+    "and pp._SegmentType_key = vt._Term_key "
 		+    "and pm._Probe_key = pp._Probe_key "
-		+ "group by pp.DNAtype";
+		+ "group by vt.term";
 
     // get a count of references for the marker
     // fill in: marker key (int)
@@ -2471,27 +2882,24 @@ public class MarkerFactory
 
     // get info about the marker's oldest reference, defined as the one
     // with the lowest J: number for the oldest year (which is NOT a load
-    // reference)
+    // reference).  For the sake of efficiency, we avoid the use of BIB_View
+    // here and compute 'citation' directly.  (This drops the query's runtime
+    // from 1.19 seconds to 0.46 seconds, a 62% drop.)
     // fill in:  marker key (int)
     private static final String REFERENCE_FIRST =
-    		"select bv._Refs_key, bv.jnumID, bv.authors, bv.authors2,"
-		+ "    bv.title, bv.title2, bv.citation"
-		+ " from BIB_View bv, MRK_Reference mr"
-		+ " where bv._Refs_key = mr._Refs_key"
-		+ "    and mr._Marker_key = %d"
-		+ " order by bv.year, bv.jnum";
-
-    // get info about the marker's most recent reference, defined as the one
-    // with the highest J: number for the most recent year (which is NOT a
-    // load reference)
-    // fill in:  marker key (int)
-    private static final String REFERENCE_LAST =
-    		"select bv._Refs_key, bv.jnumID, bv.authors, bv.authors2,"
-		+ "    bv.title, bv.title2, bv.citation"
-		+ " from BIB_View bv, MRK_Reference mr"
-		+ " where bv._Refs_key = mr._Refs_key"
-		+ "    and mr._Marker_key = %d"
-		+ " order by bv.year desc, bv.jnum desc";
+	"SELECT br._Refs_key, aa.accID, br.authors, br.authors2,"
+	+ "  br.title, br.title2, "
+	+ "  citation = br.journal + ' ' + br.date + ';' + br.vol "
+		+ "+ '(' + br.issue + '):' + br.pgs "
+	+ " FROM BIB_Refs br, ACC_Accession aa, MRK_Reference mr "
+	+ " WHERE mr._Marker_key = %d "
+	+ "  AND mr._Refs_key = br._Refs_key "
+	+ "  AND br._Refs_key = aa._Object_key "
+	+ "  AND aa._MGIType_key = 1 "
+	+ "  AND aa._LogicalDB_key = 1 "
+	+ "  AND aa.preferred = 1 "
+	+ "  AND aa.prefixPart = 'J:' "
+	+ " ORDER BY br.year, aa.numericPart";
 
     // get all sequence IDs associated with a marker
     // fill in:  marker key (int)
@@ -2510,6 +2918,31 @@ public class MarkerFactory
 			    DBConstants.LogicalDB_SwissProt + ", " +
 			    DBConstants.LogicalDB_SequenceDB + ") "
 		+ " order by a.accID";
+
+    // get data for sequences associated with a marker
+    // fill in: marker key (int)
+    private static final String SEQUENCES =
+    		"SELECT seq._Sequence_key, aa.accID, typ.term, seq.length"
+		+	", aa._LogicalDB_key, st.strain, seq.rawStrain"
+		+ " FROM SEQ_Marker_Cache smc"
+		+	", ACC_Accession aa"
+		+	", SEQ_Sequence seq"
+		+	", VOC_Term typ"
+		+	", PRB_Source sou"
+		+	", PRB_Strain st"
+		+	", SEQ_Source_Assoc ssa"
+		+ " WHERE smc._Marker_key = %d"
+		+	" AND smc._Sequence_key = seq._Sequence_key"
+		+	" AND seq._Sequence_key = aa._Object_key"
+		+	" AND aa.private = 0"
+		+	" AND aa.preferred = 1"
+		+	" AND aa._MGIType_key = " +
+				DBConstants.MGIType_Sequence
+		+	" AND seq._SequenceType_key = typ._Term_key"
+		+	" AND seq._Sequence_key = ssa._Sequence_key"
+		+	" AND ssa._Source_key = sou._Source_key"
+		+	" AND sou._Strain_key = st._Strain_key"
+		+ " ORDER BY typ.term, seq.length desc";
 
     // get synonyms
     // fill in: marker key (int)
@@ -2533,6 +2966,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.1  2003/12/30 16:38:50  mbw
+* initial import into this product
+*
 * Revision 1.1  2003/12/30 16:28:29  mbw
 * initial import into this product
 *
