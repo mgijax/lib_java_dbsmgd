@@ -3,6 +3,7 @@
 
 package org.jax.mgi.dbs.mgd.lookup;
 
+import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.KeyNotFoundException;
@@ -40,7 +41,7 @@ public class LogicalDBLookup extends FullCachedLookup
     public LogicalDBLookup ()
         throws CacheException, ConfigException, DBException
     {
-        super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     }
 
 
@@ -100,6 +101,9 @@ public class LogicalDBLookup extends FullCachedLookup
 
 
 //  $Log$
+//  Revision 1.8  2003/10/10 15:30:15  dbm
+//  Update javadocs
+//
 //  Revision 1.7  2003/10/06 19:43:07  dbm
 //  Support changes to frameworks classes
 //
