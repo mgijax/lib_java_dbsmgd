@@ -3,7 +3,6 @@ package org.jax.mgi.dbs.mgd.lookup;
 import java.util.HashMap;
 
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
-import org.jax.mgi.shr.dbutils.SQLDataManager;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowReference;
@@ -13,14 +12,10 @@ import org.jax.mgi.shr.cache.LazyCachedLookup;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.CacheConstants;
-import org.jax.mgi.shr.cache.KeyNotFoundException;
-import org.jax.mgi.shr.types.Converter;
-import org.jax.mgi.dbs.mgd.TranslationTypeConstants;
 import org.jax.mgi.dbs.mgd.trans.Translator;
 import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.dbs.mgd.MGD;
 import org.jax.mgi.shr.config.ConfigException;
-import org.jax.mgi.shr.exception.MGIException;
 
 /**
  * @is: a RowDataCacheHandler for caching vocabulary terms and their index keys
