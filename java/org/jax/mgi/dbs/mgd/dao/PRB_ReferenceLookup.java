@@ -6,7 +6,6 @@ package org.jax.mgi.dbs.mgd.dao;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LazyCachedLookup;
-import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
@@ -66,7 +65,7 @@ public class PRB_ReferenceLookup
      * @throws LookupException
      */
     public PRB_ReferenceDAO findByPrbRef (Integer probeKey, Integer refsKey)
-        throws LookupException
+    throws DBException, CacheException
     {
         return prbRefLookup.lookup(probeKey, refsKey);
     }
@@ -112,11 +111,11 @@ public class PRB_ReferenceLookup
          * @throws LookupException
          */
         public PRB_ReferenceDAO lookup(Integer probeKey, Integer refsKey)
-            throws LookupException
+        throws CacheException, DBException
         {
             String key = probeKey + "," + refsKey;
 
-            return (PRB_ReferenceDAO)super.lookup(key, true);
+            return (PRB_ReferenceDAO)super.lookupNullsOk(key);
         }
 
         /**
@@ -184,6 +183,9 @@ public class PRB_ReferenceLookup
 
 
 //  $Log$
+//  Revision 1.1  2003/10/23 11:44:44  dbm
+//  Converted to work with code generated DAO classes
+//
 //
 /**************************************************************************
 *

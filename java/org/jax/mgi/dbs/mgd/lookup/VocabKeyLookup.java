@@ -14,7 +14,6 @@ import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.CacheConstants;
 import org.jax.mgi.shr.cache.KeyNotFoundException;
-import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.types.Converter;
 import org.jax.mgi.dbs.mgd.TranslationTypeConstants;
 import org.jax.mgi.dbs.mgd.trans.Translator;
@@ -72,8 +71,7 @@ public class VocabKeyLookup extends LazyCachedLookup
    */
   public VocabKeyLookup(int vocabType)
       throws CacheException, DBException,
-             ConfigException, LookupException,
-             TranslationException
+             ConfigException, TranslationException
   {
     super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
     this.vocabType = vocabType;
@@ -209,10 +207,11 @@ public class VocabKeyLookup extends LazyCachedLookup
      * @param the given vocabulary type
      * @return the translation type for this vocabulary
      */
-    public Integer lookup(int vocabularyType) throws LookupException
+    public Integer lookup(int vocabularyType)
+        throws DBException, CacheException
     {
       Integer transType =
-          (Integer)super.lookup(new Integer(vocabularyType), true);
+          (Integer)super.lookupNullsOk(new Integer(vocabularyType));
       return transType;
     }
 

@@ -8,7 +8,6 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.cache.FullCachedLookup;
-import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.shr.cache.CacheException;
@@ -20,7 +19,7 @@ import org.jax.mgi.shr.exception.MGIException;
 /**
  *
  * @is: a FullCachedLookup for caching translation types and allowing
- * queries on the translation name to get back the record key 
+ * queries on the translation name to get back the record key
  * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
  * cache and performing the cache lookup.
  * @does: provides a lookup method for looking up translation type key by
@@ -43,7 +42,7 @@ public class TranslationTypeKeyLookup extends FullCachedLookup
    * @throws ConfigException
    */
   public TranslationTypeKeyLookup()
-  throws CacheException, DBException, 
+  throws CacheException, DBException,
          ConfigException, KeyNotFoundException
   {
     super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
@@ -56,7 +55,6 @@ public class TranslationTypeKeyLookup extends FullCachedLookup
    * @return the MGI type
    */
   public Integer lookup(String translationName)
-      throws LookupException
   {
     Object o = lookup(translationName);
     return (Integer)o;

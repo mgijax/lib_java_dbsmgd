@@ -9,7 +9,6 @@ import org.jax.mgi.dbs.mgd.MGITypeConstants;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LazyCachedLookup;
-import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
@@ -57,9 +56,9 @@ public class JNumberLookup extends LazyCachedLookup
     * @throws LookupException
     */
     public Integer lookup (String jNumber)
-        throws LookupException
+    throws DBException, CacheException
     {
-        return (Integer)super.lookup(jNumber, true);
+        return (Integer)super.lookupNullsOk(jNumber);
     }
 
 
@@ -124,6 +123,9 @@ public class JNumberLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.10  2003/10/20 19:00:59  dbm
+//  Use schema constants
+//
 //  Revision 1.9  2003/10/10 15:30:15  dbm
 //  Update javadocs
 //

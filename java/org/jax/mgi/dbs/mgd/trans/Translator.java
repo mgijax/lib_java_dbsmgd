@@ -12,8 +12,6 @@ import org.jax.mgi.shr.cache.CachedLookup;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.shr.cache.KeyValue;
-import org.jax.mgi.shr.cache.LookupException;
-import org.jax.mgi.shr.cache.LookupExceptionFactory;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.dbs.mgd.MGD;
 import org.jax.mgi.shr.config.ConfigException;
@@ -65,8 +63,6 @@ public class Translator extends CachedLookup
       TranslationExceptionFactory.NoTransTypeKey;
   private static String NoTransType =
       TranslationExceptionFactory.NoTransType;
-  private static String KeyNotFound =
-      LookupExceptionFactory.KeyNotFound;
   private static String NoMGIType =
       TranslationExceptionFactory.NoMGIType;
   private static String LookupErr =
@@ -135,20 +131,10 @@ public class Translator extends CachedLookup
    * @param the given term to translate
    * @return the translated term and its key in the MGD database
    */
-  public KeyedDataAttribute translate(String term) throws TranslationException
+  public KeyedDataAttribute translate(String term)
+      throws TranslationException, CacheException, DBException
   {
-    try
-    {
-      return (KeyedDataAttribute)super.lookup(term, true);
-    }
-    catch (LookupException e)
-    {
-      TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
-      TranslationException e2 =
-          (TranslationException) eFactory.getException(LookupErr, e);
-      e2.bind(term);
-      throw e2;
-    }
+    return (KeyedDataAttribute)super.lookupNullsOk(term);
   }
 
   /**
@@ -246,7 +232,7 @@ public class Translator extends CachedLookup
     MGITypeLookup lookup = new MGITypeLookup();
     Integer mgiType = null;
     try {
-      mgiType = (Integer)lookup.lookup(translationType);
+      mgiType = lookup.lookup(translationType.intValue());
     }
     catch (MGIException e) {
       TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
@@ -317,8 +303,9 @@ public class Translator extends CachedLookup
      * @return the HashMap containing the following data
      * MGD.mgi_translationtype._mgitype_key
      */
-    public Integer lookup(int translationType) throws LookupException,
-        KeyNotFoundException {
+    public Integer lookup(int translationType)
+        throws KeyNotFoundException, DBException, CacheException
+    {
       Object o = super.lookup(new Integer(translationType));
       return (Integer) o;
     }
@@ -391,8 +378,9 @@ public class Translator extends CachedLookup
      *		  MGD.acc_mgitype.tablename
      *		  MGD.acc_mgitype.identitycolumnname
      */
-    public HashMap lookup(int translationType) throws KeyNotFoundException,
-        LookupException {
+    public HashMap lookup(int translationType)
+        throws KeyNotFoundException, DBException, CacheException
+    {
       Object o = super.lookup(new Integer(translationType));
       return (HashMap) o;
     }
@@ -466,7 +454,8 @@ public class Translator extends CachedLookup
      * @return the MGI type
      */
     public Integer lookup(String translationName)
-        throws LookupException, KeyNotFoundException {
+        throws KeyNotFoundException, DBException, CacheException
+    {
       Object o = super.lookup(translationName);
       return (Integer) o;
     }

@@ -4,11 +4,11 @@
 package org.jax.mgi.dbs.mgd.dao;
 
 import org.jax.mgi.dbs.mgd.trans.Translator;
+import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.LazyCachedLookup;
 import org.jax.mgi.shr.cache.KeyValue;
-import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.KeyedDataAttribute;
@@ -96,7 +96,7 @@ public class PRB_SourceLookup
      * @throws LookupException
      */
     public PRB_SourceDAO findByName (String name)
-        throws LookupException
+      throws DBException, CacheException, TranslationException
     {
         if (trans != null)
         {
@@ -121,7 +121,7 @@ public class PRB_SourceLookup
      * @throws LookupException
      */
     public PRB_SourceDAO findByKey (Integer key)
-        throws CacheException, ConfigException, DBException, LookupException
+        throws CacheException, ConfigException, DBException
     {
         KeyedSourceLookup keyedSourceLookup = new KeyedSourceLookup();
         return keyedSourceLookup.lookup(key);
@@ -166,9 +166,9 @@ public class PRB_SourceLookup
          * @throws LookupException
          */
         public PRB_SourceDAO lookup(String name)
-            throws LookupException
+        throws DBException, CacheException
         {
-            return (PRB_SourceDAO)super.lookup(name, true);
+            return (PRB_SourceDAO)super.lookupNullsOk(name);
         }
 
         /**
@@ -254,9 +254,9 @@ public class PRB_SourceLookup
          * @throws LookupException
          */
         public PRB_SourceDAO lookup(Integer key)
-            throws LookupException
+          throws DBException, CacheException
         {
-            return (PRB_SourceDAO)super.lookup(key, true);
+            return (PRB_SourceDAO)super.lookupNullsOk(key);
         }
 
         /**
@@ -322,6 +322,9 @@ public class PRB_SourceLookup
 
 
 //  $Log$
+//  Revision 1.1  2003/10/23 11:44:46  dbm
+//  Converted to work with code generated DAO classes
+//
 //
 /**************************************************************************
 *
