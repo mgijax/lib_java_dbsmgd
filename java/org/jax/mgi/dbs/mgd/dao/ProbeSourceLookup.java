@@ -5,13 +5,13 @@ package org.jax.mgi.dbs.mgd.dao;
 
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.FullCachedLookup;
+import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.types.KeyValue;
 
 /**
  * @is An object that knows how to look up a PRB_Source record.
@@ -80,7 +80,6 @@ public class ProbeSourceLookup
            throws ConfigException, DBException, CacheException
         {
             super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
-            super.setOkToAllowNulls(true);
         }
 
         /**
@@ -94,7 +93,7 @@ public class ProbeSourceLookup
         public ProbeSourceDAO lookup(String name)
             throws LookupException
         {
-            return (ProbeSourceDAO)super.lookup(name);
+            return (ProbeSourceDAO)super.lookup(name, true);
         }
 
         /**
@@ -144,6 +143,9 @@ public class ProbeSourceLookup
 
 
 //  $Log$
+//  Revision 1.5  2003/10/02 18:48:54  dbm
+//  Changed to extend subclass of CachedLookup
+//
 //  Revision 1.4  2003/09/30 16:58:10  dbm
 //  Use Integer instead of int for attributes
 //

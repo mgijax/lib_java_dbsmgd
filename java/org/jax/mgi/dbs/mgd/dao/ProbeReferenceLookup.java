@@ -3,7 +3,7 @@
 
 package org.jax.mgi.dbs.mgd.dao;
 
-import org.jax.mgi.shr.cache.CacheException;
+import org.jax.mgi.shr.cache.CacheException;import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LazyCachedLookup;
 import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
@@ -11,7 +11,7 @@ import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.types.KeyValue;
+
 
 /**
  * @is An object that knows how to look up a PRB_Reference record.
@@ -82,7 +82,6 @@ public class ProbeReferenceLookup
            throws CacheException, ConfigException, DBException
         {
             super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
-            super.setOkToAllowNulls(true);
         }
 
         /**
@@ -100,7 +99,7 @@ public class ProbeReferenceLookup
         {
             String key = probeKey + "," + refsKey;
 
-            return (ProbeReferenceDAO)super.lookup(key);
+            return (ProbeReferenceDAO)super.lookup(key, true);
         }
 
         /**
@@ -169,6 +168,9 @@ public class ProbeReferenceLookup
 
 
 //  $Log$
+//  Revision 1.5  2003/10/02 18:48:54  dbm
+//  Changed to extend subclass of CachedLookup
+//
 //  Revision 1.4  2003/10/01 14:52:15  dbm
 //  Use Strings to represent bit columns in DAO classes
 //
