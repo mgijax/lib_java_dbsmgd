@@ -24,14 +24,18 @@ public class MGITypeConstants
     public static final int CLONE = 3;
     public static final int SOURCE = 5;
     public static final int STRAIN = 10;
-    public static final int VOCABULARY = 13;
+    public static final int VOCABULARY = 14;
     public static final int ORGANISM = 20;
     public static final int TISSUE = 24;
     public static final int SEQUENCE = 19;
+    public static final int CHROMOSOME = 27;
 }
 
 
 //  $Log$
+//  Revision 1.4  2004/02/04 19:41:29  mbw
+//  merged jsam branch to the trunk
+//
 //  Revision 1.3.2.1  2003/11/13 20:38:50  sc
 //  added SEQUENCE constant
 //
