@@ -3409,10 +3409,11 @@ public class MarkerFactory
     // get synonyms
     // fill in: marker key (int)
     private static final String SYNONYMS =
-		"select name "
-		+ "from MRK_Other "
-		+ "where _Marker_key = %d "
-		+ "order by name";
+		  "select synonym"
+		+ " from MGI_Synonym"
+		+ " where _Object_key = %d"
+		+ " and _MGIType_key = " + DBConstants.MGIType_Marker
+		+ " order by synonym";
 
     // get the marker key and symbol for the marker(s) to which a specified
     // marker was withdrawn.  There may be multiple rows returned if a marker
@@ -3428,6 +3429,12 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.14.2.1  2005/01/24 14:45:32  jw
+* Fix for schema change
+*
+* Revision 1.14  2004/12/02 20:30:51  mbw
+* changed use of floats to doubles
+*
 * Revision 1.13  2004/10/21 17:50:40  jw
 * Changes for the 3.1 assembly release
 *
