@@ -72,7 +72,7 @@ public class VocabKeyLookup extends LazyCachedLookup
   {
     super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
     this.vocabType = vocabType;
-    setCache(cache);
+    //setCache(cache);
     translationTypeLookup = new TranslationTypeLookup();
     // look up the translation type for this vocabulary type
     translationType = translationTypeLookup.lookup(this.vocabType);
