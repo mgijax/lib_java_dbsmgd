@@ -7,6 +7,7 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.KeyedDataAttribute;
+import org.jax.mgi.shr.exception.MGIException;
 import org.jax.mgi.shr.cache.CachedLookup;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.KeyNotFoundException;
@@ -19,11 +20,11 @@ import org.jax.mgi.shr.config.ConfigException;
 
 /**
  *
- * @is: a RowDataCacheHandler for caching Gender Translation terms
- * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
- * cache and performing the cache lookup.
- * @does: provides a lookup method for gender translation terms stored
- * within an in-memory cache.
+ * @is: a RowDataCacheHandler for caching translation terms
+ * @has: a RowDataCacheStrategy which can be set to type FULL_CACHE or
+ * LAZY_CACHE.
+ * @does: provides a lookup method for translation terms stored and caches the
+ * results
  * @company: The Jackson Laboratory
  * @author not attributable
  * @version 1.0
@@ -50,22 +51,26 @@ public class Translator extends CachedLookup
   /**
    * cache for MGITypeLookup class
    */
-  private static HashMap lookupCache1 = new HashMap();
+  private static HashMap mgiTypeCache = new HashMap();
 
   /**
    * cache for the MGITypeTableLookup
    */
-  private static HashMap lookupCache2 = new HashMap();
+  private static HashMap mgiTypeTableCache = new HashMap();
 
   /*
    * the following constant definitions are exceptions thrown by this class
    */
   private static String NoTransTypeKey =
       TranslationExceptionFactory.NoTransTypeKey;
-  private static String NoTransTypeName =
-      TranslationExceptionFactory.NoTransTypeName;
+  private static String NoTransType =
+      TranslationExceptionFactory.NoTransType;
   private static String KeyNotFound =
-                LookupExceptionFactory.KeyNotFound;
+      LookupExceptionFactory.KeyNotFound;
+  private static String NoMGIType =
+      TranslationExceptionFactory.NoMGIType;
+  private static String LookupErr =
+      TranslationExceptionFactory.LookupErr;
 
   /**
    * constructor
@@ -79,7 +84,7 @@ public class Translator extends CachedLookup
    */
   public Translator(int translationType, int cacheType)
   throws CacheException, DBException,
-         ConfigException, LookupException, TranslationException
+         ConfigException, TranslationException
   {
     super(cacheType,
           SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
@@ -99,20 +104,21 @@ public class Translator extends CachedLookup
    */
   public Translator(String translationType, int cacheType)
   throws CacheException, DBException,
-         ConfigException, LookupException, TranslationException
+         ConfigException, TranslationException
   {
     super(cacheType,
           SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+    // convert the translation type from a string value to it's db key value
     TranslationTypeKeyLookup ttkLookup = new TranslationTypeKeyLookup();
     try
     {
       this.translationType = ttkLookup.lookup(translationType);
     }
-    catch (KeyNotFoundException e)
+    catch (MGIException e)
     {
       TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
       TranslationException e2 =
-          (TranslationException) eFactory.getException(NoTransTypeName);
+          (TranslationException) eFactory.getException(NoTransType, e);
       e2.bind(translationType);
       throw e2;
     }
@@ -129,10 +135,20 @@ public class Translator extends CachedLookup
    * @param the given term to translate
    * @return the translated term and its key in the MGD database
    */
-  public KeyedDataAttribute translate(String term)
-      throws LookupException
+  public KeyedDataAttribute translate(String term) throws TranslationException
   {
-    return (KeyedDataAttribute)super.lookup(term, true);
+    try
+    {
+      return (KeyedDataAttribute)super.lookup(term, true);
+    }
+    catch (LookupException e)
+    {
+      TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
+      TranslationException e2 =
+          (TranslationException) eFactory.getException(LookupErr, e);
+      e2.bind(term);
+      throw e2;
+    }
   }
 
   /**
@@ -211,7 +227,7 @@ public class Translator extends CachedLookup
    * lookup and set the instance variables of this class through database
    * queries
    * @assumes nothing
-   * @effects clas instance variables will be set
+   * @effects class instance variables will be set
    * @throws TranslationException thrown if there is the given translation
    * type is not found in the database
    * @throws LookupException thrown if there is the mgi type for the given
@@ -222,47 +238,51 @@ public class Translator extends CachedLookup
    * @throws CacheException thrown if there is an error handling the cache
    */
   private void setup()
-      throws TranslationException, LookupException, ConfigException,
-             DBException, CacheException
+      throws TranslationException, ConfigException, DBException, CacheException
   {
     /**
-     * lookup the MGIType from the database
+     * lookup the MGIType from the database using the inner class MGITypeLookup
      */
     MGITypeLookup lookup = new MGITypeLookup();
-    HashMap map = null;
+    Integer mgiType = null;
     try {
-      map = (HashMap)lookup.lookup(translationType);
+      mgiType = (Integer)lookup.lookup(translationType);
     }
-    catch (KeyNotFoundException e) {
+    catch (MGIException e) {
       TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
       TranslationException e2 =
-          (TranslationException) eFactory.getException(NoTransTypeKey);
+          (TranslationException) eFactory.getException(NoMGIType, e);
       e2.bind(translationType.intValue());
       throw e2;
     }
-    Integer mgiType = (Integer) map.get(MGD.mgi_translationtype._mgitype_key);
 
     /**
-     * lookup the table information from the ACC_MGIType table
+     * lookup the table information from the ACC_MGIType table which includes
+     * the table name, identity column name and the primary key name for
+     * a given MGI type.
      */
     MGITypeTableLookup lookup2 = new MGITypeTableLookup();
+    HashMap map = null;
     try {
       map = lookup2.lookup(mgiType.intValue());
     }
-    catch (KeyNotFoundException e) {
-      LookupExceptionFactory eFactory = new LookupExceptionFactory();
-      throw eFactory.getLookupException(e);
+    catch (MGIException e) {
+      TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
+      TranslationException e2 =
+          (TranslationException) eFactory.getException(NoMGIType, e);
+      e2.bind(mgiType.intValue());
+      throw e2;
     }
     targetTable = (String) map.get(MGD.acc_mgitype.tablename);
     targetIdentity = (String) map.get(MGD.acc_mgitype.identitycolumnname);
     targetPrimaryKey = (String)map.get(MGD.acc_mgitype.primarykeyname);
-
   }
 
 
   /**
    *
-   * @is: a RowDataCacheHandler for caching Gender Translation terms
+   * @is: a RowDataCacheHandler for caching MGI types obtained from a database
+   * query
    * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
    * cache and performing the cache lookup.
    * @does: provides a lookup method for gender translation terms stored
@@ -278,14 +298,17 @@ public class Translator extends CachedLookup
      * constructor
      * @assumes nothing
      * @effects nothing
-     * @throws CacheException thrown if there is an error
-     * @throws DBException
-     * @throws ConfigException
+     * @throws CacheException thrown if there is an error with the cache
+     * @throws DBException thrown if there is an error accessing the db
+     * @throws ConfigException thrown if there is an error accessing the
+     * configuration file
      */
     public MGITypeLookup()
         throws CacheException, DBException, ConfigException {
       super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
-      setCache(lookupCache1);
+      // override the super class instance of the cache with a static one so
+      // that all instances of the Translator will see the same cache
+      setCache(mgiTypeCache);
     }
 
     /**
@@ -294,10 +317,10 @@ public class Translator extends CachedLookup
      * @return the HashMap containing the following data
      * MGD.mgi_translationtype._mgitype_key
      */
-    public HashMap lookup(int translationType) throws LookupException,
+    public Integer lookup(int translationType) throws LookupException,
         KeyNotFoundException {
       Object o = super.lookup(new Integer(translationType));
-      return (HashMap) o;
+      return (Integer) o;
     }
 
     /**
@@ -306,8 +329,10 @@ public class Translator extends CachedLookup
      * @return the sql string to use in fully intializing the cache
      */
     public String getFullInitQuery() {
-      String s = "SELECT _TranslationType_key, _MGIType_key " +
-          "FROM MGI_TranslationType";
+      String s = "SELECT " +
+                 MGD.mgi_translationtype._translationtype_key + ", " +
+                 MGD.mgi_translationtype._mgitype_key + " " +
+                 "FROM " + MGD.mgi_translationtype._name;
       return s;
     }
 
@@ -320,9 +345,7 @@ public class Translator extends CachedLookup
       class Interpreter
           implements RowDataInterpreter {
         public Object interpret(RowReference row) throws DBException {
-          HashMap map = new HashMap();
-          map.put(MGD.mgi_translationtype._mgitype_key, row.getInt(2));
-          return new KeyValue(row.getInt(1), map);
+          return new KeyValue(row.getInt(1), row.getInt(2));
         }
       }
 
@@ -355,7 +378,9 @@ public class Translator extends CachedLookup
     public MGITypeTableLookup() throws CacheException, DBException,
         ConfigException {
       super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
-      setCache(lookupCache2);
+      // override the super class instance of the cache with a static one so
+      // that all instances of the Translator will see the same cache
+      setCache(mgiTypeTableCache);
     }
 
     /**
@@ -452,8 +477,10 @@ public class Translator extends CachedLookup
      * @return the sql string to use in fully intializing the cache
      */
     public String getFullInitQuery() {
-      String s = "SELECT _TranslationType_key, translationType " +
-          "FROM MGI_TranslationType";
+      String s = "SELECT " +
+                 MGD.mgi_translationtype._translationtype_key + ", " +
+                 MGD.mgi_translationtype.translationtype + " " +
+                 "FROM " + MGD.mgi_translationtype._name;
       return s;
     }
 
