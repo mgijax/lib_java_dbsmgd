@@ -188,7 +188,7 @@ public class Translator extends CachedLookup
         KeyedDataAttribute kda =
             new KeyedDataAttribute(row.getInt(3), row.getString(2));
         KeyValue kv = new KeyValue(row.getString(1), kda);
-        return kda;
+        return kv;
       }
     }
     return new Interpreter();
@@ -365,10 +365,10 @@ public class Translator extends CachedLookup
      * @return the sql string to use in fully intializing the cache
      */
     public String getFullInitQuery() {
-      String s = "SELECT _translationType_key, " +
+      String s = "SELECT _mgiType_key, " +
           "       primaryKeyName, " +
           "       tablename, " +
-          "       identityColumn " +
+          "       identityColumnName " +
           "FROM ACC_MGIType";
       return s;
     }
@@ -384,8 +384,8 @@ public class Translator extends CachedLookup
         public Object interpret(RowReference row) throws DBException {
           HashMap map = new HashMap();
           map.put(MGD.acc_mgitype.primarykeyname, row.getString(2));
-          map.put(MGD.acc_mgitype.tablename, row.getInt(3));
-          map.put(MGD.acc_mgitype.identitycolumnname, row.getInt(4));
+          map.put(MGD.acc_mgitype.tablename, row.getString(3));
+          map.put(MGD.acc_mgitype.identitycolumnname, row.getString(4));
           return new KeyValue(row.getInt(1), map);
         }
       }
