@@ -48,7 +48,7 @@ public class ActualDBMap
     ///////////////
     // constructors
     ///////////////
-    
+
     /** constructor; instantiates an ActualDBMap using only information from
     *    the database accessed via 'sqlDM'.
     * @param sqlDM provides access to a database
@@ -57,10 +57,10 @@ public class ActualDBMap
     * @throws nothing
     */
     public ActualDBMap (SQLDataManager sqlDM)
-	throws DBException, IOException, FileNotFoundException
+    throws DBException, IOException, FileNotFoundException
     {
         this.initialize (sqlDM, null);
-	return;
+    return;
     }
 
     /* -------------------------------------------------------------------- */
@@ -76,10 +76,10 @@ public class ActualDBMap
     * @throws nothing
     */
     public ActualDBMap (SQLDataManager sqlDM, String updateFile)
-	throws DBException, IOException, FileNotFoundException
+    throws DBException, IOException, FileNotFoundException
     {
         this.initialize (sqlDM, updateFile);
-	return;
+    return;
     }
 
     /* -------------------------------------------------------------------- */
@@ -102,10 +102,10 @@ public class ActualDBMap
     public String getFirstLink (List links)
     {
         if ((links != null) && (links.size() > 0))
-	{
-	    return (String) links.get(0);
-	}
-	return null;
+    {
+        return (String) links.get(0);
+    }
+    return null;
     }
 
     /* -------------------------------------------------------------------- */
@@ -125,11 +125,11 @@ public class ActualDBMap
     public List getLinks (String logicalDb, String accID)
     {
         if (!this.ldbNameToKey.containsKey(logicalDb))
-	{
-	    return new ArrayList(0);
-	}
-	return this.getLinks(
-	        (Integer) this.ldbNameToKey.get(logicalDb), accID);
+    {
+        return new ArrayList(0);
+    }
+    return this.getLinks(
+            (Integer) this.ldbNameToKey.get(logicalDb), accID);
     }
 
     /* -------------------------------------------------------------------- */
@@ -150,11 +150,11 @@ public class ActualDBMap
     public List getShortLinks (String logicalDb, String accID)
     {
         if (!this.ldbNameToKey.containsKey(logicalDb))
-	{
-	    return new ArrayList(0);
-	}
-	return this.getShortLinks(
-	        (Integer) this.ldbNameToKey.get(logicalDb), accID);
+    {
+        return new ArrayList(0);
+    }
+    return this.getShortLinks(
+            (Integer) this.ldbNameToKey.get(logicalDb), accID);
     }
 
     /* -------------------------------------------------------------------- */
@@ -173,12 +173,12 @@ public class ActualDBMap
     */
     public List getIDLinks (String logicalDb, String accID)
     {
-	if (!this.ldbNameToKey.containsKey(logicalDb))
-	{
-	    return new ArrayList(0);
-	}
+    if (!this.ldbNameToKey.containsKey(logicalDb))
+    {
+        return new ArrayList(0);
+    }
         return this.getIDLinks (
-		(Integer) this.ldbNameToKey.get(logicalDb), accID);
+        (Integer) this.ldbNameToKey.get(logicalDb), accID);
     }
 
     /* -------------------------------------------------------------------- */
@@ -241,10 +241,27 @@ public class ActualDBMap
 
     /* -------------------------------------------------------------------- */
 
+    /** get a List of URLs, one per actual database for the
+    *    given 'logicalDbKey'.
+    * @param logicalDbKey database key for the logical database
+    * @return List of Strings; each String is URL
+    * @assumes nothing
+    * @effects nothing
+    * @throws nothing
+    * @notes will return an empty List if 'logicalDbKey' is not known
+    */
+    public ArrayList getActualDBUrl(Integer logicalDbKey) {
+
+        return this.getActualDBUrlPrivate(logicalDbKey);
+    }
+
+
+    /* -------------------------------------------------------------------- */
+
     ///////////////////////////
     // private instance methods
     ///////////////////////////
-    
+
     /** get a List of links for 'accID', one per actual database for the
     *    given 'logicalDbKey'.
     * @param logicalDbKey database key for the logical database
@@ -262,67 +279,67 @@ public class ActualDBMap
     private List getLinksPrivate (Integer logicalDbKey, String accID,
         String fieldname)
     {
-	// List of links we will build to return
-	ArrayList links = new ArrayList();
+    // List of links we will build to return
+    ArrayList links = new ArrayList();
 
-	// List of actual database info for the given 'logicalDbKey'
-	List actualDbs = null;
+    // List of actual database info for the given 'logicalDbKey'
+    List actualDbs = null;
 
-	// number of items in 'actualDbs'
-	int adbCount = -1;
+    // number of items in 'actualDbs'
+    int adbCount = -1;
 
-	// current item being used in 'actualDbs'
-	HashMap actualDb = null;
+    // current item being used in 'actualDbs'
+    HashMap actualDb = null;
 
-	// URL stored in 'actualDb'
-	String url = null;
+    // URL stored in 'actualDb'
+    String url = null;
 
-	// template for building a link
-	String template = "<A HREF='%s'>%s</A>";
+    // template for building a link
+    String template = "<A HREF='%s'>%s</A>";
 
-	// what the clickable text should be
-	String linkText = null;
+    // what the clickable text should be
+    String linkText = null;
 
-	// We should always have a valid 'logicalDbKey', but we check just to
-	// make sure, and return an empty List otherwise.
+    // We should always have a valid 'logicalDbKey', but we check just to
+    // make sure, and return an empty List otherwise.
 
-	if (this.ldbKeyToAdb.containsKey(logicalDbKey))
-	{
-	    actualDbs = (List) this.ldbKeyToAdb.get(logicalDbKey);
-	    adbCount = actualDbs.size();
+    if (this.ldbKeyToAdb.containsKey(logicalDbKey))
+    {
+        actualDbs = (List) this.ldbKeyToAdb.get(logicalDbKey);
+        adbCount = actualDbs.size();
 
-	    // walk through each actual database for this logical database,
-	    // generating a link for each
+        // walk through each actual database for this logical database,
+        // generating a link for each
 
-	    for (int i = 0; i < adbCount; i++)
-	    {
-	        actualDb = (HashMap) actualDbs.get(i);
+        for (int i = 0; i < adbCount; i++)
+        {
+            actualDb = (HashMap) actualDbs.get(i);
 
-		// if we have a fieldname, then we lookup the value of that
-		// field to use as the link text.  if not, we just use the
-		// given accession ID.
+        // if we have a fieldname, then we lookup the value of that
+        // field to use as the link text.  if not, we just use the
+        // given accession ID.
 
-		if (fieldname != null)
-		{
-		    linkText = (String) actualDb.get(fieldname);
-		}
-		else
-		{
-		    linkText = accID;
-		}
+        if (fieldname != null)
+        {
+            linkText = (String) actualDb.get(fieldname);
+        }
+        else
+        {
+            linkText = accID;
+        }
 
-		url = (String) actualDb.get(ADB_URL);
+        url = (String) actualDb.get(ADB_URL);
 
-		if ((linkText != null) && (url != null))
-		{
-		    // to correctly form the link, we need to insert the accID
-		    url = url.replaceFirst ("@@@@", accID);
+        if ((linkText != null) && (url != null))
+        {
+            // to correctly form the link, we need to insert the accID
+            url = url.replaceFirst ("@@@@", accID);
 
-		    links.add (Sprintf.sprintf (template, url, linkText));
-		}
-	    }
-	} 
-	return links;
+            links.add (Sprintf.sprintf (template, url, linkText));
+        }
+        }
+    }
+    return links;
     }
 
     /* -------------------------------------------------------------------- */
@@ -339,23 +356,23 @@ public class ActualDBMap
     * @throws nothing
     */
     private void initialize (SQLDataManager sqlDM, String updateFile)
-	throws DBException, IOException, FileNotFoundException
+    throws DBException, IOException, FileNotFoundException
     {
-	// initialize the HashMaps used for storing data in this object
+    // initialize the HashMaps used for storing data in this object
 
         this.ldbNameToKey = new HashMap();
-	this.ldbKeyToAdb = new HashMap();
-	this.adbKeyToLdbKey = new HashMap();
+    this.ldbKeyToAdb = new HashMap();
+    this.adbKeyToLdbKey = new HashMap();
 
-	// first get info from the database, then optionally update it from
-	// the 'updateFile'
+    // first get info from the database, then optionally update it from
+    // the 'updateFile'
 
-	this.getDbInfo(sqlDM);
-	if (updateFile != null)
-	{
-	    this.getFileInfo(updateFile);
-	}
-	return;
+    this.getDbInfo(sqlDM);
+    if (updateFile != null)
+    {
+        this.getFileInfo(updateFile);
+    }
+    return;
     }
 
     /* -------------------------------------------------------------------- */
@@ -368,90 +385,90 @@ public class ActualDBMap
     * @throws nothing
     */
     private void getDbInfo (SQLDataManager sqlDM)
-	throws DBException
+    throws DBException
     {
-        ResultsNavigator nav = null;	// set of results from query
-	RowReference rr = null;		// one row in 'nav'
-	int counter = 0;		// counts rows processed so far
+        ResultsNavigator nav = null;    // set of results from query
+    RowReference rr = null;     // one row in 'nav'
+    int counter = 0;        // counts rows processed so far
 
-	String[] queries = new String[] {
-			MSM_LDB_ADB_INFO, OTHER_LDB_ADB_INFO };
+    String[] queries = new String[] {
+            MSM_LDB_ADB_INFO, OTHER_LDB_ADB_INFO };
 
-	// retrieve the data from the database
+    // retrieve the data from the database
 
-	//nav = sqlDM.executeQuery (MSM_LDB_ADB_INFO);
-	for (int i = 0; i < queries.length; i++)
-	{
-	    nav = sqlDM.executeQuery (queries[i]);
+    //nav = sqlDM.executeQuery (MSM_LDB_ADB_INFO);
+    for (int i = 0; i < queries.length; i++)
+    {
+        nav = sqlDM.executeQuery (queries[i]);
 
-	    // if we got at least one row, then we can go ahead and process
-	    // them
+        // if we got at least one row, then we can go ahead and process
+        // them
 
-	    if (nav.next())
-	    {
-	        rr = (RowReference) nav.getCurrent();
+        if (nav.next())
+        {
+            rr = (RowReference) nav.getCurrent();
 
-	        String ldbName = null;	// name of logical db for current row
-	        Integer ldbKey = null;	// key of logical db for current row
-	        Integer adbKey = null;	// key of actual db for current row
-	        HashMap adbInfo = null;	// table of info for one actual db
+            String ldbName = null;  // name of logical db for current row
+            Integer ldbKey = null;  // key of logical db for current row
+            Integer adbKey = null;  // key of actual db for current row
+            HashMap adbInfo = null; // table of info for one actual db
 
-	        ArrayList adbList = null;	// list of 'adbInfo' objects
-	    					// ...for a single logical db
-	        do
-	        {
-		    // get attributes to be used multiple times, and increment
-		    // the counter of rows.
+            ArrayList adbList = null;   // list of 'adbInfo' objects
+                            // ...for a single logical db
+            do
+            {
+            // get attributes to be used multiple times, and increment
+            // the counter of rows.
 
-		    ldbKey = rr.getInt(1);
-		    ldbName = rr.getString(2);
-		    adbKey = rr.getInt(3);
-		    counter++;
+            ldbKey = rr.getInt(1);
+            ldbName = rr.getString(2);
+            adbKey = rr.getInt(3);
+            counter++;
 
-		    // keep mapping from each logical db name to its key
+            // keep mapping from each logical db name to its key
 
-		    if (!this.ldbNameToKey.containsKey (ldbName))
-		    {
-			this.ldbNameToKey.put (ldbName, ldbKey);
-		    }
+            if (!this.ldbNameToKey.containsKey (ldbName))
+            {
+            this.ldbNameToKey.put (ldbName, ldbKey);
+            }
 
-		    // keep mapping from each actual db key to its logical db
-		    // key
+            // keep mapping from each actual db key to its logical db
+            // key
 
-		    this.adbKeyToLdbKey.put (adbKey, ldbKey);
+            this.adbKeyToLdbKey.put (adbKey, ldbKey);
 
-		    // finally, create an entry for this row
+            // finally, create an entry for this row
 
-		    adbInfo = createActualDB (adbKey, rr.getString(4),
-		        rr.getString(4), new Integer(counter),
-			rr.getString(5) );
+            adbInfo = createActualDB (adbKey, rr.getString(4),
+                rr.getString(4), new Integer(counter),
+            rr.getString(5) );
 
-		    // if we've not already seen this logical database, then
-		    // we need to create a new list to store our 'adbInfo'
-		    // objects
+            // if we've not already seen this logical database, then
+            // we need to create a new list to store our 'adbInfo'
+            // objects
 
-		    if (!this.ldbKeyToAdb.containsKey(ldbKey))
-		    {
-		        adbList = new ArrayList();
-		        this.ldbKeyToAdb.put (ldbKey, adbList);
-		    }
-		    else
-		    {
-		        // otherwise, just get a reference to the existing
-			// List
+            if (!this.ldbKeyToAdb.containsKey(ldbKey))
+            {
+                adbList = new ArrayList();
+                this.ldbKeyToAdb.put (ldbKey, adbList);
+            }
+            else
+            {
+                // otherwise, just get a reference to the existing
+            // List
 
-		        adbList = (ArrayList) this.ldbKeyToAdb.get(ldbKey);
-		    }
- 
-		    addActualDB (adbList, adbInfo);	// and add this entry
+                adbList = (ArrayList) this.ldbKeyToAdb.get(ldbKey);
+            }
 
-	        } while (nav.next());		// process all remaining rows
+            addActualDB (adbList, adbInfo); // and add this entry
 
-	    }	// end of 'if' statement that checks for any results
+            } while (nav.next());       // process all remaining rows
 
-	    nav.close();
+        }   // end of 'if' statement that checks for any results
 
-	} // end of 'for' loop that iterates through queries
+        nav.close();
+
+    } // end of 'for' loop that iterates through queries
     }
 
     /* -------------------------------------------------------------------- */
@@ -468,208 +485,208 @@ public class ActualDBMap
     private void getFileInfo (String updateFile)
         throws IOException, FileNotFoundException
     {
-	// set of all updates from the given 'updateFile'
-	RcdFile entries = new RcdFile (updateFile, ENTRY_KEY);
+    // set of all updates from the given 'updateFile'
+    RcdFile entries = new RcdFile (updateFile, ENTRY_KEY);
 
-	// the update currently being processed
-	Rcd entry = null;
+    // the update currently being processed
+    Rcd entry = null;
 
-	// interates through all the given updates
-	Iterator it = entries.getRcds();
+    // interates through all the given updates
+    Iterator it = entries.getRcds();
 
-	// these three fields are required for all entries:
+    // these three fields are required for all entries:
 
-	String op = null;		// operation specified in this 'entry'
-	Integer actualDbKey = null;	// key of this entry's actual database
-	String entryKey = null;		// unique identifier for this entry
+    String op = null;       // operation specified in this 'entry'
+    Integer actualDbKey = null; // key of this entry's actual database
+    String entryKey = null;     // unique identifier for this entry
 
-	// these fields are optional, depending on the type of 'op':
+    // these fields are optional, depending on the type of 'op':
 
-	String logicalDbKeyStr = null;	// logical db key as a String
-	Integer logicalDbKey = null;	// logical db key as an Integer
-	String name = null;		// name of the actual database
-	String shortName = null;	// shorter name of the actual database
-	String orderStr = null;		// ordering value as a String
-	Integer order = null;		// ordering value as an Integer
-	String url = null;		// URL for the actual database
+    String logicalDbKeyStr = null;  // logical db key as a String
+    Integer logicalDbKey = null;    // logical db key as an Integer
+    String name = null;     // name of the actual database
+    String shortName = null;    // shorter name of the actual database
+    String orderStr = null;     // ordering value as a String
+    Integer order = null;       // ordering value as an Integer
+    String url = null;      // URL for the actual database
 
-	// these variables are used for processing, but are not part of an
-	// individual entry
+    // these variables are used for processing, but are not part of an
+    // individual entry
 
-	List actualDbs = null;		// list of actual dbs for this log.db
-	HashMap actualDb = null;	// actual database to be updated
-	int pos = -1;			// index into 'actualDbs'
-	boolean orderChanged = false;	// did ADB_ORDER in 'actualDb' change?
+    List actualDbs = null;      // list of actual dbs for this log.db
+    HashMap actualDb = null;    // actual database to be updated
+    int pos = -1;           // index into 'actualDbs'
+    boolean orderChanged = false;   // did ADB_ORDER in 'actualDb' change?
 
-	// step through all entries...
+    // step through all entries...
 
-	while (it.hasNext())
-	{
-	    entry = (Rcd) it.next();
+    while (it.hasNext())
+    {
+        entry = (Rcd) it.next();
 
-	    // use this 'entryKey' to help report error messages
-	    entryKey = entry.getString(ENTRY_KEY);
+        // use this 'entryKey' to help report error messages
+        entryKey = entry.getString(ENTRY_KEY);
 
-	    // for now, we just ignore 'entry' if it omits either of the
-	    // other required fields.  In reality, this should be an error.
+        // for now, we just ignore 'entry' if it omits either of the
+        // other required fields.  In reality, this should be an error.
 
-	    if (!entry.containsKey(OPERATION))
-	    {
-	        continue;
-	    }
-	    if (!entry.containsKey(ADB_KEY))
-	    {
-	        continue;
-	    }
+        if (!entry.containsKey(OPERATION))
+        {
+            continue;
+        }
+        if (!entry.containsKey(ADB_KEY))
+        {
+            continue;
+        }
 
-	    // these values are now guaranteed to exist, though valueOf()
-	    // could throw an exception
+        // these values are now guaranteed to exist, though valueOf()
+        // could throw an exception
 
-	    op = entry.getString(OPERATION);
-	    actualDbKey = Integer.valueOf(entry.getString(ADB_KEY));
+        op = entry.getString(OPERATION);
+        actualDbKey = Integer.valueOf(entry.getString(ADB_KEY));
 
-	    logicalDbKey = null;	// reset for this 'entry'
+        logicalDbKey = null;    // reset for this 'entry'
 
-	    // any or all of these four fields may be present in the 'entry'
-	    
-	    name = null;
-	    shortName = null;
-	    orderStr = null;
-	    url = null;
+        // any or all of these four fields may be present in the 'entry'
 
-	    if (entry.containsKey(ADB_NAME))
-	    {
-	        name = entry.getString(ADB_NAME);
-	    }
-	    if (entry.containsKey(ADB_SHORT_NAME))
-	    {
-	        shortName = entry.getString(ADB_SHORT_NAME);
-	    }
-	    if (entry.containsKey(ADB_ORDER))
-	    {
-	        orderStr = entry.getString(ADB_ORDER);
-	    }
-	    if (entry.containsKey(ADB_URL))
-	    {
-	        url = entry.getString(ADB_URL);
-	    }
+        name = null;
+        shortName = null;
+        orderStr = null;
+        url = null;
 
-	    // if we have an 'orderStr', then get its Integer value
+        if (entry.containsKey(ADB_NAME))
+        {
+            name = entry.getString(ADB_NAME);
+        }
+        if (entry.containsKey(ADB_SHORT_NAME))
+        {
+            shortName = entry.getString(ADB_SHORT_NAME);
+        }
+        if (entry.containsKey(ADB_ORDER))
+        {
+            orderStr = entry.getString(ADB_ORDER);
+        }
+        if (entry.containsKey(ADB_URL))
+        {
+            url = entry.getString(ADB_URL);
+        }
 
-	    if ((orderStr != null) && (orderStr.length() > 0))
-	    {
-	        order = Integer.valueOf(orderStr);
-	    }
-	    else
-	    {
-	        order = null;
-	    }
+        // if we have an 'orderStr', then get its Integer value
 
-	    // now we do the actual processing of the 'entry', based on its
-	    // specified type of operation...
+        if ((orderStr != null) && (orderStr.length() > 0))
+        {
+            order = Integer.valueOf(orderStr);
+        }
+        else
+        {
+            order = null;
+        }
 
-	    if ("remove".equals(op))	// remove the actual database?
-	    {
-		// find the logical database associated with the specified
-		// actual database.  If valid, remove the actual database
-		// from its List of associated ones.
-		
-	        logicalDbKey = (Integer) this.adbKeyToLdbKey.get(actualDbKey);
-		if (this.ldbKeyToAdb.containsKey(logicalDbKey))
-		{
-		    actualDbs = (List) this.ldbKeyToAdb.get(logicalDbKey);
-		    pos = findActualDB (actualDbs, actualDbKey);
-		    if (pos >= 0)
-		    {
-		        actualDbs.remove(pos);
-		    }
-		} 
-	    }	// operation is remove
+        // now we do the actual processing of the 'entry', based on its
+        // specified type of operation...
 
-	    else if ("modify".equals(op))	// modify actual database?
-	    {
-		// find the logical database associated with this actual
-		// database.  If valid, look up the actual database and
-		// update its contents.
+        if ("remove".equals(op))    // remove the actual database?
+        {
+        // find the logical database associated with the specified
+        // actual database.  If valid, remove the actual database
+        // from its List of associated ones.
 
-	        logicalDbKey = (Integer) this.adbKeyToLdbKey.get(actualDbKey);
-		if (this.ldbKeyToAdb.containsKey(logicalDbKey))
-		{
-		    actualDbs = (List) this.ldbKeyToAdb.get(logicalDbKey);
-		    pos = findActualDB (actualDbs, actualDbKey);
+            logicalDbKey = (Integer) this.adbKeyToLdbKey.get(actualDbKey);
+        if (this.ldbKeyToAdb.containsKey(logicalDbKey))
+        {
+            actualDbs = (List) this.ldbKeyToAdb.get(logicalDbKey);
+            pos = findActualDB (actualDbs, actualDbKey);
+            if (pos >= 0)
+            {
+                actualDbs.remove(pos);
+            }
+        }
+        }   // operation is remove
 
-		    if (pos >= 0)
-		    {
-		        actualDb = (HashMap) actualDbs.get(pos);
-			orderChanged = updateActualDB (actualDb, name,
-			    shortName, order, url);
+        else if ("modify".equals(op))   // modify actual database?
+        {
+        // find the logical database associated with this actual
+        // database.  If valid, look up the actual database and
+        // update its contents.
 
-			// if the ADB_ORDER attribute of the actual database
-			// changed, we remove it and re-add it to ensure that
-			// it is stored in the proper order
+            logicalDbKey = (Integer) this.adbKeyToLdbKey.get(actualDbKey);
+        if (this.ldbKeyToAdb.containsKey(logicalDbKey))
+        {
+            actualDbs = (List) this.ldbKeyToAdb.get(logicalDbKey);
+            pos = findActualDB (actualDbs, actualDbKey);
 
-			if (orderChanged)
-			{
-			    actualDbs.remove(pos);
-			    addActualDB (actualDbs, actualDb);
-			}
-		    }
-		}
-	    }	// operation is modify
-	    
-	    else if ("add".equals(op))		// add a new actual database
-	    {
-		// entries to be added must specify the logical database
-		// to which they should be added
+            if (pos >= 0)
+            {
+                actualDb = (HashMap) actualDbs.get(pos);
+            orderChanged = updateActualDB (actualDb, name,
+                shortName, order, url);
 
-	        logicalDbKeyStr = entry.getString(LDB_KEY);
-		if ((logicalDbKeyStr != null) && (logicalDbKeyStr.length() > 0))
-		{
-		    logicalDbKey = Integer.valueOf(logicalDbKeyStr);
+            // if the ADB_ORDER attribute of the actual database
+            // changed, we remove it and re-add it to ensure that
+            // it is stored in the proper order
 
-		    if (shortName == null)
-		    {
-		        shortName = name;
-		    }
+            if (orderChanged)
+            {
+                actualDbs.remove(pos);
+                addActualDB (actualDbs, actualDb);
+            }
+            }
+        }
+        }   // operation is modify
 
-		    if (order == null)
-		    {
-		        order = Integer.valueOf(entryKey);
-		    }
+        else if ("add".equals(op))      // add a new actual database
+        {
+        // entries to be added must specify the logical database
+        // to which they should be added
 
-		    if ((name == null) || (url == null))
-		    {
-			// this should really give an exception
-		        continue;
-		    }
+            logicalDbKeyStr = entry.getString(LDB_KEY);
+        if ((logicalDbKeyStr != null) && (logicalDbKeyStr.length() > 0))
+        {
+            logicalDbKey = Integer.valueOf(logicalDbKeyStr);
 
-	            actualDb = createActualDB (actualDbKey, name, shortName,
-		        order, url);
-		}
+            if (shortName == null)
+            {
+                shortName = name;
+            }
 
-		// if this logical database has no other active entries, then
-		// we must create a new List.
+            if (order == null)
+            {
+                order = Integer.valueOf(entryKey);
+            }
 
-		if (!this.ldbKeyToAdb.containsKey(logicalDbKey))
-		{
-		    actualDbs = new ArrayList();
-		    this.ldbKeyToAdb.put (logicalDbKey, actualDbs);
-		}
-		else	// otherwise, retrieve the List for this logical db
-		{
-		    actualDbs = (ArrayList) this.ldbKeyToAdb.get(
-		        logicalDbKey);
-		}
+            if ((name == null) || (url == null))
+            {
+            // this should really give an exception
+                continue;
+            }
 
-		addActualDB (actualDbs, actualDb);
+                actualDb = createActualDB (actualDbKey, name, shortName,
+                order, url);
+        }
 
-	    }	// operation is add
+        // if this logical database has no other active entries, then
+        // we must create a new List.
 
-	    else
-	    {
-	    	// should give an exception here, for an invalid operation
-	    }
-	}
+        if (!this.ldbKeyToAdb.containsKey(logicalDbKey))
+        {
+            actualDbs = new ArrayList();
+            this.ldbKeyToAdb.put (logicalDbKey, actualDbs);
+        }
+        else    // otherwise, retrieve the List for this logical db
+        {
+            actualDbs = (ArrayList) this.ldbKeyToAdb.get(
+                logicalDbKey);
+        }
+
+        addActualDB (actualDbs, actualDb);
+
+        }   // operation is add
+
+        else
+        {
+            // should give an exception here, for an invalid operation
+        }
+    }
 
         return;
     }
@@ -692,24 +709,24 @@ public class ActualDBMap
     */
     private static int findActualDB (List actualDbs, Integer actualDbKey)
     {
-        HashMap actualDb = null;		// actual db being examined
-	int listLength = actualDbs.size();	// length of 'actualDbs'
-	Integer thisDbKey = null;		// actual db key in 'actualDb'
+        HashMap actualDb = null;        // actual db being examined
+    int listLength = actualDbs.size();  // length of 'actualDbs'
+    Integer thisDbKey = null;       // actual db key in 'actualDb'
 
-	// walk through the list until we find the matching actual database
-	// entry.  If we don't find it, then we return -1.
+    // walk through the list until we find the matching actual database
+    // entry.  If we don't find it, then we return -1.
 
-	for (int i = 0; i < listLength; i++)
-	{
-	    actualDb = (HashMap) actualDbs.get(i);
-	    thisDbKey = (Integer) actualDb.get(ADB_KEY);
+    for (int i = 0; i < listLength; i++)
+    {
+        actualDb = (HashMap) actualDbs.get(i);
+        thisDbKey = (Integer) actualDb.get(ADB_KEY);
 
-	    if (thisDbKey.equals(actualDbKey))
-	    {
-	        return i;
-	    }
-	}
-	return -1;
+        if (thisDbKey.equals(actualDbKey))
+        {
+            return i;
+        }
+    }
+    return -1;
     }
 
     /* -------------------------------------------------------------------- */
@@ -725,43 +742,43 @@ public class ActualDBMap
     */
     private static void addActualDB (List actualDbs, HashMap actualDb)
     {
-	boolean added = false;			// did we add 'actualDb' yet?
-        int listLength = actualDbs.size();	// # of items in 'actualDbs'
-	HashMap current = null;			// item in 'actualDbs'
-	Integer currentOrder = null;		// ADB_ORDER within 'current'
+    boolean added = false;          // did we add 'actualDb' yet?
+        int listLength = actualDbs.size();  // # of items in 'actualDbs'
+    HashMap current = null;         // item in 'actualDbs'
+    Integer currentOrder = null;        // ADB_ORDER within 'current'
 
-	// ADB_ORDER of the element we are inserting
-	Integer actualDbOrder = (Integer) actualDb.get(ADB_ORDER);
+    // ADB_ORDER of the element we are inserting
+    Integer actualDbOrder = (Integer) actualDb.get(ADB_ORDER);
 
-	for (int i = 0; i < listLength; i++)
-	{
-	    // as we walk the list, we look for the first element with an
-	    // ADB_ORDER that comes after the ADB_ORDER of the element we want
-	    // to insert.  If we find it, then we insert the new element
-	    // before it.
+    for (int i = 0; i < listLength; i++)
+    {
+        // as we walk the list, we look for the first element with an
+        // ADB_ORDER that comes after the ADB_ORDER of the element we want
+        // to insert.  If we find it, then we insert the new element
+        // before it.
 
-	    current = (HashMap) actualDbs.get(i);
-	    currentOrder = (Integer) current.get(ADB_ORDER);
+        current = (HashMap) actualDbs.get(i);
+        currentOrder = (Integer) current.get(ADB_ORDER);
 
-	    if (!added && (currentOrder.compareTo(actualDbOrder) > 0))
-	    {
-	        actualDbs.add (i, actualDb);
-		added = true;
-		break;
-	    }
-	}
-	
-	if (!added)	// if all elements preceded this one, add to the end
-	{
-	    actualDbs.add (actualDb);
-	}
-	return;
+        if (!added && (currentOrder.compareTo(actualDbOrder) > 0))
+        {
+            actualDbs.add (i, actualDb);
+        added = true;
+        break;
+        }
+    }
+
+    if (!added) // if all elements preceded this one, add to the end
+    {
+        actualDbs.add (actualDb);
+    }
+    return;
     }
 
     /* -------------------------------------------------------------------- */
 
     /** create a HashMap representing the actual database described in the
-    *	parameters.
+    *   parameters.
     * @param actualDbKey unique key for the actual database
     * @param name the name of the actual database
     * @param shortName a shorter name for the actual database
@@ -775,17 +792,17 @@ public class ActualDBMap
     * @throws nothing
     */
     private static HashMap createActualDB (Integer actualDbKey,
-    	String name, String shortName, Integer order, String url)
+        String name, String shortName, Integer order, String url)
     {
         HashMap actualDB = new HashMap();
 
-	actualDB.put (ADB_KEY, actualDbKey);
-	actualDB.put (ADB_NAME, name);
-	actualDB.put (ADB_SHORT_NAME, shortName);
-	actualDB.put (ADB_ORDER, order);
-	actualDB.put (ADB_URL, url);
+    actualDB.put (ADB_KEY, actualDbKey);
+    actualDB.put (ADB_NAME, name);
+    actualDB.put (ADB_SHORT_NAME, shortName);
+    actualDB.put (ADB_ORDER, order);
+    actualDB.put (ADB_URL, url);
 
-	return actualDB;
+    return actualDB;
     }
 
     /* -------------------------------------------------------------------- */
@@ -811,34 +828,63 @@ public class ActualDBMap
     *    changed.
     */
     private static boolean updateActualDB (HashMap actualDB, String name,
-    	String shortName, Integer order, String url)
+        String shortName, Integer order, String url)
     {
-        boolean orderChanged = false;	// did the ordering attribute change?
+        boolean orderChanged = false;   // did the ordering attribute change?
 
         if ((name != null) && (name.length() > 0))
-	{
-	    actualDB.put (ADB_NAME, name);
-	}
+    {
+        actualDB.put (ADB_NAME, name);
+    }
 
         if ((shortName != null) && (shortName.length() > 0))
-	{
-	    actualDB.put (ADB_SHORT_NAME, shortName);
-	}
+    {
+        actualDB.put (ADB_SHORT_NAME, shortName);
+    }
 
         if (order != null)
-	{
-	    actualDB.put (ADB_ORDER, order);
-	    orderChanged = true;
-	}
+    {
+        actualDB.put (ADB_ORDER, order);
+        orderChanged = true;
+    }
 
         if ((url != null) && (url.length() > 0))
-	{
-	    actualDB.put (ADB_URL, url);
-	}
-
-	return orderChanged;
+    {
+        actualDB.put (ADB_URL, url);
     }
-    
+
+    return orderChanged;
+    }
+
+    /* -------------------------------------------------------------------- */
+
+    /** get a List of URLs, one per actual database for the
+    *    given 'logicalDbKey'.
+    * @param logicalDbKey database key for the logical database
+    * @return List of Strings; each String is URL
+    * @assumes nothing
+    * @effects nothing
+    * @throws nothing
+    * @notes will return an empty List if 'logicalDbKey' is not known
+    */
+   private ArrayList getActualDBUrlPrivate(Integer logicalDbKey) {
+
+        ArrayList urls = new ArrayList();
+        List actualDbs;
+        HashMap actualDb;
+
+        if (this.ldbKeyToAdb.containsKey(logicalDbKey)) {
+            actualDbs = (List) this.ldbKeyToAdb.get(logicalDbKey);
+
+            for(int i=0;i<actualDbs.size();i++) {
+                actualDb = (HashMap) actualDbs.get(0);
+                urls.add((String) actualDb.get(ADB_URL));
+            }
+
+        }
+        return urls;
+    }
+
     /* -------------------------------------------------------------------- */
 
     /////////////////////
@@ -851,13 +897,13 @@ public class ActualDBMap
     // And, we have a mapping from each logical database key to its List
     // of actual databases.
 
-    private HashMap ldbNameToKey = null;	// maps ldb name to ldb key
+    private HashMap ldbNameToKey = null;    // maps ldb name to ldb key
 
-    private HashMap adbKeyToLdbKey = null;	// maps Integer adbKey to its
-    						// ...Integer ldbKey
-    
-    private HashMap ldbKeyToAdb = null;		// maps Integer ldbKey to
-    						// ...List of adb data
+    private HashMap adbKeyToLdbKey = null;  // maps Integer adbKey to its
+                            // ...Integer ldbKey
+
+    private HashMap ldbKeyToAdb = null;     // maps Integer ldbKey to
+                            // ...List of adb data
 
     /* -------------------------------------------------------------------- */
 
@@ -871,53 +917,56 @@ public class ActualDBMap
     // only returns actual databases associated with sequence IDs, as those
     // are the only ones in the MGI Set named 'Actual DB'.
 
-    private static String MSM_LDB_ADB_INFO = 
+    private static String MSM_LDB_ADB_INFO =
         "SELECT ldb._LogicalDB_key, ldb.name, adb._ActualDB_key, adb.name"
-	+	", adb.url, msm.sequenceNum"
-	+ " FROM ACC_LogicalDB ldb, ACC_ActualDB adb"
-	+	", MGI_Set ms, MGI_SetMember msm"
-	+ " WHERE ldb._LogicalDB_key = adb._LogicalDB_key"
-	+	" AND adb._ActualDB_key = msm._Object_key"
-	+	" AND msm._Set_key = ms._Set_key"
-	+	" AND ms.name = 'Actual DB'"
-	+ " ORDER BY msm.sequenceNum, adb.name";
+    +   ", adb.url, msm.sequenceNum"
+    + " FROM ACC_LogicalDB ldb, ACC_ActualDB adb"
+    +   ", MGI_Set ms, MGI_SetMember msm"
+    + " WHERE ldb._LogicalDB_key = adb._LogicalDB_key"
+    +   " AND adb._ActualDB_key = msm._Object_key"
+    +   " AND msm._Set_key = ms._Set_key"
+    +   " AND ms.name = 'Actual DB'"
+    + " ORDER BY msm.sequenceNum, adb.name";
 
     // SQL statement to retrieve logical and actual database information from
     // the database.  This includes only those actual databases not in the
     // MGI Set named 'Actual DB' -- thus, including all non-sequence actual
     // databases.  We simply order these ones by name.
 
-    private static String OTHER_LDB_ADB_INFO = 
-	"SELECT ldb._LogicalDB_key, ldb.name, adb._ActualDB_key, adb.name"
-	+	", adb.url"
-	+ " FROM ACC_LogicalDB ldb, ACC_ActualDB adb"
-	+ " WHERE ldb._LogicalDB_key = adb._LogicalDB_key"
-	+	" AND adb._ActualDB_key not in ("
-	+		" SELECT msm._Object_key"
-	+		" FROM MGI_Set ms, MGI_SetMember msm"
-	+		" WHERE ms._Set_key = msm._Set_key"
-	+			" AND ms.name = 'Actual DB')"
-	+		" ORDER BY adb.name";
+    private static String OTHER_LDB_ADB_INFO =
+    "SELECT ldb._LogicalDB_key, ldb.name, adb._ActualDB_key, adb.name"
+    +   ", adb.url"
+    + " FROM ACC_LogicalDB ldb, ACC_ActualDB adb"
+    + " WHERE ldb._LogicalDB_key = adb._LogicalDB_key"
+    +   " AND adb._ActualDB_key not in ("
+    +       " SELECT msm._Object_key"
+    +       " FROM MGI_Set ms, MGI_SetMember msm"
+    +       " WHERE ms._Set_key = msm._Set_key"
+    +           " AND ms.name = 'Actual DB')"
+    +       " ORDER BY adb.name";
 
     // These two values identify attributes required in each Rcd in the
     // update file.
 
-    private static String ENTRY_KEY = "entry";		// unique key for Rcd
-    private static String OPERATION = "operation";	// type of update
+    private static String ENTRY_KEY = "entry";      // unique key for Rcd
+    private static String OPERATION = "operation";  // type of update
 
     // The final six String values identify attributes in each actual db's
     // HashMap.  (These are the keys.)  They also are used as attributes in
     // the update file's Rcds.
 
-    private static String LDB_KEY = "_LogicalDB_key";	// logical db key
-    private static String ADB_KEY = "_ActualDB_key";	// actual db key
-    private static String ADB_NAME = "name";		// actual db name
-    private static String ADB_SHORT_NAME = "shortName";	// shorter adb name
-    private static String ADB_URL = "url";		// url for actual db
-    private static String ADB_ORDER = "order";		// sort order for adb
+    private static String LDB_KEY = "_LogicalDB_key";   // logical db key
+    private static String ADB_KEY = "_ActualDB_key";    // actual db key
+    private static String ADB_NAME = "name";        // actual db name
+    private static String ADB_SHORT_NAME = "shortName"; // shorter adb name
+    private static String ADB_URL = "url";      // url for actual db
+    private static String ADB_ORDER = "order";      // sort order for adb
 }
 
 /*
 * $Log$
+* Revision 1.1  2004/04/09 14:34:09  jsb
+* initial addition
+*
 * $Copyright$
 */
