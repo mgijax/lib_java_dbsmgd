@@ -20,11 +20,20 @@ public class MGITypeConstants
     // Constants
     //
     public static final int REF = 1;
+    public static final int MARKER = 2;
     public static final int CLONE = 3;
+    public static final int SOURCE = 5;
+    public static final int STRAIN = 10;
+    public static final int VOCABULARY = 13;
+    public static final int ORGANISM = 20;
+    public static final int TISSUE = 24;
 }
 
 
 //  $Log$
+//  Revision 1.2  2003/09/25 17:36:02  mbw
+//  changed MGI to REF
+//
 //  Revision 1.1  2003/09/18 14:25:18  dbm
 //  Initial version
 //
