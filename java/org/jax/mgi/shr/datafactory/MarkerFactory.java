@@ -324,7 +324,7 @@ public class MarkerFactory
 	// get data for individual sections.  For the sake of efficiency, we
 	// make sure to always return the 'section' to the pool of available
 	// DTOs once we are done with it.
-	
+
 	section = this.getBasicInfo (key);
 	marker.merge (section);
 	DTO.putDTO (section);
@@ -512,7 +512,7 @@ public class MarkerFactory
 	// get data for individual sections.  For the sake of efficiency, we
 	// make sure to always return the 'section' to the pool of available
 	// DTOs once we are done with it.
-	
+
 	section = this.getBasicInfo (key);
 	marker.merge (section);
 	DTO.putDTO (section);
@@ -565,7 +565,7 @@ public class MarkerFactory
 	// get data for individual sections.  For the sake of efficiency, we
 	// make sure to always return the 'section' to the pool of available
 	// DTOs once we are done with it.
-	
+
 	section = this.getBasicInfo (key);
 	marker.merge (section);
 	DTO.putDTO (section);
@@ -618,7 +618,7 @@ public class MarkerFactory
 	// get data for individual sections.  For the sake of efficiency, we
 	// make sure to always return the 'section' to the pool of available
 	// DTOs once we are done with it.
-	
+
 	section = this.getBasicInfo (key);
 	marker.merge (section);
 	DTO.putDTO (section);
@@ -647,7 +647,7 @@ public class MarkerFactory
     * @effects queries the database
     * @throws DBException if there are problems querying the database or
     *    stepping through the results.
-    * @notes The following constants from DTOConstants are included as 
+    * @notes The following constants from DTOConstants are included as
     *    fieldnames in the returned DTO:
     *    <OL>
     *    <LI> MarkerKey : Integer
@@ -680,7 +680,7 @@ public class MarkerFactory
 	{
 	    return marker;
 	}
-	
+
 	// otherwise collect the basic data fields
 
 	rr = (RowReference) nav.getCurrent();
@@ -779,13 +779,13 @@ public class MarkerFactory
 	DTO marker = DTO.getDTO();	// start with an empty DTO
 
         nav = this.sqlDM.executeQuery (Sprintf.sprintf (MAP_POSITION, key));
-	
+
 	if (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
 	    marker.set (DTOConstants.MapPosition, rr.getFloat(1) );
 	}
-	
+
 	nav.close();
         return marker;
     }
@@ -914,7 +914,7 @@ public class MarkerFactory
     * @effects queries the database
     * @throws DBException if there are problems querying the database or
     *    stepping through the results
-    * @notes 
+    * @notes
     *    This method should probably be moved into a MappingFactory which
     *    knows how to retrieve mapping data.  This method could become
     *    getMappingCountForMarker() or something similar.
@@ -1210,6 +1210,7 @@ public class MarkerFactory
 	{
 	    this.sqlDM.executeUpdate (GO_UPDATE_1);
 	    this.sqlDM.executeUpdate (GO_UPDATE_2);
+ 	    this.sqlDM.executeUpdate (GO_UPDATE_3);
 	}
 	nav = this.sqlDM.executeQuery (GO_SELECT);
 
@@ -1280,7 +1281,7 @@ public class MarkerFactory
 
 	// did we find an 'evidenceDTO' to match the current row?
 	boolean foundMatch;
-	
+
 	// 'evidence code' and 'inferred from' for the DTO being examined
 	String dtoEvidenceCode = null;
 	String dtoInferredFrom = null;
@@ -1944,7 +1945,7 @@ public class MarkerFactory
 	    Integer zero = new Integer(0);
 
 	    /* Each expression result is returned individually, and we want to
-	    * group them by tissue and by result type (expressed or not), to 
+	    * group them by tissue and by result type (expressed or not), to
 	    * get counts for each grouping.  To do this, we rely on the proper
 	    * sorting of the query results, and we remember the previous
 	    * structure key.
@@ -2020,7 +2021,7 @@ public class MarkerFactory
 	            dto.set (DTOConstants.NegativeExpressionCount,
 		        new Integer(notExpressedCount));
 		}
-	    
+
 		// we only add the item to the result DTO if there were any
 		// tissues with expression data
 
@@ -2158,7 +2159,7 @@ public class MarkerFactory
 	int prevLdbKey = -1;		// key of previous logical database
 	int ldbKey = -1;		// key of this logical database
 	String ldbName = null;		// name of this logical database
-	
+
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (ACC_IDS, key));
 	if (nav.next())
 	{
@@ -2763,7 +2764,7 @@ public class MarkerFactory
 
     /** get information about the actual databases associated with the given
     *    logical database.
-    * @param logicalDBkey primary key in ACC_LogicalDB, uniquely identifying 
+    * @param logicalDBkey primary key in ACC_LogicalDB, uniquely identifying
     *    the desired logical database
     * @return List of DTO objects.  Each DTO defines two keys:
     *    DTOConstants.ActualDB and DTOConstants.URL, each of which refer to a
@@ -2784,7 +2785,7 @@ public class MarkerFactory
 
 	// list of DTOs, each defining one actual database for this logical db
 	List actualDBs = (List) cache.get(cacheKey);
-	
+
 	// if we can get the data from cache, then go ahead and return it
 	if (actualDBs != null)
 	{
@@ -2824,7 +2825,7 @@ public class MarkerFactory
 
 	nav.close();
 
-	this.timeStamp ("Retrieved actualDB info for logicalDBkey=" + 
+	this.timeStamp ("Retrieved actualDB info for logicalDBkey=" +
 	    logicalDBkey);
 
 	return actualDBs;
@@ -2861,7 +2862,7 @@ public class MarkerFactory
 	}
 
         // otherwise, 's' and 't' are both non-null, so we use both
-	
+
 	return s + t;
     }
 
@@ -2925,7 +2926,7 @@ public class MarkerFactory
 
     // get all accession IDs associated with a marker
     // fill in:  marker key (int)
-    private static final String ACC_IDS = 
+    private static final String ACC_IDS =
 		"select a.accID, ldb.name, adb.url, ldb._LogicalDB_key "
 		+ "from ACC_Accession a, ACC_LogicalDB ldb, ACC_ActualDB adb "
 		+ "where a._LogicalDB_key = ldb._LogicalDB_key "
@@ -3015,7 +3016,7 @@ public class MarkerFactory
 
     // get a count of cDNA sources
     // fill in:  marker key (int)
-    private static final String CDNA_COUNT = 
+    private static final String CDNA_COUNT =
 		"select count (distinct pp._Probe_key)"
 		+ " from PRB_Probe pp,"
 		+ "    PRB_Source ps,"
@@ -3138,6 +3139,15 @@ public class MarkerFactory
 		+ "	AND dn._DAG_key = dd._DAG_key "
 		+ "	AND dd._MGIType_key = " + DBConstants.MGIType_VocTerm;
 
+    private static final String GO_UPDATE_3 =
+        "delete #GO_Annotations "
+        + "from #GO_Annotations ga1, #GO_Annotations ga2 "
+        + "where ga1.ontology = ga2.ontology "
+        + "and (ga1.term = 'molecular_function unknown' "
+        + "or ga1.term = 'cellular_component unknown' "
+        + "or ga1.term = 'biological_process unknown') "
+        + "and ga2.term != ga1.term";
+
     // retrieve the GO data from the temp table (from GO_CREATE_TEMP).
     // fill in: nothing
     private static final String GO_SELECT =
@@ -3163,7 +3173,7 @@ public class MarkerFactory
 	+ "WHERE ga._Annot_key = ve._Annot_key "
 		+ " AND ve._EvidenceTerm_key = vt._Term_key "
 	+ "ORDER BY vt.abbreviation, ve.inferredFrom";
-	
+
     // clean up by deleting the temp table (from GO_CREATE_TEMP).
     // fill in: nothing
     private static final String GO_CLEANUP =
@@ -3197,7 +3207,7 @@ public class MarkerFactory
 		+ "from ACC_Accession "
 		+ "where _MGIType_key = " + DBConstants.MGIType_Marker + " "
 		+    "and accID = '%s'";
-    
+
     // find the marker key associated with the given mouse symbol.
     // fill in: marker symbol (String)
     private static final String KEY_FOR_SYMBOL =
@@ -3205,7 +3215,7 @@ public class MarkerFactory
 		+ "from MRK_Marker "
 		+ "where _Organism_key = " + DBConstants.Species_Mouse + " "
 		+    "and symbol = '%s'";
-    
+
     // get MGI map position (in centimorgans)
     // fill in: marker key (int)
     private static final String MAP_POSITION =
@@ -3213,7 +3223,7 @@ public class MarkerFactory
 		+ "from MRK_Offset "
 		+ "where _Marker_key = %d "
 		+    "and source = " + DBConstants.OffsetSource_MGI;
-	
+
     // determine how many mapping experiments are associated with the marker
     // fill in: marker key (int)
     private static final String MAPPING_COUNT =
@@ -3223,7 +3233,7 @@ public class MarkerFactory
 
     // get all MGI accession IDs associated with a marker
     // fill in:  marker key (int)
-    private static final String MGI_IDS = 
+    private static final String MGI_IDS =
 		"select a.accID, a.preferred "
 		+ "from ACC_Accession a "
 		+ "where a._LogicalDB_key = " + DBConstants.LogicalDB_MGI
@@ -3240,7 +3250,7 @@ public class MarkerFactory
 
     // get the marker's nomenclature history
     // fill in: marker key (int)
-    private static String NOMEN_HISTORY = 
+    private static String NOMEN_HISTORY =
 		"SELECT mh.sequenceNum"
 		+	", oldName = mh.name"
 		+	", oldSymbol = mm.symbol"
@@ -3318,7 +3328,7 @@ public class MarkerFactory
 
     // get the primary MGI ID for a given marker.
     // fill in:  marker key (int)
-    protected static final String PRIMARY_MGI_ID = 
+    protected static final String PRIMARY_MGI_ID =
     		"select accID"
 		+ " from ACC_Accession"
 		+ " where _Object_key = %d"
@@ -3327,7 +3337,7 @@ public class MarkerFactory
 		+    " and private = 0"
 		+    " and _LogicalDB_key = " + DBConstants.LogicalDB_MGI;
 
-    // find how many probes are associatd with this marker, by type 
+    // find how many probes are associatd with this marker, by type
     // fill in: marker key (int)
     private static final String PROBE_COUNTS =
 		"select vt.term, count (distinct pp._Probe_key) "
@@ -3371,14 +3381,14 @@ public class MarkerFactory
 
     // get the _Set_key values for references which are excluded from display
     // via the "All" link for references
-    private static final String REFERENCE_NOT_ALL = 
+    private static final String REFERENCE_NOT_ALL =
         "SELECT _Set_key, name "
 	+ " FROM MGI_Set "
 	+ " WHERE name LIKE '%References'";
 
     // get all sequence IDs associated with a marker (now unused - can delete)
     // fill in:  marker key (int)
-    private static final String SEQ_IDS = 
+    private static final String SEQ_IDS =
 		"select a.accID, ldb.name, adb.url, ldb._LogicalDB_key "
 		+ "from ACC_Accession a, ACC_LogicalDB ldb, ACC_ActualDB adb "
 		+ "where a._LogicalDB_key = ldb._LogicalDB_key "
@@ -3441,6 +3451,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.11  2004/08/03 10:47:53  jsb
+* Adjusted count for 'All' references to exclude certain sets, TR4920
+*
 * Revision 1.10  2004/06/25 18:01:23  jsb
 * Updated ordering of ALLELE_COUNTS query, per TR5750
 *
