@@ -28,7 +28,7 @@ import org.jax.mgi.shr.config.ConfigException;
  * @author not attributable
  * @version 1.0
  */
-public abstract class Translator extends CachedLookup
+public class Translator extends CachedLookup
 {
 	/**
 	 * the table that stores the term
