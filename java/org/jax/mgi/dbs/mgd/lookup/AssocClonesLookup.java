@@ -88,7 +88,6 @@ public class AssocClonesLookup extends CachedLookup
      * Get the query to fully initialize the cache.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return The query to fully initialize the cache.
      */
 
@@ -136,7 +135,6 @@ public class AssocClonesLookup extends CachedLookup
      * Get the query to partially initialize the cache.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return The query to partially initialize the cache.
      */
 
@@ -151,7 +149,6 @@ public class AssocClonesLookup extends CachedLookup
      * Get the query to add an object to the cache.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return The add object query
      */
 
@@ -211,7 +208,6 @@ public class AssocClonesLookup extends CachedLookup
      * MultiRowInterpreter and cast it appropriately.
      * @assumes nothing
      * @effects nothing
-     * @param None
      * @return The MultiRowInterpreter object.
      */
 
