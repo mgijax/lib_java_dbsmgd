@@ -117,7 +117,6 @@ public class SequenceFactory extends Factory {
         RowReference rr = null;     // one row in 'nav'
         int key = -1;
 
-        System.out.println(Sprintf.sprintf(SEQ_KEY, accID));
         nav = this.sqlDM.executeQuery(Sprintf.sprintf(SEQ_KEY, accID));
         if(nav.next()) {
             rr = (RowReference)nav.getCurrent();
@@ -168,28 +167,34 @@ public class SequenceFactory extends Factory {
         section = getBasicInfo(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned basic info");
 
         //The chromosome of the associated markers.  Even on a BAC, there
         //should be at most one.
         section = getChromosome(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned chromosome info");
+
 
         //All of the markers associated with this sequence
         section = getMarkerInfo(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned marker info");
 
         //all the references associated with this sequence
         section = getReferenceInfo(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned reference info");
 
         //all the probes associated with this sequence
         section = getProbes(key);
         sequence.merge (section);
         DTO.putDTO (section);
-
+        this.timeStamp("returned probe info");
+        System.out.println(this.timer.toString());
         return sequence;
     }
 
@@ -211,38 +216,47 @@ public class SequenceFactory extends Factory {
 
         section.set(DTOConstants.SequenceKey,new Integer(key).toString());
         sequence.merge(section);
+        this.timeStamp("stored sequence key info");
 
         section = getACCIDs(key);
         sequence.merge(section);
         DTO.putDTO(section);
+        this.timeStamp("returned accIDs info");
 
         section = getSequenceVersion(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned version");
 
         section = getSequenceDescription(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned description");
 
         section = getSequenceProvider(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned provider");
 
         section = getSequenceStatus(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned status");
 
         section = getSequenceType(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned type");
 
         section = getSequenceLength(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned length");
 
         section = getSequenceSource(key);
         sequence.merge (section);
         DTO.putDTO (section);
+        this.timeStamp("returned source");
 
         return sequence;
     }
@@ -284,12 +298,10 @@ public class SequenceFactory extends Factory {
         HashMap ids = new HashMap();
 
 
-        System.out.println(Sprintf.sprintf(ACC_IDS, key));
         nav = this.sqlDM.executeQuery(
                         Sprintf.sprintf(ACC_IDS, key));
 
         while(nav.next()) {
-            System.out.println("In the loop");
             rr = (RowReference) nav.getCurrent();
             id = rr.getString(1);
             pref = rr.getInt(2);
@@ -541,14 +553,23 @@ public class SequenceFactory extends Factory {
         String age, cellLine, gender, library, organism, strain, tissue;
         String NOT_SPECIFIED = "Not Specified";
 
-        this.sqlDM.execute(Sprintf.sprintf(SEQ_SOURCE_TABLE, key));
+        this.sqlDM.execute(Sprintf.sprintf(SEQ_SOURCE_TABLE2, key));
+        this.timeStamp("resolved source loaded into table");
         this.sqlDM.execute(RAW_LIBRARY);
+        this.timeStamp("raw library");
         this.sqlDM.execute(RAW_ORGANISM);
+        this.timeStamp("raw organism");
         this.sqlDM.execute(RAW_STRAIN);
+        this.timeStamp("raw strain");
         this.sqlDM.execute(RAW_TISSUE);
+        this.timeStamp("raw tissue");
         this.sqlDM.execute(RAW_AGE);
+        this.timeStamp("raw age");
         this.sqlDM.execute(RAW_SEX);
+        this.timeStamp("raw sex");
         this.sqlDM.execute(RAW_CELLLINE);
+        this.timeStamp("raw cell line");
+        this.timeStamp("gathered raw source");
         nav = this.sqlDM.executeQuery(SEQ_SOURCE);
         if (nav.next()) {
             rr = (RowReference) nav.getCurrent();
@@ -921,6 +942,28 @@ public class SequenceFactory extends Factory {
             "from PRB_Source_View psv, SEQ_Source_Assoc ssa\n"+
             "where ssa._Sequence_key = %d\n"+
             "and ssa._Source_key = psv._Source_key";
+
+    private static final String SEQ_SOURCE_TABLE2 =
+             "select _Sequence_key,\n"+
+            "    library = ps.name,\n"+
+            "    organism = vtO.term,\n"+
+            "    strain = pstr.strain,\n"+
+            "    tissue = pt.tissue,\n"+
+            "    age = ps.age,\n"+
+            "    sex = vtG.term,\n"+
+            "    cellLine = vtC.term\n"+
+            "into #seqSource\n"+
+            "from PRB_Source ps, SEQ_Source_Assoc ssa,\n"+
+            "VOC_Term vtO, PRB_Strain pstr, PRB_Tissue pt, \n"+
+            "VOC_Term vtG, VOC_Term vtC\n"+
+            "where ssa._Sequence_key = %d\n"+
+            "and ssa._Source_key = ps._Source_key\n"+
+            "and ps._Organism_key = vtO._Term_key\n"+
+            "and ps._Strain_key = pstr._Strain_key\n"+
+            "and ps._Tissue_key = pt._Tissue_key\n"+
+            "and ps._Gender_key = vtG._Term_key\n"+
+            "and ps._CellLine_key = vtC._Term_key\n";
+
 
     // loads #seqSource with the raw library name if there was no
     // resolved value
