@@ -38,8 +38,8 @@ public class AccessionLookup extends FullCachedLookup {
      * Constructs an AccessionLookup object.
      * @assumes Nothing
      * @effects Nothing
-     * @param logicalDB the logical db of the accession id to look up
-     * @param mgiType the MGI type of the object key to return
+     * @param logicalDBKey the logical db of the accession id to look up
+     * @param mgiTypeKey the MGI type of the object key to return
      * @param preferred true (1)if preferred accession ids
      * @throws CacheException
      * @throws ConfigException
@@ -58,7 +58,6 @@ public class AccessionLookup extends FullCachedLookup {
      * Get the query to fully initialize the cache.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return the query to fully initialize the cache
      * @throws Nothing
      */
@@ -79,7 +78,6 @@ public class AccessionLookup extends FullCachedLookup {
     * used for creating a new cache entry.
     * @assumes nothing
     * @effects nothing
-    * @param None
     * @return A RowDataInterpreter object
     * @throws Nothing
     */
@@ -102,7 +100,9 @@ public class AccessionLookup extends FullCachedLookup {
     * @effects Nothing
     * @param accid the accession id to look up.
     * @return The _object_key for that accession id
-    * @throws LookupException
+    * @throws DBException thrown if there is an error accessing the database
+    * @throws CacheException thrown if there is an error accessing the cache
+    * @throws KeyNotFoundException thrown if there is the key is not found
     */
     public Integer lookup (String accid)
         throws DBException, CacheException, KeyNotFoundException{

@@ -60,12 +60,14 @@ public class TissueKeyLookup extends FullCachedLookup
    * look up the primary key for a Tissue term in the PRB_Tissue table
    * @param term the term to look up
    * @return the key value
-   * @throws DBException thrown if there is an error accessing the database
-   * @throws TranslationException thrown if there is an error using the
-   * Translator
+   * @throws CacheException thrown if there is an error accessing the cache
    * @throws ConfigException thrown if there is an error accessing the
    * configuration
-   * @throws KeyNotFoundException thrown if the lookup did not find the value
+   * @throws DBException thrown if there is an error accessing the
+   * database
+   * @throws TranslationException thrown if there is an error accessing the
+   * translation tables
+   * @throws KeyNotFoundException thrown if the key is not found
    */
   public Integer lookup(String term) throws CacheException,
       DBException, TranslationException, ConfigException, KeyNotFoundException

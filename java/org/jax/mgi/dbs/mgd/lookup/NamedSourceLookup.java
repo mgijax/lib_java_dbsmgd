@@ -34,10 +34,11 @@ public class NamedSourceLookup extends FullCachedLookup
      * Constructs a NamedSourceLookup object.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
-     * @throws CacheException
-     * @throws ConfigException
-     * @throws DBException
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws ConfigException thrown if there is an error accessing the
+     * configuration
+     * @throws DBException thrown if there is an error accessing the
+     * database
      */
     public NamedSourceLookup()
        throws CacheException, ConfigException, DBException
@@ -64,7 +65,6 @@ public class NamedSourceLookup extends FullCachedLookup
      * Get the query to fully initialize the cache.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return The query to fully initialize the cache.
      */
     public String getFullInitQuery()
@@ -93,7 +93,6 @@ public class NamedSourceLookup extends FullCachedLookup
      * database row which is used for creating a new cache entry.
      * @assumes nothing
      * @effects nothing
-     * @param None
      * @return The RowDataInterpreter object.
      */
     public RowDataInterpreter getRowDataInterpreter()

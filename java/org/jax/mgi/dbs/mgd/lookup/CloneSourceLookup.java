@@ -60,10 +60,10 @@ public class CloneSourceLookup
      * Constructs a CloneSourceLookup object.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
-     * @throws CacheException
-     * @throws ConfigException
-     * @throws DBException
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws ConfigException thrown of there is an error accessing the
+     * configuration
+     * @throws DBException thrown if there is an error accessing the database
      */
     public CloneSourceLookup()
         throws CacheException, ConfigException, DBException
@@ -91,15 +91,23 @@ public class CloneSourceLookup
     }
 
     /**
-     * Finds a PRB_Source record for a given source name. If a Translator object
+     * Finds a PRB_Source record for a given source name. If a Translator
+     * object
      * has been set up, it will be used to attempt to resolve the source name
      * before doing a lookup.
      * @assumes Nothing
      * @effects Nothing
      * @param name The source name to look up.
      * @return A PRB_SourceDAO object that represents the PRB_Source record.
-     * @throws LookupException
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws ConfigException thrown of there is an error accessing the
+     * configuration
+     * @throws DBException thrown if there is an error accessing the database
+     * @throws CacheException thrown if there is error accessing the cache
+     * @throws TranslationException thrown if there is an error accessing the
+     * translation tables
      */
+
     public PRB_SourceDAO findByName (String name)
       throws DBException, CacheException, TranslationException
     {
@@ -118,12 +126,12 @@ public class CloneSourceLookup
      * Finds a PRB_Source record for a given source key.
      * @assumes Nothing
      * @effects Nothing
-     * @param name The source key to look up.
+     * @param key The source key to look up.
      * @return A PRB_SourceDAO object that represents the PRB_Source record.
-     * @throws CacheException
-     * @throws ConfigException
-     * @throws DBException
-     * @throws LookupException
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws ConfigException thrown of there is an error accessing the
+     * configuration
+     * @throws DBException thrown if there is an error accessing the database
      */
     public PRB_SourceDAO findByKey (Integer key)
         throws CacheException, ConfigException, DBException
@@ -151,10 +159,12 @@ public class CloneSourceLookup
          * Constructs a NamedSourceLookup object.
          * @assumes Nothing
          * @effects Nothing
-         * @param None
-         * @throws CacheException
-         * @throws ConfigException
-         * @throws DBException
+         * @throws CacheException thrown if there is an error accessing the
+         * cache
+         * @throws ConfigException thrown of there is an error accessing the
+         * configuration
+         * @throws DBException thrown if there is an error accessing the
+         * database
          */
         public NamedSourceLookup()
            throws CacheException, ConfigException, DBException
@@ -167,8 +177,12 @@ public class CloneSourceLookup
          * @assumes Nothing
          * @effects Nothing
          * @param name The source name to look up.
-         * @return A PRB_SourceDAO object that represents the PRB_Source record.
-         * @throws LookupException
+         * @return A PRB_SourceDAO object that represents the PRB_Source
+         * record.
+         * @throws CacheException thrown if there is an error accessing the
+         * cache
+         * @throws DBException thrown if there is an error accessing the
+         * database
          */
         public PRB_SourceDAO lookup(String name)
         throws DBException, CacheException
@@ -180,9 +194,7 @@ public class CloneSourceLookup
          * Get the query to fully initialize the cache.
          * @assumes Nothing
          * @effects Nothing
-         * @param None
          * @return The query to fully initialize the cache.
-         * @throws Nothing
          */
         public String getFullInitQuery()
         {
@@ -196,9 +208,7 @@ public class CloneSourceLookup
          * database used for creating a new cache entry.
          * @assumes nothing
          * @effects nothing
-         * @param None
          * @return The RowDataInterpreter object.
-         * @throws Nothing
          */
         public RowDataInterpreter getRowDataInterpreter()
         {
@@ -239,10 +249,12 @@ public class CloneSourceLookup
          * Constructs a KeyedSourceLookup object.
          * @assumes Nothing
          * @effects Nothing
-         * @param None
-         * @throws CacheException
-         * @throws ConfigException
-         * @throws DBException
+         * @throws CacheException thrown if there is an error accessing the
+         * cache
+         * @throws ConfigException thrown of there is an error accessing the
+         * configuration
+         * @throws DBException thrown if there is an error accessing the
+         * database
          */
         public KeyedSourceLookup()
            throws CacheException, ConfigException, DBException
@@ -255,8 +267,12 @@ public class CloneSourceLookup
          * @assumes Nothing
          * @effects Nothing
          * @param key The source key to look up.
-         * @return A PRB_SourceDAO object that represents the PRB_Source record.
-         * @throws LookupException
+         * @return A PRB_SourceDAO object that represents the PRB_Source
+         * record.
+         * @throws CacheException thrown if there is an error accessing the cache
+         *
+         * @throws DBException thrown if there is an error accessing the
+         * database
          */
         public PRB_SourceDAO lookup(Integer key)
           throws DBException, CacheException
@@ -268,9 +284,7 @@ public class CloneSourceLookup
          * Get the query to partially initialize the cache.
          * @assumes Nothing
          * @effects Nothing
-         * @param None
          * @return The query to partially initialize the cache.
-         * @throws Nothing
          */
         public String getPartialInitQuery()
         {
@@ -300,9 +314,7 @@ public class CloneSourceLookup
          * database used for creating a new cache entry.
          * @assumes nothing
          * @effects nothing
-         * @param None
          * @return The RowDataInterpreter object.
-         * @throws Nothing
          */
         public RowDataInterpreter getRowDataInterpreter()
         {
@@ -377,6 +389,9 @@ public class CloneSourceLookup
 
 
 //  $Log$
+//  Revision 1.1  2004/03/29 15:24:40  dbm
+//  Renamed ProbeSourceLookup to CloneSourceLookup
+//
 //
 /**************************************************************************
 *

@@ -34,9 +34,14 @@ public class TranslationTypeKeyLookup extends FullCachedLookup
    * constructor
    * @assumes nothing
    * @effects nothing
-   * @throws CacheException thrown if there is an error
-   * @throws DBException
-   * @throws ConfigException
+   * @throws CacheException thrown if there is an error accessing the cache
+   * @throws ConfigException thrown if there is an error accessing the
+   * configuration
+   * @throws DBException thrown if there is an error accessing the
+   * database
+   * @throws TranslationException thrown if there is an error accessing the
+   * translation tables
+   * @throws KeyNotFoundException thrown if the key is not found
    */
   public TranslationTypeKeyLookup()
   throws CacheException, DBException,
@@ -48,7 +53,7 @@ public class TranslationTypeKeyLookup extends FullCachedLookup
 
   /**
    * lookup a MGI type for the given translation type
-   * @param the given translation type
+   * @param translationName the given translation type
    * @return the MGI type
    */
   public Integer lookup(String translationName)

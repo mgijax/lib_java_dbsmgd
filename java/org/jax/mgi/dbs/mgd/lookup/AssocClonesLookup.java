@@ -44,10 +44,12 @@ public class AssocClonesLookup extends CachedLookup
      * Constructor
      * @assumes Nothing
      * @effects Nothing
-     * @param None
-     * @throws CacheException
-     * @throws ConfigException
-     * @throws DBException
+     * @param cacheType the type of cache as designated in the class
+     * org.jax.mgi.shr.cache.CacheConstants
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws ConfigException thrown of there is an error accessing the
+     * configuration
+     * @throws DBException thrown if there is an error accessing the database
      */
 
     public AssocClonesLookup(int cacheType)

@@ -33,10 +33,11 @@ public class JNumberLookup extends LazyCachedLookup
      * Constructs a JNumberLookup object.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
-     * @throws CacheException
-     * @throws ConfigException
-     * @throws DBException
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws ConfigException thrown if there is an error accessing the
+     * configuration
+     * @throws DBException thrown if there is an error accessing the
+     * database
      */
     public JNumberLookup ()
         throws  CacheException, ConfigException, DBException
@@ -52,7 +53,9 @@ public class JNumberLookup extends LazyCachedLookup
     * @param jNumber The J-Number to look up.
     * @return An Integer object containing the reference key for the J-Number or
     *         a null if the J-Number was not found.
-    * @throws LookupException
+    * @throws CacheException thrown if there is an error accessing the cache
+    * @throws DBException thrown if there is an error accessing the
+    * database
     */
     public Integer lookup (String jNumber) throws DBException, CacheException
     {
@@ -64,9 +67,7 @@ public class JNumberLookup extends LazyCachedLookup
      * Get the query to partially initialize the cache.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return The query to partially initialize the cache.
-     * @throws Nothing
      */
     public String getPartialInitQuery ()
     {
@@ -101,9 +102,7 @@ public class JNumberLookup extends LazyCachedLookup
      * used for creating a new cache entry.
      * @assumes nothing
      * @effects nothing
-     * @param None
      * @return The RowDataInterpreter object
-     * @throws Nothing
      */
     public RowDataInterpreter getRowDataInterpreter()
     {
@@ -121,6 +120,9 @@ public class JNumberLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.12  2004/02/04 19:44:44  mbw
+//  merged jsam branch to the trunk
+//
 //  Revision 1.11  2003/11/05 15:44:20  mbw
 //  modified to suit the now defunct LookupException
 //

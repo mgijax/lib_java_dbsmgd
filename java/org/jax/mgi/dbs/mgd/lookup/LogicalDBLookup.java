@@ -31,10 +31,11 @@ public class LogicalDBLookup extends FullCachedLookup
      * Constructs a LogicalDBLookup object.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
-     * @throws CacheException
-     * @throws ConfigException
-     * @throws DBException
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws ConfigException thrown if there is an error accessing the
+     * configuration
+     * @throws DBException thrown if there is an error accessing the
+     * database
      */
     public LogicalDBLookup ()
         throws CacheException, ConfigException, DBException
@@ -50,8 +51,10 @@ public class LogicalDBLookup extends FullCachedLookup
      * @param logicalDB The logicalDB to look up.
      * @return An Integer object containing the key for the logical DB or a null
      *         if the logical DB was not found.
-     * @throws KeyNotFoundException
-     * @throws LookupException
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws DBException thrown if there is an error accessing the
+     * database
+     * @throws KeyNotFoundException thrown if the key is not found
      */
     public Integer lookup (String logicalDB)
         throws KeyNotFoundException, DBException, CacheException
@@ -64,9 +67,7 @@ public class LogicalDBLookup extends FullCachedLookup
      * Get the query to fully initialize the cache.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return The query to fully initialize the cache.
-     * @throws Nothing
      */
     public String getFullInitQuery ()
     {
@@ -79,9 +80,7 @@ public class LogicalDBLookup extends FullCachedLookup
      * used for creating a new cache entry.
      * @assumes nothing
      * @effects nothing
-     * @param None
      * @return The RowDataInterpreter object.
-     * @throws Nothing
      */
     public RowDataInterpreter getRowDataInterpreter()
     {
@@ -99,6 +98,9 @@ public class LogicalDBLookup extends FullCachedLookup
 
 
 //  $Log$
+//  Revision 1.11  2004/02/04 19:44:45  mbw
+//  merged jsam branch to the trunk
+//
 //  Revision 1.10  2003/11/05 15:44:20  mbw
 //  modified to suit the now defunct LookupException
 //

@@ -49,10 +49,13 @@ public class VocabKeyLookup extends CachedLookup
    * vocabulary terms and a lazy caching strategy for the translations
    * @param vocabType the type of vocabulary which are listed in
    * org.jax.mgi.dbs.mgd.VocabularyTypeConstants
-   * @throws CacheException thrown if there is an error with the cache
-   * @throws DBException thrown if there is an error accessing the db
+   * @throws CacheException thrown if there is an error accessing the cache
    * @throws ConfigException thrown if there is an error accessing the
-   * configuration file
+   * configuration
+   * @throws DBException thrown if there is an error accessing the
+   * database
+   * @throws TranslationException thrown if there is an error accessing the
+   * translation tables
    */
   public VocabKeyLookup(int vocabType)
       throws CacheException, DBException,
@@ -86,10 +89,13 @@ public class VocabKeyLookup extends CachedLookup
    * org.jax.mgi.shr.cache.CacheConstants for the vocabulary lookup
    * @param translationCacheType the type of caching strategy chosen from
    * the list in org.jax.mgi.shr.cache.CacheConstants
-   * @throws CacheException thrown if there is an error with the cache
-   * @throws DBException thrown if there is an error accessing the db
+   * @throws CacheException thrown if there is an error accessing the cache
    * @throws ConfigException thrown if there is an error accessing the
-   * configuration file
+   * configuration
+   * @throws DBException thrown if there is an error accessing the
+   * database
+   * @throws TranslationException thrown if there is an error accessing the
+   * translation tables
    */
   public VocabKeyLookup(int vocabType,
                         int vocabCacheType, int translationCacheType)
@@ -120,6 +126,14 @@ public class VocabKeyLookup extends CachedLookup
    * look up the primary key for a Strain term in the PRB_Strain table
    * @param term the term to look up
    * @return the key value
+   * @throws CacheException thrown if there is an error accessing the cache
+   * @throws ConfigException thrown if there is an error accessing the
+   * configuration
+   * @throws DBException thrown if there is an error accessing the
+   * database
+   * @throws TranslationException thrown if there is an error accessing the
+   * translation tables
+   * @throws KeyNotFoundException thrown if the key is not found
    */
   public Integer lookup(String term) throws CacheException,
       DBException, TranslationException, ConfigException, KeyNotFoundException
@@ -237,8 +251,16 @@ public class VocabKeyLookup extends CachedLookup
 
     /**
      * lookup the translation type for the given vocabulary type
-     * @param the given vocabulary type
+     * @param vocabularyType the given vocabulary type
      * @return the translation type for this vocabulary
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws ConfigException thrown if there is an error accessing the
+     * configuration
+     * @throws DBException thrown if there is an error accessing the
+     * database
+     * @throws TranslationException thrown if there is an error accessing the
+     * translation tables
+     * @throws KeyNotFoundException thrown if the key is not found
      */
     public Integer lookup(int vocabularyType) throws DBException,
         ConfigException, CacheException

@@ -72,11 +72,16 @@ public class Translator extends CachedLookup
    * constructor
    * @assumes nothing
    * @effects nothing
-   * @throws CacheException thrown if there is an error accessing cache
-   * @throws DBException thrown if there is an error with the db
+   * @param translationType the translation type from
+   * org.jax.mgi.dbs.mgd.TranslationTypeConstants
+   * @param cacheType the cache type from org.jax.mgi.shr.cache.CacheConstants
+   * @throws CacheException thrown if there is an error accessing the cache
    * @throws ConfigException thrown if there is an error accessing the
    * configuration
-   * @lookupException thrown if there is an error using the
+   * @throws DBException thrown if there is an error accessing the
+   * database
+   * @throws TranslationException thrown if there is an error accessing the
+   * translation tables
    */
   public Translator(int translationType, int cacheType)
   throws CacheException, DBException,
@@ -92,11 +97,20 @@ public class Translator extends CachedLookup
    * constructor
    * @assumes nothing
    * @effects nothing
+   * @param translationType the translation type from
+   * org.jax.mgi.dbs.mgd.TranslationTypeConstants
+   * @param cacheType the cache type from org.jax.mgi.shr.cache.CacheConstants
    * @throws CacheException thrown if there is an error accessing cache
    * @throws DBException thrown if there is an error with the db
    * @throws ConfigException thrown if there is an error accessing the
    * configuration
-   * @lookupException thrown if there is an error using the
+   * @throws CacheException thrown if there is an error accessing the cache
+   * @throws ConfigException thrown if there is an error accessing the
+   * configuration
+   * @throws DBException thrown if there is an error accessing the
+   * database
+   * @throws TranslationException thrown if there is an error accessing the
+   * translation tables
    */
   public Translator(String translationType, int cacheType)
   throws CacheException, DBException,
@@ -112,7 +126,8 @@ public class Translator extends CachedLookup
     }
     catch (MGIException e)
     {
-      TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
+      TranslationExceptionFactory eFactory =
+          new TranslationExceptionFactory();
       TranslationException e2 =
           (TranslationException) eFactory.getException(NoTransType, e);
       e2.bind(translationType);
@@ -127,8 +142,13 @@ public class Translator extends CachedLookup
    * translate the given term into the known object key in the MGD database
    * @assumes nothing
    * @effects nothing
-   * @param the given term to translate
+   * @param term the given term to translate
    * @return the key in the MGD database for that term
+   * @throws CacheException thrown if there is an error accessing the cache
+   * @throws DBException thrown if there is an error accessing the
+   * database
+   * @throws TranslationException thrown if there is an error accessing the
+   * translation tables
    */
   public Integer translate(String term)
       throws TranslationException, CacheException, DBException
@@ -162,6 +182,7 @@ public class Translator extends CachedLookup
    * get the sql string used to add to the cache. This method
    * is called by the CacheStrategy class when performing a lookup
    * that is not in the cache.
+   * @param term the term
    * @return the sql string used to add to the cache
    */
   public String getAddQuery(Object term) {
@@ -300,9 +321,14 @@ public class Translator extends CachedLookup
 
     /**
      * lookup a MGI type for the given translation type
-     * @param the given translation type
+     * @param translationType the translation type from
+     * org.jax.mgi.dbs.mgd.TranslationTypeConstants
      * @return the HashMap containing the following data
      * MGD.mgi_translationtype._mgitype_key
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws DBException thrown if there is an error accessing the
+     * database
+     * @throws KeyNotFoundException thrown if the key is not found
      */
     public Integer lookup(int translationType) throws KeyNotFoundException,
     DBException, CacheException
@@ -377,11 +403,16 @@ public class Translator extends CachedLookup
 
     /**
      * lookup a MGI type for the given translation type
-     * @param the given translation type
+     * @param translationType the translation type from
+     * org.jax.mgi.dbs.mgd.TranslationTypeConstants
      * @return the HashMap with the following entries:
      *      MGD.acc_mgitype.primarykeyname
      *		  MGD.acc_mgitype.tablename
      *		  MGD.acc_mgitype.identitycolumnname
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws DBException thrown if there is an error accessing the
+     * database
+     * @throws KeyNotFoundException thrown if the key is not found
      */
     public HashMap lookup(int translationType)
         throws KeyNotFoundException, DBException, CacheException
@@ -459,8 +490,12 @@ public class Translator extends CachedLookup
 
     /**
      * lookup a MGI type for the given translation type
-     * @param the given translation type
+     * @param translationName the given translation type
      * @return the MGI type
+     * @throws CacheException thrown if there is an error accessing the cache
+     * @throws DBException thrown if there is an error accessing the
+     * database
+     * @throws KeyNotFoundException thrown if the key is not found
      */
     public Integer lookup(String translationName)
         throws KeyNotFoundException, DBException, CacheException
