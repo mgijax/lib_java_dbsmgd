@@ -51,9 +51,16 @@ public class OrganismKeyLookup extends FullCachedLookup
 
   }
   /**
-   * look up the primary key for a Strain term in the PRB_Strain table
+   * look up the primary key for a Organism
    * @param term the term to translate
-   * @return
+   * @return Organism key
+   * @throws CacheException thrown if there is an error accessing the cache
+   * @throws DBException if there is an error accessing the database
+   * @throws TranslationException thrown if there is an error accessing the
+   * translation tables
+   * @throws ConfigException thrown if there is an error accessing the
+   * configuration
+   * @throws KeyNotFoundException thrown if there is the key was not found
    */
   public Integer lookup(String term)
       throws CacheException, DBException, TranslationException,
