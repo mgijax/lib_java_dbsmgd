@@ -45,7 +45,15 @@ public class DBConstants
 
     public static final int MGIType_Reference = 1;
     public static final int MGIType_Marker = 2;
+    public static final int MGIType_Probe = 3;
+    public static final int MGIType_MappingExpt = 4;
+    public static final int MGIType_Antibody = 6;
+    public static final int MGIType_Antigen = 7;
+    public static final int MGIType_Assay = 8;
+    public static final int MGIType_Image = 9;
+    public static final int MGIType_Allele = 11;
     public static final int MGIType_VocTerm = 13;
+    public static final int MGIType_Sequence = 19;
 
     // from MRK_Status
 
@@ -59,6 +67,9 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.1  2003/12/30 16:38:48  mbw
+* initial import into this product
+*
 * Revision 1.1  2003/12/30 16:28:27  mbw
 * initial import into this product
 *
