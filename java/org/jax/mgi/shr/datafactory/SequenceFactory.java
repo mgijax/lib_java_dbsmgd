@@ -1082,7 +1082,8 @@ public class SequenceFactory extends Factory {
             "FROM VOC_Annot va, VOC_GOMarker_AnnotType_View gm,\n"+
             "#mrk m\n"+
             "WHERE va._Object_key = m._Marker_key\n"+
-            "AND va._AnnotType_key = gm._AnnotType_key";
+            "AND va._AnnotType_key = gm._AnnotType_key\n"+
+            "group by m._Marker_key";
 
     // updates #mrk, associating the count of GO terms with their marker keys
     private static final String MARKER_GO_UPDATE =
