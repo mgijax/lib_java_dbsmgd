@@ -829,24 +829,51 @@ public class SequenceFactory extends Factory {
         DTO sequence = DTO.getDTO();
         Vector allProbes = new Vector();
         DTO probe = DTO.getDTO();
+        HashMap collections = new HashMap();
+        String probeKey;
+        Vector collectionList = null;
+        String curKey = "";
+        String lastKey = null;
 
         this.sqlDM.execute(PROBE_TABLE);
         this.sqlDM.execute(Sprintf.sprintf(PROBES, key));
-        this.sqlDM.execute(CLONE_COLLECTION);
+        this.sqlDM.execute(CLONE_COLLECTION_TABLE);
+        this.sqlDM.execute(CLONE_ACC_ID);
+        nav = this.sqlDM.executeQuery(CLONE_INFO);
+        while(nav.next()) {
+            rr = (RowReference) nav.getCurrent();
+            curKey = rr.getString(1);
+            if(curKey.equals(lastKey)) {
+                collectionList.add(rr.getString(2));
+            } else {
+                if(lastKey != null)
+                    collections.put(lastKey,collectionList);
+                collectionList = new Vector();
+                collectionList.add(rr.getString(2));
+            }
+            lastKey = curKey;
+        }
+        collections.put(curKey,collectionList);
+        System.out.println(collections.get(curKey));
+        System.out.println(curKey);
         nav = this.sqlDM.executeQuery(PROBE_INFO);
 
         while (nav.next()) {
             rr = (RowReference) nav.getCurrent();
-            probe.set(DTOConstants.ProbeKey, rr.getInt(1));
+            probeKey = rr.getString(1);
+            System.out.println(probeKey);
+            probe.set(DTOConstants.ProbeKey, probeKey);
             probe.set(DTOConstants.ProbeName, rr.getString(2));
             probe.set(DTOConstants.AccID, rr.getString(3));
             probe.set(DTOConstants.CloneID, rr.getString(4));
             probe.set(DTOConstants.SegmentType, rr.getString(5));
-            probe.set(DTOConstants.CloneCollection, rr.getString(6));
+            probe.set(DTOConstants.CloneCollection,
+                      (Vector)collections.get(probeKey));
             allProbes.add(probe);
             probe = DTO.getDTO();
         }
         sequence.set(DTOConstants.Probes, allProbes);
+        System.out.println("-=========-");
         return sequence;
     }
 
@@ -1203,7 +1230,6 @@ public class SequenceFactory extends Factory {
             "mgiID        varchar(30)  NOT NULL,\n"+
             "accID        varchar(30)  NULL,\n"+
             "segmentType  varchar(255) NULL,\n"+
-            "collection   varchar(80)  NULL\n"+
             ")";
 
     // loads #prbs with the name, _Probe_key, type, and mgiID of all the
@@ -1223,19 +1249,32 @@ public class SequenceFactory extends Factory {
 
     // loads #prbs with the logicaldb name of the collection this probe
     // belongs to, if any and the providers accID for the probe.
-    private static final String CLONE_COLLECTION =
+    private static final String CLONE_COLLECTION_TABLE =
+            "select collection = msclv.name, p._Probe_key\n"+
+            "into #collection\n"+
+            "from #prbs p, PRB_Probe pp,\n"+
+            "MGI_SetMember msm, MGI_Set_CloneLibrary_View msclv\n"+
+            "where p._Probe_key = pp._Probe_key\n"+
+            "and pp._Source_key = msm._Object_key\n"+
+            "and msm._Set_key = msclv._Set_key";
+
+    private static final String CLONE_ACC_ID =
             "update #prbs\n"+
-            "set collection = ldb.name, accID = aa.accID\n"+
-            "from ACC_LogicalDB ldb, ACC_Accession aa, #prbs p\n"+
-            "where p._Probe_key = aa._Object_key\n"+
+            "set accID = aa.accID\n"+
+            "from ACC_Accession aa, #prbs p, #collection c, ACC_LogicalDB ldb\n"+
+            "where aa._Object_key = p._Probe_key\n"+
             "and aa._MGIType_key = 3\n"+
-            "and ldb._LogicalDB_key = aa._LogicalDB_key\n"+
-            "and aa._LogicalDB_key in (select _Object_key\n"+
-            "                          from MGI_SetMember\n"+
-            "                          where _Set_key = 1000)";
+            "and p._Probe_key = c._Probe_key\n"+
+            "and c.collection = ldb.name\n"+
+            "and ldb._LogicalDB_key = aa._LogicalDB_key";
+
+    private static final String CLONE_INFO =
+            "select _Probe_key, collection\n"+
+            "from #collection\n"+
+            "order by _Probe_key";
 
     // gets the probe information from #prbs
     private static final String PROBE_INFO =
-            "select _Probe_key, name, mgiID, accID,segmentType, collection\n"+
+            "select _Probe_key, name, mgiID, accID,segmentType\n"+
             "from #prbs";
 }
