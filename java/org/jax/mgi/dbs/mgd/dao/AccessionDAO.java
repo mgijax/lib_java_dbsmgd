@@ -118,7 +118,7 @@ public class AccessionDAO extends DAO
         // records are not created for MGI IDs.
         //
         v.add("ACC_Accession");
-        if (accessionState.getMGITypeKey().intValue() == MGITypeConstants.MGI)
+        if (accessionState.getMGITypeKey().intValue() != MGITypeConstants.REF)
             v.add("ACC_AccessionReference");
 
         // Return the vector.
@@ -289,6 +289,9 @@ public class AccessionDAO extends DAO
 
 
 //  $Log$
+//  Revision 1.3  2003/09/24 15:12:56  dbm
+//  Changed DataInstance to DAO
+//
 //  Revision 1.2  2003/09/23 13:23:51  dbm
 //  Continued development
 //

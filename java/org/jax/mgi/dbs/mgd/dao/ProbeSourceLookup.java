@@ -13,11 +13,12 @@ import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 /**
- * @is An object that knows how to look up a source record.
+ * @is An object that knows how to look up a PRB_Source record.
  * @has Nothing
  * @does
  *   <UL>
- *   <LI> Provides a method to look up a source name.
+ *   <LI> Provides a method to look up a PRB_Source record for a given source
+ *        name.
  *   </UL>
  * @company The Jackson Laboratory
  * @author dbm
@@ -38,12 +39,11 @@ public class ProbeSourceLookup
     }
 
     /**
-     * Finds a source record for a given source name.
+     * Finds a PRB_Source record for a given source name.
      * @assumes Nothing
      * @effects Nothing
      * @param name The source name to look up.
-     * @return A ProbeSourceDAO object that represents the source record for the
-     *         source name.
+     * @return A ProbeSourceDAO object that represents the PRB_Source record.
      * @throws Nothing
      */
     public ProbeSourceDAO findByName (String name)
@@ -54,12 +54,12 @@ public class ProbeSourceLookup
     }
 
     /**
-     * @is An object that knows how to look up a source name to find its
-     *     source record.
+     * @is An object that knows how to look up a PRB_Source record for a given
+     *     source name.
      * @has Nothing
      * @does
      *   <UL>
-     *   <LI> Provides a method to look up a source name.
+     *   <LI> Provides a method to look up a PRB_Source record.
      *   </UL>
      * @company The Jackson Laboratory
      * @author dbm
@@ -83,12 +83,11 @@ public class ProbeSourceLookup
         }
 
         /**
-         * Looks up a source name to find its source record.
+         * Looks up a PRB_Source record for a given source name.
          * @assumes Nothing
          * @effects Nothing
          * @param name The source name to look up.
-         * @return A ProbeSourceDAO object that represents the source record
-         *         for the source name.
+         * @return A ProbeSourceDAO object that represents the PRB_Source record.
          * @throws Nothing
          */
         public ProbeSourceDAO lookup(String name)
@@ -182,7 +181,7 @@ public class ProbeSourceLookup
              * @return The KeyValue object.
              * @throws Nothing
              */
-            public java.lang.Object interpret(RowReference row)
+            public Object interpret(RowReference row)
                 throws DBException
             {
                 ProbeSourceDAO probeSrcDAO =
@@ -198,6 +197,9 @@ public class ProbeSourceLookup
 
 
 //  $Log$
+//  Revision 1.1  2003/09/23 13:16:22  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

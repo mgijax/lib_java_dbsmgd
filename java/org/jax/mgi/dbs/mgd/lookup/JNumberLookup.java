@@ -107,7 +107,7 @@ public class JNumberLookup extends RowDataCacheHandler
                       "FROM ACC_Accession " +
                       "WHERE accID = '" + addObject + "' and " +
                             "_LogicalDB_key = " + LogicalDBConstants.MGI + " and " +
-                            "_MGIType_key = " + MGITypeConstants.MGI + " and " +
+                            "_MGIType_key = " + MGITypeConstants.REF + " and " +
                             "prefixPart = 'J:' and " +
                             "preferred = 1";
 
@@ -167,6 +167,9 @@ public class JNumberLookup extends RowDataCacheHandler
 
 
 //  $Log$
+//  Revision 1.2  2003/09/23 13:13:01  dbm
+//  Continued development
+//
 //  Revision 1.1  2003/09/18 14:26:12  dbm
 //  Initial version
 //

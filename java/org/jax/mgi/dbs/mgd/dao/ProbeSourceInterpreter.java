@@ -13,7 +13,7 @@ import org.jax.mgi.shr.dbutils.RowReference;
  * @has Nothing
  * @does
  *   <UL>
- *   <LI> Provides a method to interpret a row of source data.
+ *   <LI> Provides a method to interpret a row of data.
  *   </UL>
  * @company The Jackson Laboratory
  * @author dbm
@@ -23,11 +23,12 @@ import org.jax.mgi.shr.dbutils.RowReference;
 public class ProbeSourceInterpreter implements RowDataInterpreter
 {
     /**
-    * Interprets a row of source data to create a ProbeSourceState object.
+    * Interprets a row of data from the PRB_Source table to create a
+    * ProbeSourceState object.
     * @assumes Nothing
     * @effects Nothing
-    * @param row A row of source data.
-    * @return A ProbeSourceState object that contains a row of source data.
+    * @param row A row of data.
+    * @return A ProbeSourceState object that contains a row of data.
     * @throws DBException
     */
     public Object interpret (RowReference row)
@@ -50,13 +51,17 @@ public class ProbeSourceInterpreter implements RowDataInterpreter
         probeSrcState.setAgeMin(new Double(row.getFloat("ageMin")));
         probeSrcState.setAgeMax(new Double(row.getFloat("ageMax")));
         probeSrcState.setIsCuratorEdited(new Integer(row.getInt("isCuratorEdited")));
-        ProbeSourceDAO probeSrcDAO = new ProbeSourceDAO(probeSrcKey, probeSrcState);
+        ProbeSourceDAO probeSrcDAO =
+            new ProbeSourceDAO(probeSrcKey, probeSrcState);
         return probeSrcDAO;
     }
 }
 
 
 //  $Log$
+//  Revision 1.1  2003/09/23 13:16:21  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

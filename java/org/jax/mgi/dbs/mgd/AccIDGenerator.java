@@ -139,6 +139,7 @@ public class AccIDGenerator
             SQLDataManager sqlMgr =
                 SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD);
             sqlMgr.executeUpdate(sql);
+            lastNumericMGI = 0;
         }
 
         if (lastNumericJ != 0)
@@ -149,12 +150,16 @@ public class AccIDGenerator
             SQLDataManager sqlMgr =
                 SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD);
             sqlMgr.executeUpdate(sql);
+            lastNumericJ = 0;
         }
     }
 }
 
 
 //  $Log$
+//  Revision 1.1  2003/09/19 17:49:37  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *
