@@ -3,8 +3,8 @@ package org.jax.mgi.dbs.mgd.dao;
 import org.jax.mgi.shr.dbutils.Table;
 import org.jax.mgi.shr.dbutils.SQLDataManager;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.dbutils.RecordStamp_MGD;
 import org.jax.mgi.shr.dbutils.DBException;
+import org.jax.mgi.shr.dbutils.bcp.RecordStamp_MGD;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**

@@ -1,4 +1,4 @@
-package org.jax.mgi.dbs.mgd.lookup;
+package org.jax.mgi.dbs.mgd.dao;
 
 import org.jax.mgi.shr.cache.RowDataCacheHandler;
 import org.jax.mgi.shr.cache.CacheException;
