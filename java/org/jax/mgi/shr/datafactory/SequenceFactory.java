@@ -945,7 +945,7 @@ public class SequenceFactory extends Factory {
     private static final String SEQ_SOURCE_TABLE2 =
              "select _Sequence_key,\n"+
             "    library = ps.name,\n"+
-            "    organism = vtO.term,\n"+
+            "    organism = mo.commonName,\n"+
             "    strain = pstr.strain,\n"+
             "    tissue = pt.tissue,\n"+
             "    age = ps.age,\n"+
@@ -953,11 +953,11 @@ public class SequenceFactory extends Factory {
             "    cellLine = vtC.term\n"+
             "into #seqSource\n"+
             "from PRB_Source ps, SEQ_Source_Assoc ssa,\n"+
-            "VOC_Term vtO, PRB_Strain pstr, PRB_Tissue pt, \n"+
+            "MGI_Organism mo, PRB_Strain pstr, PRB_Tissue pt, \n"+
             "VOC_Term vtG, VOC_Term vtC\n"+
             "where ssa._Sequence_key = %d\n"+
             "and ssa._Source_key = ps._Source_key\n"+
-            "and ps._Organism_key = vtO._Term_key\n"+
+            "and ps._Organism_key = mo._Organism_key\n"+
             "and ps._Strain_key = pstr._Strain_key\n"+
             "and ps._Tissue_key = pt._Tissue_key\n"+
             "and ps._Gender_key = vtG._Term_key\n"+
