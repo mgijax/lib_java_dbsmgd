@@ -43,8 +43,6 @@ public class StrainKeyLookup extends FullCachedLookup
   // the Translator object shared by all instances of this class
   private static Translator translator = null;
 
-
-
   /**
    * constructor
    * @throws CacheException thrown if there is an error with the cache
