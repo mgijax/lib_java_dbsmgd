@@ -21,10 +21,15 @@ public class LogicalDBConstants
     //
     public static final int MGI = 1;
     public static final int SEQUENCE = 9;
+    public static final int PUBMED = 29;
+    public static final int MEDLINE = 7;
 }
 
 
 //  $Log$
+//  Revision 1.1  2003/09/18 14:25:17  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *
