@@ -3,19 +3,25 @@
 
 package org.jax.mgi.dbs.mgd.dao;
 
+import org.jax.mgi.dbs.mgd.trans.Translator;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.FullCachedLookup;
+import org.jax.mgi.shr.cache.LazyCachedLookup;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
+import org.jax.mgi.shr.dbutils.KeyedDataAttribute;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 /**
  * @is An object that knows how to look up a PRB_Source record.
- * @has Nothing
+ * @has
+ *   <UL>
+ *   <LI> Translator object
+ *   </UL>
  * @does
  *   <UL>
  *   <LI> Provides a method to look up a PRB_Source record for a given source
@@ -28,6 +34,14 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 public class ProbeSourceLookup
 {
+    /////////////////
+    //  Variables  //
+    /////////////////
+
+    // A translator for resolving a source name.
+    //
+    private Translator trans = null;
+
     /**
      * Constructs a ProbeSourceLookup object.
      * @assumes Nothing
@@ -40,7 +54,22 @@ public class ProbeSourceLookup
     }
 
     /**
-     * Finds a PRB_Source record for a given source name.
+     * Constructs a ProbeSourceLookup object that will use a Translator to
+     * resolve a source name.
+     * @assumes Nothing
+     * @effects Nothing
+     * @param pTrans The Translator to use for resolving a source name.
+     * @throws Nothing
+     */
+    public ProbeSourceLookup(Translator pTrans)
+    {
+        trans = pTrans;
+    }
+
+    /**
+     * Finds a PRB_Source record for a given source name. If a Translator object
+     * has been set up, it will be used to attempt to resolve the source name
+     * before doing a lookup.
      * @assumes Nothing
      * @effects Nothing
      * @param name The source name to look up.
@@ -50,8 +79,32 @@ public class ProbeSourceLookup
     public ProbeSourceDAO findByName (String name)
         throws CacheException, ConfigException, DBException, LookupException
     {
+        if (trans != null)
+        {
+            KeyedDataAttribute kda = trans.translate(name);
+            if (kda != null)
+            {
+                KeyedSourceLookup keyedSourceLookup = new KeyedSourceLookup();
+                return keyedSourceLookup.lookup(kda.getKey());
+            }
+        }
         NamedSourceLookup namedSourceLookup = new NamedSourceLookup();
         return namedSourceLookup.lookup(name);
+    }
+
+    /**
+     * Finds a PRB_Source record for a given source key.
+     * @assumes Nothing
+     * @effects Nothing
+     * @param name The source key to look up.
+     * @return A ProbeSourceDAO object that represents the PRB_Source record.
+     * @throws Nothing
+     */
+    public ProbeSourceDAO findByKey (Integer key)
+        throws CacheException, ConfigException, DBException, LookupException
+    {
+        KeyedSourceLookup keyedSourceLookup = new KeyedSourceLookup();
+        return keyedSourceLookup.lookup(key);
     }
 
     /**
@@ -139,10 +192,115 @@ public class ProbeSourceLookup
             return new Interpreter();
         }
     }
+
+    /**
+     * @is An object that knows how to look up a PRB_Source record for a given
+     *     source key.
+     * @has Nothing
+     * @does
+     *   <UL>
+     *   <LI> Provides a method to look up a PRB_Source record.
+     *   </UL>
+     * @company The Jackson Laboratory
+     * @author dbm
+     * @version 1.0
+     */
+
+    private class KeyedSourceLookup extends LazyCachedLookup
+    {
+        /**
+         * Constructs a KeyedSourceLookup object.
+         * @assumes Nothing
+         * @effects Nothing
+         * @param None
+         * @throws Nothing
+         */
+        public KeyedSourceLookup()
+           throws ConfigException, DBException, CacheException
+        {
+            super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        }
+
+        /**
+         * Looks up a PRB_Source record for a given source key.
+         * @assumes Nothing
+         * @effects Nothing
+         * @param key The source key to look up.
+         * @return A ProbeSourceDAO object that represents the PRB_Source record.
+         * @throws Nothing
+         */
+        public ProbeSourceDAO lookup(Integer key)
+            throws LookupException
+        {
+            return (ProbeSourceDAO)super.lookup(key, true);
+        }
+
+        /**
+         * Get the query to partially initialize the cache.
+         * @assumes Nothing
+         * @effects Nothing
+         * @param None
+         * @return The query to partially initialize the cache.
+         * @throws Nothing
+         */
+        public String getPartialInitQuery()
+        {
+            String stmt = "SELECT * FROM PRB_Source WHERE name is not null";
+
+            return stmt;
+        }
+
+        /**
+         * Get the query to add an object to the database.
+         * @assumes Nothing
+         * @effects Nothing
+         * @param addObject The object to add.
+         * @return The query to add an object to the database.
+         * @throws Nothing
+         */
+        public String getAddQuery(Object addObject)
+        {
+            String stmt = "SELECT * FROM PRB_Source " +
+                          "WHERE _Source_key = "+((Integer)addObject).intValue();
+
+            return stmt;
+        }
+
+        /**
+         * Get a RowDataInterpreter for creating a KeyValue object from a
+         * database used for creating a new cache entry.
+         * @assumes nothing
+         * @effects nothing
+         * @param None
+         * @return The RowDataInterpreter object
+         * @throws Nothing
+         */
+        public RowDataInterpreter getRowDataInterpreter()
+        {
+            class Interpreter implements RowDataInterpreter
+            {
+                private RowDataInterpreter probeSrcInterpreter =
+                    new ProbeSourceInterpreter();
+
+                public Object interpret (RowReference row)
+                    throws DBException
+                {
+                    ProbeSourceDAO probeSrcDAO =
+                        (ProbeSourceDAO) probeSrcInterpreter.interpret(row);
+                    return new KeyValue(probeSrcDAO.getProbeSrcKey().getPrimaryKey(),
+                                        probeSrcDAO);
+                }
+            }
+            return new Interpreter();
+        }
+    }
 }
 
 
 //  $Log$
+//  Revision 1.6  2003/10/03 16:35:25  mbw
+//  modified to suit changes to the CachedLookup base class
+//
 //  Revision 1.5  2003/10/02 18:48:54  dbm
 //  Changed to extend subclass of CachedLookup
 //
