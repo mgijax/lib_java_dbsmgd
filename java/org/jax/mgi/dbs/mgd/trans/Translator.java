@@ -14,6 +14,7 @@ import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.dbs.mgd.MGD;
+import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
@@ -83,7 +84,7 @@ public class Translator extends CachedLookup
          ConfigException, TranslationException
   {
     super(cacheType,
-          SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+          SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     this.translationType = new Integer(translationType);
     setup();
   }
@@ -103,7 +104,7 @@ public class Translator extends CachedLookup
          ConfigException, TranslationException
   {
     super(cacheType,
-          SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+          SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     // convert the translation type from a string value to it's db key value
     TranslationTypeKeyLookup ttkLookup = new TranslationTypeKeyLookup();
     try
@@ -232,7 +233,7 @@ public class Translator extends CachedLookup
     MGITypeLookup lookup = new MGITypeLookup();
     Integer mgiType = null;
     try {
-      mgiType = (Integer)lookup.lookup(translationType);
+      mgiType = lookup.lookup(translationType.intValue());
     }
     catch (MGIException e) {
       TranslationExceptionFactory eFactory = new TranslationExceptionFactory();
@@ -293,7 +294,7 @@ public class Translator extends CachedLookup
     public MGITypeLookup()
         throws CacheException, DBException, ConfigException
     {
-      super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+      super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
       // override the super class instance of the cache with a static one so
       // that all instances of the Translator will see the same cache
       setCache(mgiTypeCache);
@@ -370,7 +371,7 @@ public class Translator extends CachedLookup
     public MGITypeTableLookup() throws CacheException, DBException,
         ConfigException
     {
-      super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+      super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
       // override the super class instance of the cache with a static one so
       // that all instances of the Translator will see the same cache
       setCache(mgiTypeTableCache);
@@ -455,7 +456,7 @@ public class Translator extends CachedLookup
     public TranslationTypeKeyLookup() throws CacheException, DBException,
         ConfigException
     {
-      super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+      super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     }
 
     /**

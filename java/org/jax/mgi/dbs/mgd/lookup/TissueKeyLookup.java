@@ -15,6 +15,7 @@ import org.jax.mgi.dbs.mgd.TranslationTypeConstants;
 import org.jax.mgi.dbs.mgd.trans.Translator;
 import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.dbs.mgd.MGD;
+import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
@@ -51,7 +52,7 @@ public class TissueKeyLookup extends FullCachedLookup
   public TissueKeyLookup()
       throws CacheException, DBException, ConfigException
   {
-    super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+    super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     setCache(cache);
   }
   /**

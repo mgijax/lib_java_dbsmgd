@@ -16,6 +16,7 @@ import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.dbs.mgd.trans.Translator;
 import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.dbs.mgd.MGD;
+import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
@@ -70,7 +71,7 @@ public class VocabKeyLookup extends LazyCachedLookup
              ConfigException,
              TranslationException
   {
-    super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+    super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     this.vocabType = vocabType;
     //setCache(cache);
     translationTypeLookup = new TranslationTypeLookup();
@@ -195,7 +196,7 @@ public class VocabKeyLookup extends LazyCachedLookup
     public TranslationTypeLookup() throws CacheException, DBException,
         ConfigException
     {
-      super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+      super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
       // override the super class instance of the cache with a static one so
       // that all instances of the this class will use the same cache
       //setCache(translationTypeCache);
