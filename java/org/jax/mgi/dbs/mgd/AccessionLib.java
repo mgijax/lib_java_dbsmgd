@@ -65,9 +65,9 @@ public class AccessionLib
             rn.next();
             RowReference row = (RowReference)rn.getCurrent();
             lastNumericMGI = row.getInt(1).intValue();
+            rn.close();
         }
         lastNumericMGI++;
-
         return new String("MGI:"+lastNumericMGI);
     }
 
@@ -95,6 +95,7 @@ public class AccessionLib
             rn.next();
             RowReference row = (RowReference)rn.getCurrent();
             lastNumericJ = row.getInt(1).intValue();
+            rn.close();
         }
         lastNumericJ++;
 
@@ -211,6 +212,9 @@ public class AccessionLib
 
 
 //  $Log$
+//  Revision 1.1.2.1  2003/11/13 20:36:57  sc
+//  PREFERRED, NOT_PREFERRED constans
+//
 //  Revision 1.1  2003/10/21 13:25:45  dbm
 //  Initial version
 //
