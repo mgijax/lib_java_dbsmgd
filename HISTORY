@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-1-0-28
+DATE: 05/27/2004
+STAFF: jsb
+CHANGES:
+1) fixes to MarkerFactory.java to ensure retrieval of distinct sequences
+
 TAG: lib_java_dbsmgd-1-0-27
 DATE: 05/24/2004
 STAFF: jsb
