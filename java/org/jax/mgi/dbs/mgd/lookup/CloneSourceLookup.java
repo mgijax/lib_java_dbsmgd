@@ -377,8 +377,8 @@ public class CloneSourceLookup
             probeSrcState.setName(row.getString("name"));
             probeSrcState.setDescription(row.getString("description"));
             probeSrcState.setAge(row.getString("age"));
-            probeSrcState.setAgeMin(row.getFloat("ageMin"));
-            probeSrcState.setAgeMax(row.getFloat("ageMax"));
+            probeSrcState.setAgeMin(row.getDouble("ageMin"));
+            probeSrcState.setAgeMax(row.getDouble("ageMax"));
             probeSrcState.setIsCuratorEdited(row.getBoolean("isCuratorEdited"));
             PRB_SourceDAO probeSrcDAO =
                 new PRB_SourceDAO(probeSrcKey, probeSrcState);
@@ -389,6 +389,9 @@ public class CloneSourceLookup
 
 
 //  $Log$
+//  Revision 1.2  2004/07/28 19:23:14  mbw
+//  javadocs only
+//
 //  Revision 1.1  2004/03/29 15:24:40  dbm
 //  Renamed ProbeSourceLookup to CloneSourceLookup
 //
