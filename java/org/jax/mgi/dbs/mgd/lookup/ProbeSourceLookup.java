@@ -15,7 +15,6 @@ import org.jax.mgi.shr.cache.LazyCachedLookup;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
-import org.jax.mgi.shr.dbutils.KeyedDataAttribute;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
@@ -377,6 +376,9 @@ public class ProbeSourceLookup
 
 
 //  $Log$
+//  Revision 1.3  2004/02/17 02:19:45  mbw
+//  fixed code to suit changes made to the signature of the lookup() method from the Translator class
+//
 //  Revision 1.2  2004/02/04 19:44:47  mbw
 //  merged jsam branch to the trunk
 //

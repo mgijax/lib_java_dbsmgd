@@ -14,7 +14,6 @@ import java.net.URL;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.ArrayList;
 import org.jax.mgi.shr.stringutil.StringLib;
@@ -170,6 +169,9 @@ public class GeneFamilyMap
 
 /*
 * $Log$
+* Revision 1.1  2003/12/30 16:38:49  mbw
+* initial import into this product
+*
 * Revision 1.1  2003/12/30 16:28:29  mbw
 * initial import into this product
 *

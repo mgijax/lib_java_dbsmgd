@@ -4,7 +4,6 @@ import junit.framework.*;
 import org.jax.mgi.shr.cache.*;
 import org.jax.mgi.shr.dbutils.*;
 import org.jax.mgi.dbs.mgd.VocabularyTypeConstants;
-import org.jax.mgi.shr.config.*;
 
 public class TestVocabKeyLookup
     extends TestCase {

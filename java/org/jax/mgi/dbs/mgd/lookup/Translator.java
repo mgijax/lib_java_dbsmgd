@@ -6,7 +6,6 @@ import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowReference;
-import org.jax.mgi.shr.dbutils.KeyedDataAttribute;
 import org.jax.mgi.shr.exception.MGIException;
 import org.jax.mgi.shr.cache.CachedLookup;
 import org.jax.mgi.shr.cache.FullCachedLookup;

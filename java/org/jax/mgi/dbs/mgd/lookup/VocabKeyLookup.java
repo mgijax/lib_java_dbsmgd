@@ -1,12 +1,9 @@
 package org.jax.mgi.dbs.mgd.lookup;
 
-import java.util.HashMap;
-
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowReference;
-import org.jax.mgi.shr.dbutils.KeyedDataAttribute;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.CachedLookup;
 import org.jax.mgi.shr.cache.FullCachedLookup;
