@@ -5,7 +5,7 @@ package org.jax.mgi.dbs.mgd;
 
 /**
  * @is An object that contains constant definitions for
- *     MGI Reference Associationtypes.
+ *     MGI Reference Association types.
  * @has
  *   <UL>
  *   <LI> Constant definitions
@@ -22,12 +22,11 @@ public class MGIRefAssocTypeConstants {
         public static final int ORIGINAL = 1000;
         public static final int GENERAL = 1002;
         public static final int PRIMARY = 1003;
-        public static final int BROADCAST = 1004;
-        public static final int DO_NOT_BROADCAST = 1005;
+        public static final int RELATED = 1004;
         public static final int PROVIDER = 1006;
         public static final int CURATOR = 1007;
+        public static final int LOAD = 1008;
 }
-
 
 //  $Log
 
