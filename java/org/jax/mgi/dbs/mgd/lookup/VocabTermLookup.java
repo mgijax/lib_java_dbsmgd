@@ -14,7 +14,8 @@ import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 /**
- * @is An object that knows how to look up a term name for a given term key.
+ * @is An object that knows how to look up a term name for a given term key in
+ * the voc_term table.
  * @has Nothing
  * @does
  *   <UL>
@@ -25,7 +26,7 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
  * @version 1.0
  */
 
-public class TermNameLookup extends LazyCachedLookup
+public class VocabTermLookup extends LazyCachedLookup
 {
     /**
      * Constructs a TermNameLookup object.
@@ -36,7 +37,7 @@ public class TermNameLookup extends LazyCachedLookup
      * @throws ConfigException
      * @throws DBException
      */
-    public TermNameLookup ()
+    public VocabTermLookup ()
         throws  CacheException, ConfigException, DBException
     {
         super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
@@ -111,6 +112,9 @@ public class TermNameLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.1.2.1  2003/11/04 20:51:27  mbw
+//  modified to suit the now defunct LookupException class
+//
 //  Revision 1.1  2003/10/20 19:01:54  dbm
 //  Initial version
 //
