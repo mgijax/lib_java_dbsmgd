@@ -7,12 +7,12 @@ import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
- * @is: a VocabKeyLookup for the Cell Line vocabulary
- * @has: a Translator for translating incoming  cell line terms before
+ * @is a VocabKeyLookup for the Cell Line vocabulary
+ * @has a Translator for translating incoming  cell line terms before
  * lookup.
- * @does: provides a lookup method for cell line terms stored within a cache
+ * @does provides a lookup method for cell line terms stored within a cache
  * and provides translation of incoming terms.
- * @company: The Jackson Laboratory
+ * @company The Jackson Laboratory
  * @author M Walker
  * @version 1.0
  */

@@ -7,12 +7,12 @@ import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
- * @is: a VocabKeyLookup for the Segment Type vocabulary
- * @has: a Translator for translating incoming segment type terms before
+ * @is a VocabKeyLookup for the Segment Type vocabulary
+ * @has a Translator for translating incoming segment type terms before
  * lookup.
- * @does: provides a lookup method for segment type terms stored within a cache
+ * @does provides a lookup method for segment type terms stored within a cache
  * and provides translation of incoming terms.
- * @company: The Jackson Laboratory
+ * @company The Jackson Laboratory
  * @author M Walker
  * @version 1.0
  */

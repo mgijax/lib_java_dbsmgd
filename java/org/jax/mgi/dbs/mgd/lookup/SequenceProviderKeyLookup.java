@@ -7,12 +7,12 @@ import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
- * @is: a VocabKeyLookup for the Sequence Provider vocabulary
- * @has: a Translator for translating incoming sequence provider terms before
+ * @is a VocabKeyLookup for the Sequence Provider vocabulary
+ * @has a Translator for translating incoming sequence provider terms before
  * lookup.
- * @does: provides a lookup method for sequence provider terms stored within a
+ * @does provides a lookup method for sequence provider terms stored within a
  * cache and provides translation of incoming terms.
- * @company: The Jackson Laboratory
+ * @company The Jackson Laboratory
  * @author M Walker
  * @version 1.0
  */
