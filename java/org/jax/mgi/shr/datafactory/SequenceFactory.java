@@ -15,8 +15,41 @@ import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.ListHash;
 
+/**
+* @module SequenceFactory.java
+* @author jw
+*/
+
+/** The SequenceFactory class contains many methods which encapsulate
+*    knowledge of the sequence-related portions of the schema.  They allow for
+*    easy retrieval of various aspects of a sequence's associated data.
+* @is a factory for retrieving information related to sequences.
+* @has all data available for sequences, retrieved from a database
+* @does queries a database to retrieve subsets of information about sequences.
+*    Retrieval methods always return a new <tt>DTO</tt>.  These DTO objects
+*    may then be merged if needed.  Public methods include:  (parameters not
+*    listed here)
+*    <OL>
+*    <LI> getKey -- find from the CGI parameters the sequence key
+*    <LI> getKeyForID() -- find the sequence key for a given accID
+*    <LI> getFullInfo() -- get all available information for a sequence
+*    <LI> getBasicInfo() -- get a minimal set of available information for a
+*        sequence
+*    <LI> <I>Many other methods exist for individual data sections.  See below
+*        for details.</I>
+*    </OL>
+*/
 public class SequenceFactory extends Factory {
 
+
+    /** constructor; instantiates and initializes a new SequenceFactory.
+    * @param config provides parameters needed to configure a SequenceFactory.
+    * @param sqlDM provides access to a database
+    * @param logger provides logging capability
+    * @assumes nothing
+    * @effects nothing
+    * @throws nothing
+    */
     public SequenceFactory (DataFactoryCfg config,
                             SQLDataManager sqlDM,
                             Logger logger) {
@@ -24,6 +57,23 @@ public class SequenceFactory extends Factory {
 
     }
 
+
+    /////////////////////////////////////
+    // methods for retrieving sequence keys
+    /////////////////////////////////////
+
+    /** find a unique key identifying the sequence specified by the given
+    *    'parms'.
+    * @param parms set of parameters specifying which sequence we are seeking.
+    *    Two keys in 'parms' are checked, first, "key" (sequeunce key as a
+    *    String), then "id" (sequence accession ID).
+    * @return String a unique key identifying the sequence object specified in
+    *    the given set of 'parms', or null if none can be found
+    * @assumes nothing
+    * @effects queries the database using 'sqlDM'
+    * @throws DBException if there is a problem while attempting to query the
+    *    database using 'sqlDM'
+    */
     public String getKey(Map parms) throws DBException {
 
         // if a 'key' is directly specified in the 'parms', then assume it is
@@ -48,11 +98,26 @@ public class SequenceFactory extends Factory {
         return null;        // no key could be found
     }
 
+    /* -------------------------------------------------------------------- */
+
+    /** find the sequence key that corresponds to the given 'accID'.  If
+    *    multiple sequences have the same 'accID', then we arbitrarily
+    *    choose one of the keys to return.
+    * @param accID the accession ID for which we seek an associated sequence
+    * @return int the sequence key corresponding to 'accID'; will be -1 if
+    *    no sequence key could be found
+    * @assumes That returning any sequence associated with that accID is
+    *    good enough.
+    * @effects nothing
+    * @throws DBException if there is a problem querying the database or
+    *    processing the results.
+    */
     public int getKeyForID (String accID) throws DBException {
         ResultsNavigator nav = null;
         RowReference rr = null;     // one row in 'nav'
         int key = -1;
 
+        System.out.println(Sprintf.sprintf(SEQ_KEY, accID));
         nav = this.sqlDM.executeQuery(Sprintf.sprintf(SEQ_KEY, accID));
         if(nav.next()) {
             rr = (RowReference)nav.getCurrent();
@@ -61,14 +126,34 @@ public class SequenceFactory extends Factory {
 
         return key;
     }
+
+
+    /* -------------------------------------------------------------------- */
+
+    //////////////////////////////////////////////////////
+    // methods to retrieve sets of sections of information
+    //////////////////////////////////////////////////////
+
+    /** retrieves the full suite of data available for the sequence specified in
+    *    'parms'.
+    * @param parms set of parameters specifying which sequence we are seeking.
+    *    Two keys in 'parms' are checked, first, "key" (sequeunce key as a
+    *    String), then "id" (sequence accession ID).
+    * @return DTO which defines all sequence data fields
+    * @assumes nothing
+    * @effects retrieves all sequence data by quering a database and retrieving
+    *    data via HTTP as needed
+    * @throws DBException if there is a problem querying the database or
+    *    processing the results
+    */
     public DTO getFullInfo (Map parms) throws DBException {
 
         DTO section = DTO.getDTO();
         DTO sequence = DTO.getDTO();
-        // marker key as a String
+        // sequence key as a String
         String keyStr = getKey (parms);
 
-        // if we could not find a marker key based on 'parms', then bail out
+        // if we could not find a sequence key based on 'parms', then bail out
         // before bothering with anything else
         if (keyStr == null)
         {
@@ -79,23 +164,28 @@ public class SequenceFactory extends Factory {
         int key = Integer.parseInt (keyStr);
 
 
-
+        //All the sequence attributes and source information
         section = getBasicInfo(key);
         sequence.merge (section);
         DTO.putDTO (section);
 
+        //The chromosome of the associated markers.  Even on a BAC, there
+        //should be at most one.
         section = getChromosome(key);
         sequence.merge (section);
         DTO.putDTO (section);
 
+        //All of the markers associated with this sequence
         section = getMarkerInfo(key);
         sequence.merge (section);
         DTO.putDTO (section);
 
+        //all the references associated with this sequence
         section = getReferenceInfo(key);
         sequence.merge (section);
         DTO.putDTO (section);
 
+        //all the probes associated with this sequence
         section = getProbes(key);
         sequence.merge (section);
         DTO.putDTO (section);
@@ -103,6 +193,18 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    /** retrieves the the basic info avaliable for the sequence specified in
+    *    'parms'.
+    * @param parms set of parameters specifying which sequence we are seeking.
+    *    Two keys in 'parms' are checked, first, "key" (sequeunce key as a
+    *    String), then "id" (sequence accession ID).
+    * @return DTO which defines all sequence attributes and source.
+    * @assumes nothing
+    * @effects retrieves all sequence attributes and source data by
+    * quering a database
+    * @throws DBException if there is a problem querying the database or
+    *    processing the results
+    */
     public DTO getBasicInfo (int key) throws DBException {
         DTO section = DTO.getDTO();
         DTO sequence = DTO.getDTO();
@@ -146,30 +248,48 @@ public class SequenceFactory extends Factory {
     }
 
 
+    /** retrieves all the accIDs associated with this sequence.
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where the DTOConstants.AccIDs field is associated with
+    *    a hashmap of all the accessionIDs and their actualdb information.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getACCIDs(int key) throws DBException {
-        ResultsNavigator nav = null;    // set of query results
-        RowReference rr = null;         // one row in 'nav'
-        DTO sequence = DTO.getDTO();    // start with a new DTO
-        String id;                      //the accID of the current row
-        String adbURL;                  //the actualDB URL in the current row
-        String adbName;                 //the actualDB name in the current row
-        Integer pref = new Integer(0);  //1 if the accID of this row is preferred.
-
-        String lastID = "";             //the accID of the last row
-
-
-        ArrayList adbs = new ArrayList(); //       Key:ADB name
-                                        //       Value:ADB URL
+        // set of query results
+        ResultsNavigator nav = null;
+        // one row in 'nav'
+        RowReference rr = null;
+        // start with a new DTO
+        DTO sequence = DTO.getDTO();
+        //the accID of the current row
+        String id;
+        //the actualDB URL in the current row
+        String adbURL;
+        //the actualDB name in the current row
+        String adbName;
+        //1 if the accID of this row is preferred.
+        Integer pref = new Integer(0);
+        //the accID of the previous row iterated through
+        String lastID = "";
+        //a list of hashmaps of the actual dbs
+        ArrayList adbs = new ArrayList();
+        //Key:ADB name; Value:ADB URL
         HashMap adb = new HashMap();
-        HashMap ids = new HashMap();    //Key:An accID associated with this sequence
-                                        //Value: A Hashmap of all associated ActualDBs
-                                        //       Key:ADB name
-                                        //       Value:ADB URL
+        //Key:An accID associated with this sequence;
+        //Value: An arraylist of hashmaps of all associated ActualDB
+        //       names and URLs
+        HashMap ids = new HashMap();
 
+
+        System.out.println(Sprintf.sprintf(ACC_IDS, key));
         nav = this.sqlDM.executeQuery(
                         Sprintf.sprintf(ACC_IDS, key));
 
         while(nav.next()) {
+            System.out.println("In the loop");
             rr = (RowReference) nav.getCurrent();
             id = rr.getString(1);
             pref = rr.getInt(2);
@@ -178,8 +298,10 @@ public class SequenceFactory extends Factory {
             adbURL.replaceAll("@@@@","%s");
             adb = new HashMap();
 
-            if (!id.equals(lastID)) { //this is a new ID
+            if (!id.equals(lastID)) {
+                //this is a new ID
                 if(!lastID.equals(""))
+                    //so store the old information
                     ids.put(lastID,adbs);
                 adbs = new ArrayList();
             }
@@ -197,7 +319,19 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
-
+    /** retrieves the sequence version information of this sequence.
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where the DTOConstants.SequenceVersion field is
+    * associated with a string containing the version of the sequence,
+    * the DTOConstants.SequenceRecordDate field is associated with a
+    * string containing the date of the last annotation of this sequence,
+    * and the DTOConstants.SequenceDate field is associated with a string
+    * containing the date of the last update of this sequence.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getSequenceVersion(int key) throws DBException {
         ResultsNavigator nav = null;
         RowReference rr = null;         // one row in 'nav'
@@ -224,7 +358,16 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
-
+    /** retrieves the description of this sequence.
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where the DTOConstants.SequenceDescription field is
+    * associated with a string containing the description of this
+    * sequence.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getSequenceDescription(int key) throws DBException {
 
         ResultsNavigator nav = null;
@@ -245,6 +388,16 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    /** retrieves the provider, (Genbank:Rod, Trembl, etc) of this sequence.
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where the DTOConstants.SequenceProvider field is
+    * associated with a string containing the provider of this
+    * sequence.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getSequenceProvider(int key) throws DBException {
 
         ResultsNavigator nav = null;
@@ -265,6 +418,16 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    /** retrieves the status of this sequence.
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where the DTOConstants.SequenceStatus field is
+    * associated with a string containing the status of this
+    * sequence.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getSequenceStatus(int key) throws DBException {
 
         ResultsNavigator nav = null;
@@ -285,6 +448,16 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    /** retrieves the type (DNA,RNA,etc) of this sequence.
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where the DTOConstants.SequenceType field is
+    * associated with a string containing the type of this
+    * sequence.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getSequenceType(int key) throws DBException {
 
         ResultsNavigator nav = null;
@@ -305,10 +478,20 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    /** retrieves the length of this sequence.
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where the DTOConstants.SequenceLength field is
+    * associated with a string containing the length of this
+    * sequence.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getSequenceLength(int key) throws DBException {
 
         ResultsNavigator nav = null;
-        RowReference rr = null;     // one row in 'nav'
+        RowReference rr = null;         // one row in 'nav'
         DTO sequence = DTO.getDTO();    // start with a new DTO
         Integer len;
 
@@ -325,6 +508,31 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    /** retrieves the source, either raw or resolved, of this sequence.
+    *if any of the resolved source values return a "Not Resolved"
+    * they will be overwritten with the raw value.  If there is no
+    * raw value to be found, they will be replaced with a "Not Specified"
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where
+    *   DTOConstants.Age is associated with a string containing the age of
+    *   the source of this sequence.
+    *   DTOConstants.CellLine is associated with a string containing the
+    *   cell line of the source of this sequence.
+    *   DTOConstants.Gender is associated with a string containing the
+    *   gender of the source of this sequence.
+    *   DTOConstants.Library is associated with a string containing the
+    *   library of the source of this sequence.
+    *   DTOConstants.Organism is associated with a string containing the
+    *   organism of the source of this sequence.
+    *   DTOConstants.Strain is associated with a string containing the
+    *   strain of the source of this sequence.
+    *   DTOConstants.Tissue is associated with a string containing the
+    *   tissue of the source of this sequence.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getSequenceSource(int key) throws DBException {
 
         ResultsNavigator nav = null;
@@ -378,6 +586,18 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    /** retrieve the chromosome of an arbitrary marker associated with this
+    * sequence.
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where the DTOConstants.Chromosome field is
+    * associated with a string containing the provider of this
+    * sequence.
+    * @assumes That all markers associated with this sequence reside on the
+    * reside on the same chromosome.
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getChromosome(int key) throws DBException {
 
         ResultsNavigator nav = null;
@@ -398,6 +618,41 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    /** retrieves a host of information about all markers associated
+    * with this sequence
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where which contains several DTOs each consisting of
+    *             the information about 1 marker associated with this
+    *             sequence.  The details of these DTOs is as follows:
+    *
+    *   DTOConstants.MarkerKey is associated with an integer containing
+    *   marker key of this marker.
+    *   DTOConstants.MarkerSymbol is associated with a string containing the
+    *   marker symbol of this marker.
+    *   DTOConstants.MarkerName is associated with a string containing the
+    *   marker name of this marker.
+    *   DTOConstants.MarkerType is associated with a string containing the
+    *   marker type of this marker.
+    *   DTOConstants.PhenoCount is associated with a string containing the
+    *   number of phenotype classification (PhenoSlim) terms associated
+    *   with this marker.
+    *   DTOConstants.ExpressionAssayCount is associated with a string
+    *   containing the number of assays associated with this marker.
+    *   DTOConstants.GOAnnotationCount is associated with a string containing
+    *   the number of Gene Ontology terms associated with this marker.
+    *   DTOConstants.OrthologCount is associated with a string containing the
+    *   number of orthologus markers associated with this marker
+    *   DTOConstants.RefsKey is associated with a string containing the
+    *   reference key for the association between this marker and the
+    *   sequence.
+    *   DTOConstants.RefID is associated with a string containing the
+    *   reference ID (J number) for the association between this marker and
+    *   the sequence.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getMarkerInfo(int key) throws DBException {
         ResultsNavigator nav = null;    // set of query results
         RowReference rr = null;     // one row in 'nav'
@@ -436,6 +691,17 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    /** retrieves all references associated with this sequence.
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where which contains several DTOs each consisting of
+    *             the information about 1 reference associated with this
+    *             sequence.  See makeReferenceDTO for details about these
+    *             inner DTOs.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getReferenceInfo(int key) throws DBException {
         ResultsNavigator nav = null;
         RowReference rr = null;
@@ -452,7 +718,9 @@ public class SequenceFactory extends Factory {
         sequence.set(DTOConstants.References, allRefs);
         return sequence;
     }
+
     /** create a DTO describing the reference identified in 'rr'.
+    * NOTE: THIS WAS TAKEN VERBATIM FROM THE COPY IN MarkerFactory
     * @param rr a row from a database query containing at least these fields:
     *    <OL>
     *    <LI> _Refs_key : integer
@@ -506,6 +774,31 @@ public class SequenceFactory extends Factory {
         return ref;
     }
 
+    /** retrieves a host of information about all probes associated
+    * with this sequence
+    * @param key the sequence key of the sequence whose data we seek
+    * @return DTO where which contains several DTOs each consisting of
+    *             the information about 1 probe associated with this
+    *             sequence.  The details of these DTOs is as follows:
+    *
+    *   DTOConstants.ProbeKey is associated with an integer containing
+    *   the _Probe_key of this probe.
+    *   DTOConstants.ProbeName is associated with a string containing the
+    *   name of this probe.
+    *   DTOConstants.AccID is associated with a string containing the
+    *   MGI accession ID of this probe.
+    *   DTOConstants.CloneID is associated with a string containing the
+    *   provider's accessionID for this probe.
+    *   DTOConstants.SegmentType is associated with a string containing the
+    *   type of this probe.
+    *   DTOConstants.CloneCollection is associated with a string
+    *   containing the name of the LogicalDB whose clone collection this
+    *   probe is a member of.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
     public DTO getProbes(int key) throws DBException {
         ResultsNavigator nav = null;
         RowReference rr = null;
@@ -533,8 +826,19 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
+    //////////////////
+    // class variables
+    //////////////////
 
+    /* --------------------------------------------------------------------
+    ** class variables -- used to hold standard SQL statements, so we don't
+    ** need to re-join the Strings in each thread of the servlet.  For each
+    ** one, we note the pieces that need to be filled in using Sprintf.
+    ** --------------------------------------------------------------------
+    */
 
+    // get the sequence key
+    // fill in: accession ID of the sequence (string)
     private static final String SEQ_KEY =
             "select ss._Sequence_key\n"+
             "from SEQ_Sequence ss, ACC_Accession aa\n"+
@@ -542,49 +846,68 @@ public class SequenceFactory extends Factory {
             "and ss._Sequence_key = aa._Object_key\n"+
             "and aa._MGIType_key = 19";
 
+    // get all accession IDs associated with this sequence key
+    // fill in: sequence key (int)
     private static final String ACC_IDS =
             "select aa.accID, aa.preferred,adb.url, adb.name\n"+
-            "from ACC_Accession aa, ACC_ActualDB adb, MGI_SetMember msm\n"+
+            "from ACC_Accession aa, ACC_ActualDB adb, \n"+
+            "MGI_Set ms, MGI_SetMember msm\n"+
             "where aa._Object_key = %d\n"+
             "and aa._MGIType_key = 19\n"+
             "and aa._LogicalDB_key = adb._LogicalDB_key\n"+
             "and msm._Object_key = adb._ActualDB_key\n"+
-            "and msm._Set_key = 1009\n"+
+            "and msm._Set_key = ms._Set_key\n"+
+            "and ms.name = 'Actual DB'\n"+
             "order by aa.accID, msm.sequenceNum";
 
+    // get the version of the sequence
+    // fill in: sequence key (int)
     private static final String SEQ_VER =
             "select version, seqrecord_date, sequence_date\n"+
             "from SEQ_Sequence\n"+
             "where _Sequence_key = %d";
 
+    // get the description of the sequence
+    // fill in: sequence key (int)
     private static final String SEQ_DESCRIPTION =
             "select description\n" +
             "from SEQ_Sequence\n" +
             "where _Sequence_key = %d";
 
+    // get the name of the sequence provider
+    // fill in: sequence key (int)
     private static final String SEQ_PROVIDER =
             "select vt.term\n"+
             "from VOC_Term vt, SEQ_Sequence ss\n"+
             "where ss._Sequence_key = %d\n"+
             "and vt._Term_key = ss._SequenceProvider_key";
 
+    // get the status of the sequence
+    // fill in: sequence key (int)
     private static final String SEQ_STATUS =
             "select vt.term\n"+
             "from VOC_Term vt, SEQ_Sequence ss\n"+
             "where ss._Sequence_key = %d\n"+
             "and vt._Term_key = ss._SequenceStatus_key";
 
+    // get the type(DNA,RNA,etc) of the sequence
+    // fill in: sequence key (int)
     private static final String SEQ_TYPE =
             "select vt.term\n"+
             "from VOC_Term vt, SEQ_Sequence ss\n"+
             "where ss._Sequence_key = %d\n"+
             "and vt._Term_key = ss._SequenceType_key";
 
+    // get the length of the sequence
+    // fill in: sequence key (int)
     private static final String SEQ_LENGTH =
             "select length\n"+
             "from SEQ_Sequence\n"+
             "where _Sequence_key = %d";
 
+    // loads #seqSource with all the resolved source values for this
+    // sequence
+    // fill in: sequence key (int)
     private static final String SEQ_SOURCE_TABLE =
             "select _Sequence_key,\n"+
             "    library = psv.name,\n"+
@@ -599,6 +922,8 @@ public class SequenceFactory extends Factory {
             "where ssa._Sequence_key = %d\n"+
             "and ssa._Source_key = psv._Source_key";
 
+    // loads #seqSource with the raw library name if there was no
+    // resolved value
     private static final String RAW_LIBRARY =
             "update #seqSource\n"+
             "set library = ss.rawLibrary + '*'\n"+
@@ -607,6 +932,8 @@ public class SequenceFactory extends Factory {
             "and s.library = 'Not Resolved' \n"+
             "or  s.library = NULL";
 
+    // loads #seqSource with the raw organism if there was no
+    // resolved value
     private static final String RAW_ORGANISM =
             "update #seqSource\n"+
             "set organism = ss.rawOrganism + '*'\n"+
@@ -614,6 +941,8 @@ public class SequenceFactory extends Factory {
             "where ss._Sequence_key = s._Sequence_key\n"+
             "and s.organism = 'Not Resolved'";
 
+    // loads #seqSource with the raw strain if there was no
+    // resolved value
     private static final String RAW_STRAIN =
             "update #seqSource\n"+
             "set strain = ss.rawStrain + '*'\n"+
@@ -621,6 +950,8 @@ public class SequenceFactory extends Factory {
             "where ss._Sequence_key = s._Sequence_key\n"+
             "and s.strain = 'Not Resolved'";
 
+    // loads #seqSource with the raw tissue if there was no
+    // resolved value
     private static final String RAW_TISSUE =
             "update #seqSource\n"+
             "set tissue = ss.rawTissue + '*'\n"+
@@ -628,6 +959,8 @@ public class SequenceFactory extends Factory {
             "where ss._Sequence_key = s._Sequence_key\n"+
             "and s.tissue = 'Not Resolved'";
 
+    // loads #seqSource with the raw age if there was no
+    // resolved value
     private static final String RAW_AGE =
             "update #seqSource\n"+
             "set age = ss.rawAge + '*'\n"+
@@ -635,6 +968,8 @@ public class SequenceFactory extends Factory {
             "where ss._Sequence_key = s._Sequence_key\n"+
             "and s.age = 'Not Resolved'";
 
+    // loads #seqSource with the raw sex if there was no
+    // resolved value
     private static final String RAW_SEX =
             "update #seqSource\n"+
             "set sex = ss.rawSex + '*'\n"+
@@ -642,6 +977,8 @@ public class SequenceFactory extends Factory {
             "where ss._Sequence_key = s._Sequence_key\n"+
             "and s.sex = 'Not Resolved'";
 
+    // loads #seqSource with the raw cell line if there was no
+    // resolved value
     private static final String RAW_CELLLINE =
             "update #seqSource\n"+
             "set cellLine = ss.rawCellLine + '*'\n"+
@@ -649,16 +986,22 @@ public class SequenceFactory extends Factory {
             "where ss._Sequence_key = s._Sequence_key\n"+
             "and s.cellLine = 'Not Resolved'";
 
+    // gets all the source information for this sequence.  If there is a
+    // raw value, it will be followed by a *
     private static final String SEQ_SOURCE =
             "select library,organism,strain,tissue,age,sex,cellLine\n"+
             "from #seqSource";
 
+    // get the chromosomes of all markers associated with this sequence
+    // fill in: sequence key (int)
     private static final String CHROMOSOME =
             "select distinct mm.chromosome\n"+
             "from MRK_Marker mm, SEQ_Marker_Cache smc\n"+
             "where smc._Sequence_key = %d\n"+
             "and mm._Marker_key = smc._Marker_key";
 
+    // sets up a temp table, #mrk to hold all the information about all
+    //  markers associated with this sequence
     private static final String MARKER_TABLE =
             "CREATE TABLE #mrk(\n"+
             "_Marker_key  int NOT NULL,\n"+
@@ -673,6 +1016,9 @@ public class SequenceFactory extends Factory {
             "refID        varchar(255) NULL\n"+
             ")";
 
+    // loads #mrk with the _Marker_key, name, symbol, and markerType of all
+    // markers associated with this sequence
+    // fill in: sequence key (int)
     private static final String MARKER_NOMENCLATURE =
             "insert #mrk(_Marker_key,name,symbol,markerType)\n"+
             "select mm._Marker_key, mm.name, mm.symbol, mt.name\n"+
@@ -681,6 +1027,8 @@ public class SequenceFactory extends Factory {
             "and mm._Marker_key = smc._Marker_key\n"+
             "and mt._Marker_Type_key = mm._Marker_Type_key";
 
+    // loads #goCnt with all _Marker_keys from #mrk and the count of
+    // Gene Ontology terms associated with each of those markers
     private static final String MARKER_GO_COUNT =
             "select GOCount = count(vt.term), m._Marker_key\n"+
             "into #goCnt\n"+
@@ -690,12 +1038,15 @@ public class SequenceFactory extends Factory {
             "and va._Term_key = vt._Term_key\n"+
             "group by m._Marker_key";
 
+    // updates #mrk, associating the count of GO terms with their marker keys
     private static final String MARKER_GO_UPDATE =
             "update #mrk\n"+
             "set goCount = gc.goCount\n"+
             "from #mrk m, #goCnt gc\n"+
             "where m._Marker_key = gc._Marker_key\n";
 
+    // loads #assayCount with all _Marker_keys from #mrk and the count of
+    // Gene Expression Assays associated with each of those markers
     private static final String MARKER_ASSAY_COUNT =
             "select assayCount = count(ga._Assay_key), m._Marker_key\n"+
             "into #assayCnt\n"+
@@ -703,12 +1054,15 @@ public class SequenceFactory extends Factory {
             "where m._Marker_key = ga._Marker_key\n"+
             "group by m._Marker_key";
 
+    // updates #mrk, associating the count of assays with their marker keys
     private static final String MARKER_ASSAY_UPDATE =
             "update #mrk\n"+
             "set assayCount = ac.assayCount\n"+
             "from #mrk m, #assayCnt ac\n"+
             "where m._Marker_key = ac._Marker_key\n";
 
+    // loads #orthoCnt with all _Marker_keys from #mrk and the count of
+    // orthologs associated with each of those markers
     private static final String MARKER_ORTHOLOGY_COUNT =
             "select orthoCount = count(hhm._Homology_key), m._Marker_key\n"+
             "into #orthoCnt\n"+
@@ -716,12 +1070,15 @@ public class SequenceFactory extends Factory {
             "where m._Marker_key = hhm._Marker_key\n"+
             "group by m._Marker_key";
 
+    // updates #mrk, associating the count of orthologs with their marker keys
     private static final String MARKER_ORTHOLOGY_UPDATE =
             "update #mrk\n"+
             "set orthoCount = oc.orthoCount\n"+
             "from #mrk m, #orthoCnt oc\n"+
             "where m._Marker_key = oc._Marker_key\n";
 
+    // loads #alleleCnt with all _Marker_keys from #mrk and the count of
+    // alleles associated with each of those markers
     private static final String MARKER_ALLELE_COUNT =
             "select alleleCount = count(al._Allele_key), m._Marker_key\n"+
             "into #alleleCnt\n"+
@@ -729,12 +1086,15 @@ public class SequenceFactory extends Factory {
             "where m._Marker_key = al._Marker_key\n"+
             "group by m._Marker_key";
 
+    // updates #mrk, associating the count of alleles with their marker keys
     private static final String MARKER_ALLELE_UPDATE =
             "update #mrk\n"+
             "set alleleCount = ac.alleleCount\n"+
             "from #mrk m, #alleleCnt ac\n"+
             "where m._Marker_key = ac._Marker_key\n";
 
+    // updates #mrk with the information for the reference associating the
+    // sequence and this marker
     private static final String MARKER_REF =
             "update #mrk\n"+
             "set _Refs_key = smc._Refs_key, refID = aa.accID\n"+
@@ -745,6 +1105,8 @@ public class SequenceFactory extends Factory {
             "and aa.prefixPart = 'J:'\n"+
             "and aa.preferred = 1";
 
+    // gets the marker information, the counts, and the association reference
+    // information for all markers associated with this sequence
     private static final String MARKER_INFO =
             "select _Marker_key, symbol, name, markerType,\n"+
             "alleleCount,assayCount,GOCount,orthoCount,\n"+
@@ -752,6 +1114,9 @@ public class SequenceFactory extends Factory {
             "from #mrk\n"+
             "order by symbol";
 
+    // gets all references associated with this sequence.
+    // this includes the _Refs_key, J:, author, title, and a short citation.
+    // fill in: sequence key (int)
     private static final String REFS =
             "SELECT br._Refs_key, aa.accID, br.authors, br.authors2,\n"+
             "br.title, br.title2,\n"+
@@ -765,6 +1130,8 @@ public class SequenceFactory extends Factory {
             "and aa.prefixPart = 'J:'\n"+
             "and aa._Object_key = br._Refs_key";
 
+    // sets up a temp table, #prbs to hold all the information about all
+    // the probes associated with this sequence
     private static final String PROBE_TABLE =
             "CREATE TABLE #prbs(\n"+
             "_Probe_key   int NOT NULL,\n"+
@@ -775,7 +1142,9 @@ public class SequenceFactory extends Factory {
             "collection   varchar(80)  NULL\n"+
             ")";
 
-
+    // loads #prbs with the name, _Probe_key, type, and mgiID of all the
+    // probes associated with this sequence
+    // fill in: sequence key (int)
     private static final String PROBES =
             "insert #prbs(name,_Probe_key,segmentType, mgiID)\n"+
             "select distinct pp.name, pp._Probe_key, vt.term, aa.accID\n"+
@@ -788,6 +1157,8 @@ public class SequenceFactory extends Factory {
             "and aa.prefixPart = 'MGI:'\n"+
             "and vt._Term_key = pp._SegmentType_key";
 
+    // loads #prbs with the logicaldb name of the collection this probe
+    // belongs to, if any and the providers accID for the probe.
     private static final String CLONE_COLLECTION =
             "update #prbs\n"+
             "set collection = ldb.name, accID = aa.accID\n"+
@@ -799,6 +1170,7 @@ public class SequenceFactory extends Factory {
             "                          from MGI_SetMember\n"+
             "                          where _Set_key = 1000)";
 
+    // gets the probe information from #prbs
     private static final String PROBE_INFO =
             "select _Probe_key, name, mgiID, accID,segmentType, collection\n"+
             "from #prbs";
