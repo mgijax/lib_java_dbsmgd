@@ -108,7 +108,7 @@ public class AssocClonesLookup extends CachedLookup
                 "OR " +
                 "prb." + MGD.prb_probe._segmenttype_key + " = " +
                    SegmentTypeConstants.NOT_SPECIFIED + " " +
-                ")" +
+                ") " +
             "AND " +
                 "src." + MGD.prb_source.name + " != null " +
             "order by acc." + MGD.acc_accession.accid ;
