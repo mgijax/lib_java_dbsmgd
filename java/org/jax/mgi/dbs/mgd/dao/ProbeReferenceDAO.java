@@ -6,7 +6,7 @@ package org.jax.mgi.dbs.mgd.dao;
 import java.util.Vector;
 
 import org.jax.mgi.shr.config.ConfigException;
-import org.jax.mgi.shr.dbutils.dao.DataInstance;
+import org.jax.mgi.shr.dbutils.dao.DAO;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.Table;
 
@@ -27,7 +27,7 @@ import org.jax.mgi.shr.dbutils.Table;
  * @version 1.0
  */
 
-public class ProbeReferenceDAO extends DataInstance
+public class ProbeReferenceDAO extends DAO
 {
     /////////////////
     //  Variables  //
@@ -214,6 +214,9 @@ public class ProbeReferenceDAO extends DataInstance
 
 
 //  $Log$
+//  Revision 1.2  2003/09/23 13:23:53  dbm
+//  Continued development
+//
 //  Revision 1.1  2003/09/19 17:43:21  dbm
 //  Initial version
 //

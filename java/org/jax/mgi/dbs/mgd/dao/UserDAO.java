@@ -1,7 +1,7 @@
 package org.jax.mgi.dbs.mgd.dao;
 
 import java.util.Vector;
-import org.jax.mgi.shr.dbutils.dao.DataInstance;
+import org.jax.mgi.shr.dbutils.dao.DAO;
 import org.jax.mgi.shr.dbutils.Table;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.config.ConfigException;
@@ -15,7 +15,7 @@ import org.jax.mgi.shr.exception.ExceptionFactory;
  * the MGI_USER table
  */
 
-public class UserDAO extends DataInstance
+public class UserDAO extends DAO
 {
   private UserKey userKey = null;
   private UserState userState = null;
