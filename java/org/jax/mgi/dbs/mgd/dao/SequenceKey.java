@@ -1,3 +1,6 @@
+//  $Header$
+//  $Name$
+
 package org.jax.mgi.dbs.mgd.dao;
 
 import org.jax.mgi.shr.config.ConfigException;
@@ -7,10 +10,10 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.shr.dbutils.Table;
 
 /**
- * @is An object that has the primary key for a Probe object.
+ * @is An object that has the primary key for a Sequence object.
  * @has
  *   <UL>
- *   <LI> The primary key for a Probe object
+ *   <LI> The primary key for a Sequence object
  *   </UL>
  * @does
  *   <UL>
@@ -24,13 +27,13 @@ import org.jax.mgi.shr.dbutils.Table;
 public class SequenceKey
 {
 
-    // The primary key for a Probe object.
+    // The primary key for a Sequence object.
     //
-    private int primaryKey;
+    private Integer primaryKey;
 
 
     /**
-     * Constructs a new ProbeKey object.
+     * Constructs a new SequenceKey object.
      * @assumes Nothing
      * @effects Nothing
      * @param None
@@ -52,7 +55,7 @@ public class SequenceKey
      * @param pKey value to set the primary key
      * @throws Nothing
      */
-    public SequenceKey (int pKey)
+    public SequenceKey (Integer pKey)
     {
         primaryKey = pKey;
     }
@@ -66,5 +69,31 @@ public class SequenceKey
      * @return The primaryKey attribute
      * @throws Nothing
      */
-    public int getPrimaryKey () { return primaryKey; }
+    public Integer getPrimaryKey () { return primaryKey; }
 }
+
+
+//  $Log$
+//
+/**************************************************************************
+*
+* Warranty Disclaimer and Copyright Notice
+*
+*  THE JACKSON LABORATORY MAKES NO REPRESENTATION ABOUT THE SUITABILITY OR
+*  ACCURACY OF THIS SOFTWARE OR DATA FOR ANY PURPOSE, AND MAKES NO WARRANTIES,
+*  EITHER EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR A
+*  PARTICULAR PURPOSE OR THAT THE USE OF THIS SOFTWARE OR DATA WILL NOT
+*  INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS, OR OTHER RIGHTS.
+*  THE SOFTWARE AND DATA ARE PROVIDED "AS IS".
+*
+*  This software and data are provided to enhance knowledge and encourage
+*  progress in the scientific community and are to be used only for research
+*  and educational purposes.  Any reproduction or use for commercial purpose
+*  is prohibited without the prior express written permission of The Jackson
+*  Laboratory.
+*
+* Copyright \251 1996, 1999, 2002, 2003 by The Jackson Laboratory
+*
+* All Rights Reserved
+*
+**************************************************************************/

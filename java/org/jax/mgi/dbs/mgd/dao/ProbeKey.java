@@ -32,7 +32,7 @@ public class ProbeKey
 
     // The primary key for a Probe object.
     //
-    private int primaryKey;
+    private Integer primaryKey;
 
 
     /**
@@ -57,7 +57,7 @@ public class ProbeKey
      * @param pKey value to set the primary key
      * @throws Nothing
      */
-    public ProbeKey (int pKey)
+    public ProbeKey (Integer pKey)
     {
         primaryKey = pKey;
     }
@@ -71,11 +71,14 @@ public class ProbeKey
      * @return The primaryKey attribute
      * @throws Nothing
      */
-    public int getPrimaryKey () { return primaryKey; }
+    public Integer getPrimaryKey () { return primaryKey; }
 }
 
 
 //  $Log$
+//  Revision 1.2  2003/09/23 13:23:53  dbm
+//  Continued development
+//
 //  Revision 1.1  2003/09/19 17:43:21  dbm
 //  Initial version
 //

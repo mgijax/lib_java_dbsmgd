@@ -32,7 +32,7 @@ public class ProbeSourceKey
 
     // The primary key for a ProbeSource object.
     //
-    private int primaryKey;
+    private Integer primaryKey;
 
 
     /**
@@ -57,7 +57,7 @@ public class ProbeSourceKey
      * @param pKey value to set the primary key
      * @throws Nothing
      */
-    public ProbeSourceKey (int pKey)
+    public ProbeSourceKey (Integer pKey)
     {
         primaryKey = pKey;
     }
@@ -71,11 +71,14 @@ public class ProbeSourceKey
      * @return The primaryKey attribute
      * @throws Nothing
      */
-    public int getPrimaryKey () { return primaryKey; }
+    public Integer getPrimaryKey () { return primaryKey; }
 }
 
 
 //  $Log$
+//  Revision 1.2  2003/09/23 13:23:55  dbm
+//  Continued development
+//
 //  Revision 1.1  2003/09/19 17:43:24  dbm
 //  Initial version
 //
