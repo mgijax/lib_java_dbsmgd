@@ -163,8 +163,8 @@ public class SequenceFactory extends Factory {
         }
         // sequence key as an int
         int key = Integer.parseInt (keyStr);
-		return getFullInfo(key);
-	}
+                return getFullInfo(key);
+        }
 
 
     /** retrieves the full suite of data available for the sequence specified in
@@ -177,11 +177,11 @@ public class SequenceFactory extends Factory {
     * @throws DBException if there is a problem querying the database or
     *    processing the results
     */
-	public DTO getFullInfo (int key) throws DBException {
+        public DTO getFullInfo (int key) throws DBException {
 
-		// As each chunk of data is gathered, section will capture it from
-		// the functions and then be merged into sequence, which will hold
-		// all the information about this sequence
+                // As each chunk of data is gathered, section will capture it from
+                // the functions and then be merged into sequence, which will hold
+                // all the information about this sequence
         DTO section;
         DTO sequence = DTO.getDTO();
 
@@ -599,7 +599,7 @@ public class SequenceFactory extends Factory {
             sequence.set(DTOConstants.Tissue, tissue);
         }
         nav.close();
-		this.sqlDM.execute(SEQ_SOURCE_TABLE_DROP);
+                this.sqlDM.execute(SEQ_SOURCE_TABLE_DROP);
         return sequence;
     }
 
@@ -657,15 +657,15 @@ public class SequenceFactory extends Factory {
                         Sprintf.sprintf(ASSEMBLY_COORDS, key));
 
         if (nav.next()) {
-			isAssembly = new Boolean(true);
+                        isAssembly = new Boolean(true);
             rr = (RowReference) nav.getCurrent();
-            sequence.set(DTOConstants.StartCoord,rr.getFloat(1));
-            sequence.set(DTOConstants.StopCoord,rr.getFloat(2));
+            sequence.set(DTOConstants.StartCoord,rr.getDouble(1));
+            sequence.set(DTOConstants.StopCoord,rr.getDouble(2));
             sequence.set(DTOConstants.Strand,rr.getString(3));
         }
         nav.close();
 
-      	sequence.set(DTOConstants.IsAssembly,isAssembly);
+        sequence.set(DTOConstants.IsAssembly,isAssembly);
 
         return sequence;
     }
@@ -1007,8 +1007,8 @@ public class SequenceFactory extends Factory {
             "and ps._Gender_key = vtG._Term_key\n"+
             "and ps._CellLine_key = vtC._Term_key\n";
 
-	private static final String SEQ_SOURCE_TABLE_DROP =
-			"drop table #seqSource";
+        private static final String SEQ_SOURCE_TABLE_DROP =
+                        "drop table #seqSource";
 
 
     // loads #seqSource with the raw library name if there was no

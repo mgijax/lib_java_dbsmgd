@@ -765,7 +765,7 @@ public class MarkerFactory
     /** retrieve the map position (cM location) for the given marker.
     * @param key the marker key of the marker whose data we seek
     * @return DTO where the DTOConstants.MapPosition field is associated with
-    *    a Float value.  If no cM location is defined for the given marker,
+    *    a Double value.  If no cM location is defined for the given marker,
     *    then an empty DTO is returned.
     * @assumes nothing
     * @effects queries the database
@@ -783,7 +783,7 @@ public class MarkerFactory
 	if (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
-	    marker.set (DTOConstants.MapPosition, rr.getFloat(1) );
+	    marker.set (DTOConstants.MapPosition, rr.getDouble(1) );
 	}
 
 	nav.close();
@@ -3428,6 +3428,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.13  2004/10/21 17:50:40  jw
+* Changes for the 3.1 assembly release
+*
 * Revision 1.12  2004/08/03 18:57:29  jw
 * Removed unknown go terms when there is another term in that ontology
 *
