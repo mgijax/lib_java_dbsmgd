@@ -153,7 +153,7 @@ public class VocabKeyLookup extends CachedLookup
   {
     String sql = "SELECT " +
                     MGD.voc_term._term_key + ", " +
-                    MGD.voc_term.term +
+                    MGD.voc_term.term + " " +
                  "FROM " + MGD.voc_term._name + " " +
                  "WHERE " +
                     MGD.voc_term._vocab_key + " = " + this.vocabType;
