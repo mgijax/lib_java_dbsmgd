@@ -54,6 +54,7 @@ public abstract class Factory {
         this.sqlDM = sqlDM;
         this.logger = logger;
         this.printName = printName;
+        this.setTimeStamper(new TimeStamper());
     }
 
     /** adds the given <tt>TimeStamper</tt> to the Factory and begins
