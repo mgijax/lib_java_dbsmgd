@@ -15,14 +15,14 @@ import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
- * @is: a RowDataCacheHandler for caching vocabulary terms and their index keys
- * @has: a RowDataCacheStrategy of type LAZY_CACHE used for creating the
+ * @is a RowDataCacheHandler for caching vocabulary terms and their index keys
+ * @has a RowDataCacheStrategy of type LAZY_CACHE used for creating the
  * cache and performing the cache lookup and has a Translator for translating
  * incoming terms before performing the lookup
- * @does: provides a lookup method for obtainning index keys from vocabulary
+ * @does provides a lookup method for obtainning index keys from vocabulary
  * terms and caches the results. Also translates lookup terms to known
  * vocabulary terms.
- * @company: The Jackson Laboratory
+ * @company The Jackson Laboratory
  * @author not attributable
  * @version 1.0
  */
@@ -219,12 +219,12 @@ public class VocabKeyLookup extends CachedLookup
 
   /**
    *
-   * @is: a FullCachedLookup for caching a mapping between translation types
+   * @is a FullCachedLookup for caching a mapping between translation types
    * and vocabulary types
-   * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
+   * @has a RowDataCacheStrategy of type FULL_CACHE used for creating the
    * cache and performing the cache lookup.
-   * @does: provides a lookup method for getting a HashMap.
-   * @company: The Jackson Laboratory
+   * @does provides a lookup method for getting a HashMap.
+   * @company The Jackson Laboratory
    * @author not attributable
    * @version 1.0
    */

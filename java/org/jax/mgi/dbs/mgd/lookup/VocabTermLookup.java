@@ -32,7 +32,6 @@ public class VocabTermLookup extends LazyCachedLookup
      * Constructs a TermNameLookup object.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @throws CacheException
      * @throws ConfigException
      * @throws DBException
@@ -63,7 +62,6 @@ public class VocabTermLookup extends LazyCachedLookup
      * Get the query to partially initialize the cache.
      * @assumes Nothing
      * @effects Nothing
-     * @param None
      * @return The query to partially initialize the cache.
      * @throws Nothing
      */
@@ -92,7 +90,6 @@ public class VocabTermLookup extends LazyCachedLookup
      * database used for creating a new cache entry.
      * @assumes nothing
      * @effects nothing
-     * @param None
      * @return The RowDataInterpreter object
      * @throws Nothing
      */
@@ -112,6 +109,9 @@ public class VocabTermLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.3  2004/07/28 18:47:16  mbw
+//  javadocs only
+//
 //  Revision 1.2  2004/02/17 01:27:36  mbw
 //  renamed TermNameLookup.java  to VocabTermLookup.java
 //
