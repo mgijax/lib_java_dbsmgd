@@ -1,7 +1,6 @@
 package org.jax.mgi.dbs.mgd.lookup;
 
 import junit.framework.*;
-import org.jax.mgi.shr.cache.*;
 import org.jax.mgi.shr.dbutils.*;
 import org.jax.mgi.dbs.mgd.trans.*;
 import org.jax.mgi.shr.config.*;
