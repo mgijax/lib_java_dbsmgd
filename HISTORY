@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-1-0-2
+DATE: 12/29/2003
+STAFF: mbw
+RELEASE: dev
+CHANGES: added the datafactory package to this product which was remove from lib_java_core
+
 TAG: lib_java_dbsmgd-1-0-1
 DATE: 12/28/2003
 STAFF: mbw
@@ -16,3 +22,20 @@ STAFF: lec
 RELEASE: A
 CHANGES: initial tag
 
+
+#
+# HISTORY imported from datafactory package
+#
+TAG: lib_java_datafactory-1-0-0
+DATE: 12/01/2003
+STAFF: jsb
+RELEASE: alpha
+CHANGES:
+1) changes per JSAM code review
+
+TAG: initial
+DATE: 07/03/2003
+STAFF: jsb
+RELEASE: alpha
+CHANGES:
+1) initial addition
