@@ -1,4 +1,5 @@
 //  $Header$
+//  $Header$
 //  $Name$
 
 package org.jax.mgi.dbs.mgd;
@@ -29,12 +30,22 @@ public class LogicalDBConstants
     public static final int NCBI_GENE = 59;
     public static final int ENSEMBL_GENE = 60;
 
+    public static final int RIKEN = 51;
+    public static final int NIA15K = 46;
+    public static final int NIA7_4K = 50;
+
     public static final int PUBMED = 29;
     public static final int MEDLINE = 7;
 }
 
 
 //  $Log$
+//  Revision 1.2.6.1  2004/12/16 15:44:57  sc
+//  added NIA15K, NIA7_4K, RIKEN
+//
+//  Revision 1.3  2004/10/12 12:41:13  sc
+//  TR5395 added NCBI_GENE ENSEMBL_GENE
+//
 //  Revision 1.2  2004/02/04 19:41:28  mbw
 //  merged jsam branch to the trunk
 //
