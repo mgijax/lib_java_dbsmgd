@@ -20,12 +20,6 @@ public class User extends DataInstance
   private UserKey userKey = null;
   private UserState userState = null;
 
-  /*
-   * the following constant definitions are exceptions thrown by this class
-   */
-  private static String MethodNotSupported =
-      ExceptionFactory.MethodNotSupported;
-
   /**
    * the constructor which sets both the UserState and UserKey
    * @param userKey the UserKey
