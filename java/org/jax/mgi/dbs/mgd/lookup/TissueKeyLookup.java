@@ -12,8 +12,6 @@ import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.CacheConstants;
 import org.jax.mgi.dbs.mgd.TranslationTypeConstants;
-import org.jax.mgi.dbs.mgd.trans.Translator;
-import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.dbs.mgd.MGD;
 import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.config.ConfigException;
@@ -35,10 +33,6 @@ public class TissueKeyLookup extends FullCachedLookup
 {
   // provide a static cache so that all instances share one cache
   private static HashMap cache = new HashMap();
-
-  // cache the term found during translation so it can be provided on a
-  // call to the getTranslatedTerm method
-  private String translatedTerm = null;
 
   // the Translator object shared by all instances of this class
   private static Translator translator = null;
@@ -78,30 +72,15 @@ public class TissueKeyLookup extends FullCachedLookup
     // do a translation of the term and expect null if term is not found.
     // if the term is translated then we dont have to look it up in the
     // PRB_Source table since we were given it from the translator
-    KeyedDataAttribute data = translator.translate(term);
-    if (data != null)
+    Integer key = translator.translate(term);
+    if (key != null)
     {
-      // a translation was successful so cache the translated term
-      this.translatedTerm = data.getValue();
-      return data.getKey();
+      return key;
     }
     else  // no translation found so lookup directly in PRB_Tissue
     {
-      this.translatedTerm = term;
       return (Integer)super.lookup(term);
     }
-  }
-
-  /**
-   * return the value of the last term which was translated.
-   * @assumes nothing
-   * @effects nothing
-   * @return the last translated term or if the term could not be
-   * translated then the lookup term will be returned
-   */
-  public String getTranslatedTerm()
-  {
-    return translatedTerm;
   }
 
   /**
