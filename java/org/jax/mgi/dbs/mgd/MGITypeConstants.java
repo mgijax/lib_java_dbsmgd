@@ -19,12 +19,15 @@ public class MGITypeConstants
 {
     // Constants
     //
-    public static final int MGI = 1;
+    public static final int REF = 1;
     public static final int CLONE = 3;
 }
 
 
 //  $Log$
+//  Revision 1.1  2003/09/18 14:25:18  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *
