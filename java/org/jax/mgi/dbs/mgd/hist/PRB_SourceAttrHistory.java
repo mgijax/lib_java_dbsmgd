@@ -1,13 +1,8 @@
 package org.jax.mgi.dbs.mgd.hist;
 
-import org.jax.mgi.shr.dbutils.SQLDataManager;
-import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.dbutils.BindableStatement;
 import org.jax.mgi.shr.dbutils.DBException;
-import org.jax.mgi.shr.dbutils.ResultsNavigator;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.dbs.mgd.MGD;
-import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.dbs.mgd.MGITypeConstants;
 
 /**
