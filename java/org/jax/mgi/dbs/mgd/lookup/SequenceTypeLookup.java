@@ -1,7 +1,6 @@
 package org.jax.mgi.dbs.mgd.lookup;
 
 import org.jax.mgi.dbs.mgd.VocabularyTypeConstants;
-import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.shr.cache.CacheConstants;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.dbutils.DBException;
