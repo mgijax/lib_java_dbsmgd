@@ -126,7 +126,7 @@ public class Translator extends CachedLookup
    * @param the given term to translate
    * @return the translated term and its key in the MGD database
    */
-  protected KeyValue translate(String term)
+  public KeyedDataAttribute translate(String term)
       throws LookupException
   {
     return (KeyValue)super.lookup(term, true);
