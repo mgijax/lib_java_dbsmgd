@@ -28,8 +28,7 @@ public class TestStrainKeyLookup
     super.tearDown();
   }
 
-  public void testLookup() throws CacheException, DBException,
-      TranslationException, ConfigException {
+  public void testLookup() throws Exception {
     String sql = "SELECT _strain_key " +
         "FROM prb_strain " +
         "WHERE strain = 'BALB/cJ'";
@@ -44,8 +43,7 @@ public class TestStrainKeyLookup
     assertEquals("return value", expectedReturn, actualReturn);
   }
 
-  public void testTranslatedLookup() throws CacheException, DBException,
-      TranslationException, ConfigException {
+  public void testTranslatedLookup()  throws Exception {
     String sql = "SELECT _strain_key " +
         "FROM prb_strain " +
         "WHERE strain = 'BALB/cJ'";

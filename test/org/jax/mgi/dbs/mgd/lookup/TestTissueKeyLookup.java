@@ -27,8 +27,7 @@ public class TestTissueKeyLookup
     super.tearDown();
   }
 
-  public void testLookup() throws CacheException, DBException,
-      TranslationException, ConfigException {
+  public void testLookup() throws Exception {
     String sql = "SELECT _tissue_key " +
         "FROM prb_tissue " +
         "WHERE tissue = 'brain'";

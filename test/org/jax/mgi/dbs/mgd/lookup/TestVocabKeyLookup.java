@@ -28,8 +28,7 @@ public class TestVocabKeyLookup
     super.tearDown();
   }
 
-  public void testLookup() throws CacheException, DBException,
-      TranslationException, ConfigException {
+  public void testLookup() throws Exception {
     String sql = "SELECT _term_key " +
                  "FROM voc_term " +
                  "WHERE _vocab_key = 15 and term = 'Female'";

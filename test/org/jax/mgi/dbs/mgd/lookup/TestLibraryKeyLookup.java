@@ -27,8 +27,7 @@ public class TestLibraryKeyLookup
     super.tearDown();
   }
 
-  public void testLookup() throws CacheException, DBException,
-      TranslationException, ConfigException {
+  public void testLookup() throws Exception {
     String sql = "SELECT _source_key " +
         "FROM prb_source " +
         "WHERE name = 'RPCI-22'";

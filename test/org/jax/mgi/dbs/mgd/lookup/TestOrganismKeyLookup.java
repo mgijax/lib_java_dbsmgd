@@ -27,8 +27,7 @@ public class TestOrganismKeyLookup
     super.tearDown();
   }
 
-  public void testLookup() throws CacheException, DBException,
-      TranslationException, ConfigException {
+  public void testLookup() throws Exception {
     String sql = "SELECT _organism_key " +
         "FROM mgi_organism " +
         "WHERE commonName = 'human'";
@@ -43,8 +42,7 @@ public class TestOrganismKeyLookup
     assertEquals("return value", expectedReturn, actualReturn);
   }
 
-  public void testTranslatedLookup() throws CacheException, DBException,
-      TranslationException, ConfigException {
+  public void testTranslatedLookup() throws Exception {
     String sql = "SELECT _organism_key " +
         "FROM mgi_organism " +
         "WHERE commonName = 'mouse, laboratory'";
