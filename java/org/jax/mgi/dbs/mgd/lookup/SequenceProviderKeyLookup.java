@@ -18,8 +18,8 @@ import org.jax.mgi.shr.config.ConfigException;
  */
 
 
-public class SequenceProviderLookup extends VocabKeyLookup {
-  public SequenceProviderLookup()
+public class SequenceProviderKeyLookup extends VocabKeyLookup {
+  public SequenceProviderKeyLookup()
       throws CacheException, DBException,
              ConfigException,
              TranslationException
