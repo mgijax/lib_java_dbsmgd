@@ -1,3 +1,10 @@
+TAG: lib_java_dbsmgd-1-0-14
+DATE: 03/15/2004
+STAFF: jsb, jw
+CHANGES:
+RELEASE: dev
+1) changes within .datafactory package for WI detail pages
+
 TAG: lib_java_dbsmgd-1-0-13
 DATE: 03/04/2004
 STAFF: mbw
