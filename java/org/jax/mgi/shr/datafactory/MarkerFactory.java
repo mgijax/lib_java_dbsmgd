@@ -703,7 +703,10 @@ public class MarkerFactory
 	// If not, then we need to get info about the markers to which it was
 	// withdrawn.
 
-	if (rr.getInt(5).intValue() == DBConstants.Marker_Approved)
+	int markerStatus = rr.getInt(5).intValue();
+
+	if ((markerStatus == DBConstants.Marker_Approved)
+		|| (markerStatus == DBConstants.Marker_Interim))
 	{
 	    marker.set (DTOConstants.MarkerIsWithdrawn, Boolean.FALSE);
 	    nav.close();
@@ -714,6 +717,11 @@ public class MarkerFactory
 	    {
 	        rr = (RowReference) nav.getCurrent();
 	        marker.set (DTOConstants.PrimaryAccID, rr.getString(1));
+	    }
+
+	    if (markerStatus == DBConstants.Marker_Interim)
+	    {
+		marker.set ("interim", "yes");
 	    }
 	}
 	else
@@ -3341,6 +3349,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.6  2004/05/18 17:57:21  jsb
+* fixed retrieval of GO annotations, to handle cases with multiple evidence rows
+*
 * Revision 1.5  2004/05/03 10:39:04  jsb
 * fixed ordering of GO associations
 *
