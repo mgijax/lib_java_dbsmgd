@@ -36,17 +36,17 @@ public class VocabKeyLookup extends LazyCachedLookup
   private int vocabType;
 
   // provide a static cache so that all instances share one cache
-  private static HashMap cache = new HashMap();
+  //private static HashMap cache = new HashMap();
 
   // cache the term found during translation so it can be provided on a
   // call to the getTranslatedTerm method
   private String translatedTerm = null;
 
   // the Translator object shared by all instances of this class
-  private static Translator translator = null;
+  private Translator translator = null;
 
   // the cached mapping of vocabulary types to translation types
-  private static HashMap translationTypeCache = new HashMap();
+  //private HashMap translationTypeCache = new HashMap();
 
   // a lookup for translation types given a vocabulary type
   private TranslationTypeLookup translationTypeLookup = null;
