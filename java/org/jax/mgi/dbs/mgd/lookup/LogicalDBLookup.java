@@ -4,7 +4,7 @@
 package org.jax.mgi.dbs.mgd.lookup;
 
 import org.jax.mgi.shr.cache.CacheException;
-import org.jax.mgi.shr.cache.KeyValue;
+import org.jax.mgi.shr.types.KeyValue;
 import org.jax.mgi.shr.cache.RowDataCacheHandler;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
@@ -158,6 +158,9 @@ public class LogicalDBLookup extends RowDataCacheHandler
 
 
 //  $Log$
+//  Revision 1.2  2003/09/23 13:13:01  dbm
+//  Continued development
+//
 //  Revision 1.1  2003/09/18 14:26:12  dbm
 //  Initial version
 //
