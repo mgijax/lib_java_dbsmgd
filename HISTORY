@@ -1,3 +1,10 @@
+TAG: lib_java_dbsmgd-tr6365_2-1
+DATE: 12/16/2004
+STAFF: sc
+CHANGES: tr6365_2 branch created of off lib_java_dbsmgd-patch302-1 tag on trunk
+1) LogicalDBConstants - added NIA15K, NIA7_4K, RIKEN
+2) AssocClonesLookup - implemented the partialInitQuery
+
 TAG: lib_java_dbsmgd-patch302-1
 DATE: 11/09/2004
 STAFF: jsb
