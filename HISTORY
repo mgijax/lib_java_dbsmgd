@@ -1,3 +1,12 @@
+TAG: lib_java_dbsmgd-1-0-30
+DATE: 10/20/2004
+STAFF: sc
+CHANGES: TR5395
+1) Added new keys to VocabularyTypeConstants, MGIRefAssocTypeConstants,
+   LogicalDBConstants, MGITypeConstants
+2) generatedTables.txt - added MAP_Coordinate, MAP_Coord_Feature, MRK_Chromosome
+3) Added MGITypeLookup and  CoordMapCollectionKeyLookup.java
+
 TAG: lib_java_dbsmgd-1-0-29
 DATE: 08/04/2004
 STAFF: jsb, jw
