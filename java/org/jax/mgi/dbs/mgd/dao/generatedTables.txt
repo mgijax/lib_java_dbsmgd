@@ -7,3 +7,7 @@ SEQ_Sequence
 MGI_Reference_Assoc
 MGI_AttributeHistory
 SEQ_Source_Assoc
+MAP_Coord_Collection
+MAP_Coordinate
+MAP_Coord_Feature
+MRK_Chromosome
