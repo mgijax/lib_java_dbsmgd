@@ -27,12 +27,19 @@ public class LogicalDBConstants
     public static final int TIGR = 35;
     public static final int DOTS = 36;
 
+    public static final int RIKEN = 51;
+    public static final int NIA15K = 46;
+    public static final int NIA7_4K = 50;
+
     public static final int PUBMED = 29;
     public static final int MEDLINE = 7;
 }
 
 
 //  $Log$
+//  Revision 1.2  2004/02/04 19:41:28  mbw
+//  merged jsam branch to the trunk
+//
 //  Revision 1.1.2.2  2004/02/02 20:02:13  sc
 //  added constants for all the sequence providers
 //
