@@ -80,7 +80,7 @@ public class AccessionLookup extends LazyCachedLookup {
        {
            String query = "select accID, _Object_key " +
                          "from ACC_Accession " +
-                         "where accID = '" + add + "' and " +
+                         "where accID = '" + accid + "' and " +
                          "_LogicalDB_key = " + logicalDBKey + " and " +
                          "_MGIType_key = " + mgiTypeKey + " and " +
                          "preferred = " + preferred;
