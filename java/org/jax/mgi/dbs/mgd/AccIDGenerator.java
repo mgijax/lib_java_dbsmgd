@@ -3,7 +3,7 @@
 
 package org.jax.mgi.dbs.mgd;
 
-import org.jax.mgi.dbs.mgd.dao.AccessionState;
+import org.jax.mgi.dbs.mgd.dao.ACC_AccessionState;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.ResultsNavigator;
@@ -105,7 +105,7 @@ public class AccIDGenerator
 
 
     /**
-     * Get an AccessionState object that contains the next available MGI ID.
+     * Get an ACC_AccessionState object that contains the next available MGI ID.
      * @assumes Nothing
      * @effects Nothing
      * @param None
@@ -113,10 +113,10 @@ public class AccIDGenerator
      * @throws ConfigException
      * @throws DBException
      */
-    public static AccessionState getNextAccState ()
+    public static ACC_AccessionState getNextAccState ()
         throws ConfigException, DBException
     {
-        AccessionState accState = new AccessionState();
+        ACC_AccessionState accState = new ACC_AccessionState();
         accState.setAccID(getNextMGIID());
         return accState;
     }
@@ -161,6 +161,9 @@ public class AccIDGenerator
 
 
 //  $Log$
+//  Revision 1.4  2003/10/10 15:29:35  dbm
+//  Update javadocs
+//
 //  Revision 1.3  2003/09/30 17:04:34  dbm
 //  Support int to Integer change
 //
