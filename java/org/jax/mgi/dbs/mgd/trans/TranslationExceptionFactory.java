@@ -15,6 +15,16 @@ import org.jax.mgi.dbs.mgd.MGD;
 public class TranslationExceptionFactory extends ExceptionFactory {
 
   /**
+   * Failed during lookup
+   */
+  public static final String LookupErr =
+      "org.jax.mgi.dbs.mgd.trans.LookupErr";
+  static {
+    exceptionsMap.put(LookupErr, new TranslationException(
+        "Failed during a lookup of term ??", false));
+  }
+
+  /**
    * Could not find given translation type key
    */
   public static final String NoTransTypeKey =
@@ -28,13 +38,25 @@ public class TranslationExceptionFactory extends ExceptionFactory {
   /**
    * Could not find given translation type name
    */
-  public static final String NoTransTypeName =
-      "org.jax.mgi.dbs.mgd.trans.NoTransTypeName";
+  public static final String NoTransType =
+      "org.jax.mgi.dbs.mgd.trans.NoTransType";
   static {
-    exceptionsMap.put(NoTransTypeName, new TranslationException(
+    exceptionsMap.put(NoTransType, new TranslationException(
         "Could not find record in " + MGD.mgi_translationtype._name + " " +
         "for translationType name of ??", false));
   }
+
+  /**
+   * Could not find given mgi type
+   */
+  public static final String NoMGIType =
+      "org.jax.mgi.dbs.mgd.trans.NoMGIType";
+  static {
+    exceptionsMap.put(NoMGIType, new TranslationException(
+        "Could not find record in " + MGD.acc_mgitype.name + " " +
+        "for mgi type of ??", false));
+  }
+
 
 
 }
