@@ -19,12 +19,12 @@ public class TestTissueKeyLookup
     super.setUp();
     sqlMgr = new SQLDataManager();
     sqlMgr.executeUpdate(
-        "insert into prb_tissue values (-50, 'placenta1', " +
+        "insert into prb_tissue values (-50, 'placenta 21', " +
         "1, getDate(), getDate())"
         );
     sqlMgr.executeUpdate(
         "insert into mgi_translation values (-50, 1003, -50, " +
-        "'placenta day 20', 1, 1200, 1200, getDate(), getDate())"
+        "'placenta day 21', 1, 1200, 1200, getDate(), getDate())"
         );
     tissueKeyLookup = new TissueKeyLookup();
   }
@@ -43,10 +43,10 @@ public class TestTissueKeyLookup
 
   public void testLookup() throws Exception {
     assertNull(tissueKeyLookup.getTranslatedTerm());
-    assertEquals(new Integer(-50), tissueKeyLookup.lookup("placenta day 20"));
-    assertEquals("placenta1", tissueKeyLookup.getTranslatedTerm());
-    assertEquals(new Integer(-50), tissueKeyLookup.lookup("placenta1"));
-    assertEquals("placenta1", tissueKeyLookup.getTranslatedTerm());
+    assertEquals(new Integer(-50), tissueKeyLookup.lookup("placenta day 21"));
+    assertEquals("placenta 21", tissueKeyLookup.getTranslatedTerm());
+    assertEquals(new Integer(-50), tissueKeyLookup.lookup("placenta 21"));
+    assertEquals("placenta 21", tissueKeyLookup.getTranslatedTerm());
   }
 
   public void testKeyNotFound() throws Exception
