@@ -18,8 +18,8 @@ import org.jax.mgi.shr.config.ConfigException;
  */
 
 
-public class CellLineLookup extends VocabKeyLookup {
-  public CellLineLookup()
+public class CellLineKeyLookup extends VocabKeyLookup {
+  public CellLineKeyLookup()
       throws CacheException, DBException,
              ConfigException,
              TranslationException
