@@ -44,6 +44,7 @@ public class StrainKeyLookup extends FullCachedLookup
   private static Translator translator = null;
 
 
+
   /**
    * constructor
    * @throws CacheException thrown if there is an error with the cache
@@ -132,4 +133,5 @@ public class StrainKeyLookup extends FullCachedLookup
     }
     return new Interpreter();
   }
+
 }
