@@ -9,6 +9,22 @@ import org.jax.mgi.shr.timing.TimeStamper;
 import org.jax.mgi.shr.dbutils.SQLDataManager;
 import org.jax.mgi.shr.dbutils.DBException;
 
+
+
+/** The Factory class contains a standard constructor and some utility
+*   methods for use in other Factories within the WI.
+* @is an abstract factory class providing utility methods to other factories.
+* @has a database manager, logger, timer, configuration and name.
+* @does nothing.  Is abstract.
+*    The following methods must be implemented in any child classes:
+*    <OL>
+*    <LI> getKey() -- retrieve the key from the cgi params.
+*    <LI> getKeyForID() -- find the object key for a given MGI ID
+*    <LI> getFullInfo() -- get all available information for a record type
+*    <LI> getBasicInfo() -- get a minimal set of available information for
+*                           record type
+*    </OL>
+*/
 public abstract class Factory {
 
     protected SQLDataManager sqlDM = null;
