@@ -12,9 +12,11 @@ import org.jax.mgi.shr.cache.LazyCachedLookup;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.CacheConstants;
+import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.dbs.mgd.trans.Translator;
 import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.dbs.mgd.MGD;
+import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
@@ -35,17 +37,17 @@ public class VocabKeyLookup extends LazyCachedLookup
   private int vocabType;
 
   // provide a static cache so that all instances share one cache
-  private static HashMap cache = new HashMap();
+  //private static HashMap cache = new HashMap();
 
   // cache the term found during translation so it can be provided on a
   // call to the getTranslatedTerm method
   private String translatedTerm = null;
 
   // the Translator object shared by all instances of this class
-  private static Translator translator = null;
+  private Translator translator = null;
 
   // the cached mapping of vocabulary types to translation types
-  private static HashMap translationTypeCache = new HashMap();
+  //private HashMap translationTypeCache = new HashMap();
 
   // a lookup for translation types given a vocabulary type
   private TranslationTypeLookup translationTypeLookup = null;
@@ -66,11 +68,12 @@ public class VocabKeyLookup extends LazyCachedLookup
    */
   public VocabKeyLookup(int vocabType)
       throws CacheException, DBException,
-             ConfigException, TranslationException
+             ConfigException,
+             TranslationException
   {
-    super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+    super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     this.vocabType = vocabType;
-    setCache(cache);
+    //setCache(cache);
     translationTypeLookup = new TranslationTypeLookup();
     // look up the translation type for this vocabulary type
     translationType = translationTypeLookup.lookup(this.vocabType);
@@ -87,7 +90,7 @@ public class VocabKeyLookup extends LazyCachedLookup
    * @return the key value
    */
   public Integer lookup(String term) throws CacheException,
-      DBException, TranslationException, ConfigException
+      DBException, TranslationException, ConfigException, KeyNotFoundException
   {
     Integer key = null;
     if (translatable)  // do a translation first
@@ -105,7 +108,7 @@ public class VocabKeyLookup extends LazyCachedLookup
     if (key == null) // was not found through translation
     {
         this.translatedTerm = term;
-        key = (Integer)super.cacheStrategy.lookup(term, cache);
+        key = (Integer)super.lookup(term);
     }
     return key;
   }
@@ -179,7 +182,8 @@ public class VocabKeyLookup extends LazyCachedLookup
    * @version 1.0
    */
   private class TranslationTypeLookup
-      extends FullCachedLookup {
+      extends FullCachedLookup
+  {
 
     /**
      * constructor
@@ -190,11 +194,12 @@ public class VocabKeyLookup extends LazyCachedLookup
      * @throws ConfigException
      */
     public TranslationTypeLookup() throws CacheException, DBException,
-        ConfigException {
-      super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        ConfigException
+    {
+      super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
       // override the super class instance of the cache with a static one so
       // that all instances of the this class will use the same cache
-      setCache(translationTypeCache);
+      //setCache(translationTypeCache);
     }
 
     /**
@@ -202,8 +207,8 @@ public class VocabKeyLookup extends LazyCachedLookup
      * @param the given vocabulary type
      * @return the translation type for this vocabulary
      */
-    public Integer lookup(int vocabularyType)
-        throws DBException, CacheException
+    public Integer lookup(int vocabularyType) throws DBException,
+        ConfigException, CacheException
     {
       Integer transType =
           (Integer)super.lookupNullsOk(new Integer(vocabularyType));
@@ -215,7 +220,8 @@ public class VocabKeyLookup extends LazyCachedLookup
      * is called by the CacheStrategy class when performing initialization.
      * @return the sql string to use in fully intializing the cache
      */
-    public String getFullInitQuery() {
+    public String getFullInitQuery()
+    {
       String s = "SELECT _vocab_key, " +
           "              _translationType_key " +
           "       FROM MGI_TranslationType";
@@ -227,7 +233,8 @@ public class VocabKeyLookup extends LazyCachedLookup
      * query.
      * @return the RowDataInterpreter
      */
-    public RowDataInterpreter getRowDataInterpreter() {
+    public RowDataInterpreter getRowDataInterpreter()
+    {
       class Interpreter implements RowDataInterpreter {
         public Object interpret(RowReference row) throws DBException {
           return new KeyValue(row.getInt(1), row.getInt(2));

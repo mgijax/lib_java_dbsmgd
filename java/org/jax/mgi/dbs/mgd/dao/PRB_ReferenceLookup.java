@@ -3,6 +3,7 @@
 
 package org.jax.mgi.dbs.mgd.dao;
 
+import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.LazyCachedLookup;
@@ -97,7 +98,7 @@ public class PRB_ReferenceLookup
         public ProbeRefLookup()
            throws CacheException, ConfigException, DBException
         {
-            super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+            super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
         }
 
         /**
@@ -183,6 +184,9 @@ public class PRB_ReferenceLookup
 
 
 //  $Log$
+//  Revision 1.2  2003/11/05 15:44:20  mbw
+//  modified to suit the now defunct LookupException
+//
 //  Revision 1.1  2003/10/23 11:44:44  dbm
 //  Converted to work with code generated DAO classes
 //

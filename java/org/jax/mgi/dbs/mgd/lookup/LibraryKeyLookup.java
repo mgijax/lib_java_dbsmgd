@@ -11,10 +11,12 @@ import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.CacheConstants;
+import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.dbs.mgd.TranslationTypeConstants;
 import org.jax.mgi.dbs.mgd.trans.Translator;
 import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.dbs.mgd.MGD;
+import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
@@ -51,7 +53,7 @@ public class LibraryKeyLookup extends FullCachedLookup
   public LibraryKeyLookup()
       throws CacheException, DBException, ConfigException
   {
-    super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+    super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     setCache(cache);
   }
   /**
@@ -60,7 +62,8 @@ public class LibraryKeyLookup extends FullCachedLookup
    * @return the key value
    */
   public Integer lookup(String term) throws CacheException,
-      DBException, TranslationException, ConfigException
+      DBException, TranslationException, ConfigException,
+      KeyNotFoundException
   {
     if (translator == null)
     {
@@ -80,7 +83,7 @@ public class LibraryKeyLookup extends FullCachedLookup
     else  // no translation found so lookup in PRB_Strain
     {
       this.translatedTerm = term;
-      return (Integer)super.cacheStrategy.lookup(term, cache);
+      return (Integer)super.lookup(term);
     }
   }
 

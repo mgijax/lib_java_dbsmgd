@@ -3,6 +3,7 @@
 
 package org.jax.mgi.dbs.mgd.dao;
 
+import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.dbs.mgd.trans.Translator;
 import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.shr.cache.CacheException;
@@ -154,7 +155,7 @@ public class PRB_SourceLookup
         public NamedSourceLookup()
            throws CacheException, ConfigException, DBException
         {
-            super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+            super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
         }
 
         /**
@@ -242,7 +243,7 @@ public class PRB_SourceLookup
         public KeyedSourceLookup()
            throws CacheException, ConfigException, DBException
         {
-            super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+            super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
         }
 
         /**
@@ -322,6 +323,9 @@ public class PRB_SourceLookup
 
 
 //  $Log$
+//  Revision 1.2  2003/11/05 15:44:20  mbw
+//  modified to suit the now defunct LookupException
+//
 //  Revision 1.1  2003/10/23 11:44:46  dbm
 //  Converted to work with code generated DAO classes
 //

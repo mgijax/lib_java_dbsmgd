@@ -14,6 +14,7 @@ import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.dbs.mgd.MGD;
+import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.config.ConfigException;
 
 /**
@@ -83,7 +84,7 @@ public class Translator extends CachedLookup
          ConfigException, TranslationException
   {
     super(cacheType,
-          SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+          SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     this.translationType = new Integer(translationType);
     setup();
   }
@@ -103,7 +104,7 @@ public class Translator extends CachedLookup
          ConfigException, TranslationException
   {
     super(cacheType,
-          SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+          SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     // convert the translation type from a string value to it's db key value
     TranslationTypeKeyLookup ttkLookup = new TranslationTypeKeyLookup();
     try
@@ -278,7 +279,8 @@ public class Translator extends CachedLookup
    * @version 1.0
    */
   private class MGITypeLookup
-      extends FullCachedLookup {
+      extends FullCachedLookup
+  {
 
     /**
      * constructor
@@ -290,8 +292,9 @@ public class Translator extends CachedLookup
      * configuration file
      */
     public MGITypeLookup()
-        throws CacheException, DBException, ConfigException {
-      super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        throws CacheException, DBException, ConfigException
+    {
+      super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
       // override the super class instance of the cache with a static one so
       // that all instances of the Translator will see the same cache
       setCache(mgiTypeCache);
@@ -303,8 +306,8 @@ public class Translator extends CachedLookup
      * @return the HashMap containing the following data
      * MGD.mgi_translationtype._mgitype_key
      */
-    public Integer lookup(int translationType)
-        throws KeyNotFoundException, DBException, CacheException
+    public Integer lookup(int translationType) throws KeyNotFoundException,
+    DBException, CacheException
     {
       Object o = super.lookup(new Integer(translationType));
       return (Integer) o;
@@ -315,7 +318,8 @@ public class Translator extends CachedLookup
      * is called by the CacheStrategy class when performing initialization.
      * @return the sql string to use in fully intializing the cache
      */
-    public String getFullInitQuery() {
+    public String getFullInitQuery()
+    {
       String s = "SELECT " +
                  MGD.mgi_translationtype._translationtype_key + ", " +
                  MGD.mgi_translationtype._mgitype_key + " " +
@@ -328,7 +332,8 @@ public class Translator extends CachedLookup
      * query.
      * @return the RowDataInterpreter
      */
-    public RowDataInterpreter getRowDataInterpreter() {
+    public RowDataInterpreter getRowDataInterpreter()
+    {
       class Interpreter
           implements RowDataInterpreter {
         public Object interpret(RowReference row) throws DBException {
@@ -352,7 +357,8 @@ public class Translator extends CachedLookup
    * @version 1.0
    */
   public class MGITypeTableLookup
-      extends FullCachedLookup {
+      extends FullCachedLookup
+  {
 
     /**
      * constructor
@@ -363,8 +369,9 @@ public class Translator extends CachedLookup
      * @throws ConfigException
      */
     public MGITypeTableLookup() throws CacheException, DBException,
-        ConfigException {
-      super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        ConfigException
+    {
+      super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
       // override the super class instance of the cache with a static one so
       // that all instances of the Translator will see the same cache
       setCache(mgiTypeTableCache);
@@ -390,7 +397,8 @@ public class Translator extends CachedLookup
      * is called by the CacheStrategy class when performing initialization.
      * @return the sql string to use in fully intializing the cache
      */
-    public String getFullInitQuery() {
+    public String getFullInitQuery()
+    {
       String s = "SELECT _mgiType_key, " +
           "       primaryKeyName, " +
           "       tablename, " +
@@ -404,7 +412,8 @@ public class Translator extends CachedLookup
      * query.
      * @return the RowDataInterpreter
      */
-    public RowDataInterpreter getRowDataInterpreter() {
+    public RowDataInterpreter getRowDataInterpreter()
+    {
       class Interpreter
           implements RowDataInterpreter {
         public Object interpret(RowReference row) throws DBException {
@@ -433,7 +442,8 @@ public class Translator extends CachedLookup
    * @version 1.0
    */
   public class TranslationTypeKeyLookup
-      extends FullCachedLookup {
+      extends FullCachedLookup
+  {
 
     /**
      * constructor
@@ -444,8 +454,9 @@ public class Translator extends CachedLookup
      * @throws ConfigException
      */
     public TranslationTypeKeyLookup() throws CacheException, DBException,
-        ConfigException {
-      super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+        ConfigException
+    {
+      super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     }
 
     /**
@@ -465,7 +476,8 @@ public class Translator extends CachedLookup
      * is called by the CacheStrategy class when performing initialization.
      * @return the sql string to use in fully intializing the cache
      */
-    public String getFullInitQuery() {
+    public String getFullInitQuery()
+    {
       String s = "SELECT " +
                  MGD.mgi_translationtype._translationtype_key + ", " +
                  MGD.mgi_translationtype.translationtype + " " +
@@ -478,7 +490,8 @@ public class Translator extends CachedLookup
      * query.
      * @return the RowDataInterpreter
      */
-    public RowDataInterpreter getRowDataInterpreter() {
+    public RowDataInterpreter getRowDataInterpreter()
+    {
       class Interpreter
           implements RowDataInterpreter {
         public Object interpret(RowReference row) throws DBException {

@@ -11,6 +11,7 @@ import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.config.ConfigException;
+import org.jax.mgi.dbs.SchemaConstants;
 
 /**
  *
@@ -41,7 +42,7 @@ public class TranslationTypeKeyLookup extends FullCachedLookup
   throws CacheException, DBException,
          ConfigException, KeyNotFoundException
   {
-    super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+    super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     setCache(cache);
   }
 
