@@ -3,6 +3,7 @@ package org.jax.mgi.shr.datafactory;
 import java.util.Map;
 import java.util.Vector;
 import java.util.HashMap;
+import java.util.ArrayList;
 import org.jax.mgi.shr.stringutil.Sprintf;
 import org.jax.mgi.shr.stringutil.StringLib;
 import org.jax.mgi.shr.log.Logger;
@@ -12,6 +13,7 @@ import org.jax.mgi.shr.dbutils.SQLDataManager;
 import org.jax.mgi.shr.dbutils.ResultsNavigator;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.DBException;
+import org.jax.mgi.shr.ListHash;
 
 public class SequenceFactory extends Factory {
 
@@ -98,18 +100,6 @@ public class SequenceFactory extends Factory {
         sequence.merge (section);
         DTO.putDTO (section);
 
-        section = getCloneCollection(key);
-        sequence.merge (section);
-        DTO.putDTO (section);
-
-        section = getCloneID(key);
-        sequence.merge (section);
-        DTO.putDTO (section);
-
-        section = getSegmentType(key);
-        sequence.merge (section);
-        DTO.putDTO (section);
-
         return sequence;
     }
 
@@ -168,9 +158,9 @@ public class SequenceFactory extends Factory {
         String lastID = "";             //the accID of the last row
 
 
-        HashMap adbs = new HashMap();   //       Key:ADB name
+        ArrayList adbs = new ArrayList(); //       Key:ADB name
                                         //       Value:ADB URL
-
+        HashMap adb = new HashMap();
         HashMap ids = new HashMap();    //Key:An accID associated with this sequence
                                         //Value: A Hashmap of all associated ActualDBs
                                         //       Key:ADB name
@@ -178,20 +168,24 @@ public class SequenceFactory extends Factory {
 
         nav = this.sqlDM.executeQuery(
                         Sprintf.sprintf(ACC_IDS, key));
+
         while(nav.next()) {
             rr = (RowReference) nav.getCurrent();
             id = rr.getString(1);
             pref = rr.getInt(2);
             adbURL = rr.getString(3);
             adbName = rr.getString(4);
-
             adbURL.replaceAll("@@@@","%s");
+            adb = new HashMap();
 
-            if (id != lastID) { //this is a new ID
-                ids.put(lastID,adbs);
-                adbs = new HashMap();
+            if (!id.equals(lastID)) { //this is a new ID
+                if(!lastID.equals(""))
+                    ids.put(lastID,adbs);
+                adbs = new ArrayList();
             }
-            adbs.put(adbName,adbURL);
+            adb.put(adbName,adbURL);
+            adbs.add(adb);
+
             if(pref.intValue() == 1) {
                 sequence.set(DTOConstants.PrimaryAccID, id);
             }
@@ -330,27 +324,47 @@ public class SequenceFactory extends Factory {
         RowReference rr = null;     // one row in 'nav'
         DTO sequence = DTO.getDTO();    // start with a new DTO
         String age, cellLine, gender, library, organism, strain, tissue;
+        String NOT_SPECIFIED = "Not Specified";
 
-        nav = this.sqlDM.executeQuery(
-                        Sprintf.sprintf(SEQ_SOURCE, key));
-
+        this.sqlDM.execute(Sprintf.sprintf(SEQ_SOURCE_TABLE, key));
+        this.sqlDM.execute(RAW_LIBRARY);
+        this.sqlDM.execute(RAW_ORGANISM);
+        this.sqlDM.execute(RAW_STRAIN);
+        this.sqlDM.execute(RAW_TISSUE);
+        this.sqlDM.execute(RAW_AGE);
+        this.sqlDM.execute(RAW_SEX);
+        this.sqlDM.execute(RAW_CELLLINE);
+        nav = this.sqlDM.executeQuery(SEQ_SOURCE);
         if (nav.next()) {
             rr = (RowReference) nav.getCurrent();
-            age = rr.getString(1);
-            cellLine = rr.getString(2);
-            gender = rr.getString(3);
-            //library = rr.getString(1);
-            organism = rr.getString(4);
-            strain = rr.getString(5);
-            tissue = rr.getString(6);
+            library = rr.getString(1);
+            if(library.equals("*"))
+                library = NOT_SPECIFIED;
+            organism = rr.getString(2);
+            if(organism.equals("*"))
+                organism = NOT_SPECIFIED;
+            strain = rr.getString(3);
+            if(strain.equals("*"))
+                strain = NOT_SPECIFIED;
+            tissue = rr.getString(4);
+            if(tissue.equals("*"))
+                tissue = NOT_SPECIFIED;
+            age = rr.getString(5);
+            if(age.equals("*"))
+                age = NOT_SPECIFIED;
+            gender = rr.getString(6);
+            if(gender.equals("*"))
+                gender = NOT_SPECIFIED;
+            cellLine = rr.getString(7);
+            if(cellLine.equals("*"))
+                cellLine = NOT_SPECIFIED;
             sequence.set(DTOConstants.Age, age);
             sequence.set(DTOConstants.CellLine, cellLine);
             sequence.set(DTOConstants.Gender, gender);
-            //sequence.set(DTOConstants.Library, library);
+            sequence.set(DTOConstants.Library, library);
             sequence.set(DTOConstants.Organism, organism);
             sequence.set(DTOConstants.Strain, strain);
             sequence.set(DTOConstants.Tissue, tissue);
-
         }
         nav.close();
 
@@ -362,15 +376,15 @@ public class SequenceFactory extends Factory {
         ResultsNavigator nav = null;
         RowReference rr = null;     // one row in 'nav'
         DTO sequence = DTO.getDTO();    // start with a new DTO
-        Integer chr;
+        String chr;
 
         nav = this.sqlDM.executeQuery(
                         Sprintf.sprintf(CHROMOSOME, key));
 
         if (nav.next()) {
             rr = (RowReference) nav.getCurrent();
-            chr = rr.getInt(1);
-            sequence.set(DTOConstants.Chromosome, chr.toString());
+            chr = rr.getString(1);
+            sequence.set(DTOConstants.Chromosome, chr);
         }
         nav.close();
 
@@ -390,6 +404,7 @@ public class SequenceFactory extends Factory {
         this.sqlDM.execute(MARKER_ASSAY_COUNT);
         this.sqlDM.execute(MARKER_ORTHOLOGY_COUNT);
         this.sqlDM.execute(MARKER_ALLELE_COUNT);
+        this.sqlDM.execute(MARKER_REF);
         nav = this.sqlDM.executeQuery(MARKER_INFO);
         while (nav.next()) {
             rr = (RowReference) nav.getCurrent();
@@ -401,6 +416,8 @@ public class SequenceFactory extends Factory {
             marker.set(DTOConstants.ExpressionAssayCount, rr.getString(6));
             marker.set(DTOConstants.GOAnnotationCount, rr.getString(7));
             marker.set(DTOConstants.OrthologCount, rr.getString(8));
+            marker.set(DTOConstants.RefsKey, rr.getInt(9));
+            marker.set(DTOConstants.RefID, rr.getString(10));
             allMarkers.add(marker);
             marker = DTO.getDTO();
         }
@@ -418,13 +435,64 @@ public class SequenceFactory extends Factory {
         nav = this.sqlDM.executeQuery(Sprintf.sprintf(REFS, key));
         while (nav.next()) {
             rr = (RowReference) nav.getCurrent();
-            ref.set(DTOConstants.RefsKey, rr.getInt(1));
-            ref.set(DTOConstants.AccID, rr.getString(2));
+            ref = makeReferenceDTO(rr);
             allRefs.add(ref);
-            ref = DTO.getDTO();
         }
         sequence.set(DTOConstants.References, allRefs);
         return sequence;
+    }
+    /** create a DTO describing the reference identified in 'rr'.
+    * @param rr a row from a database query containing at least these fields:
+    *    <OL>
+    *    <LI> _Refs_key : integer
+    *    <LI> J number : string
+    *    <LI> authors part 1 : string
+    *    <LI> authors part 2 : string
+    *    <LI> title part 1 : string
+    *    <LI> title part 2 : string
+    *    <LI> citation : string
+    *    </OL>
+    * @return DTO a data transfer object describing this reference.  The
+    *    fields (defined in DTOConstants) included are:
+    *    <OL>
+    *    <LI> RefsKey : Integer
+    *    <LI> Jnum : String
+    *    <LI> Citation : String
+    *    <LI> RefsTitle : String
+    *    <LI> Authors : ArrayList of Strings, each the name of an author;
+    *        null if there are no authors
+    *    </OL>
+    * @assumes nothing
+    * @effects nothing
+    * @throws DBException if there are problems retrieving the fields from
+    *    'rr'
+    */
+    protected DTO makeReferenceDTO (RowReference rr)
+            throws DBException {
+
+        DTO ref = DTO.getDTO();
+        ref.set (DTOConstants.RefsKey, rr.getInt(1));
+        ref.set (DTOConstants.Jnum, rr.getString(2));
+        ref.set (DTOConstants.Citation, rr.getString(7));
+
+        // title is stored in two database fields since varchar fields are
+        // limited to 256 characters each
+
+        ref.set (DTOConstants.RefsTitle,
+                combine (rr.getString(5), rr.getString(6)) );
+
+        // authors are stored in two database fields since varchar fields are
+        // limited to 256 characters each.  A semi-colon is used to delimit
+        // the lists of authors.
+
+        String authors = combine (rr.getString(3), rr.getString(4));
+        if (authors != null) {
+            ref.set (DTOConstants.Authors,
+            (ArrayList) StringLib.split (authors, ";") );
+        } else {
+            ref.set (DTOConstants.Authors, null);
+        }
+        return ref;
     }
 
     public DTO getProbes(int key) throws DBException {
@@ -434,11 +502,18 @@ public class SequenceFactory extends Factory {
         Vector allProbes = new Vector();
         DTO probe = DTO.getDTO();
 
-        nav = this.sqlDM.executeQuery(Sprintf.sprintf(PROBES, key));
+        this.sqlDM.execute(PROBE_TABLE);
+        this.sqlDM.execute(Sprintf.sprintf(PROBES, key));
+        this.sqlDM.execute(CLONE_COLLECTION);
+        nav = this.sqlDM.executeQuery(PROBE_INFO);
+
         while (nav.next()) {
             rr = (RowReference) nav.getCurrent();
-            probe.set(DTOConstants.ProbeName, rr.getString(1));
-            probe.set(DTOConstants.ProbeKey, rr.getInt(2));
+            probe.set(DTOConstants.ProbeKey, rr.getInt(1));
+            probe.set(DTOConstants.ProbeName, rr.getString(2));
+            probe.set(DTOConstants.CloneID, rr.getString(3));
+            probe.set(DTOConstants.SegmentType, rr.getString(4));
+            probe.set(DTOConstants.CloneCollection, rr.getString(5));
             allProbes.add(probe);
             probe = DTO.getDTO();
         }
@@ -446,66 +521,7 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
-    public DTO getCloneCollection(int key) throws DBException {
 
-        ResultsNavigator nav = null;
-        RowReference rr = null;     // one row in 'nav'
-        DTO sequence = DTO.getDTO();    // start with a new DTO
-        String collection;
-
-        nav = this.sqlDM.executeQuery(
-                        Sprintf.sprintf(CLONE_COLLECTION, key));
-
-        if (nav.next()) {
-            rr = (RowReference) nav.getCurrent();
-            collection = rr.getString(1);
-            sequence.set(DTOConstants.CloneCollection, collection);
-        }
-        nav.close();
-
-        return sequence;
-    }
-
-
-    public DTO getCloneID(int key) throws DBException {
-
-        ResultsNavigator nav = null;
-        RowReference rr = null;     // one row in 'nav'
-        DTO sequence = DTO.getDTO();    // start with a new DTO
-        String id;
-
-        nav = this.sqlDM.executeQuery(
-                        Sprintf.sprintf(CLONE_ID, key));
-
-        if (nav.next()) {
-            rr = (RowReference) nav.getCurrent();
-            id = rr.getString(1);
-            sequence.set(DTOConstants.CloneID, id);
-        }
-        nav.close();
-
-        return sequence;
-    }
-
-    public DTO getSegmentType(int key) throws DBException {
-
-        ResultsNavigator nav = null;
-        RowReference rr = null;     // one row in 'nav'
-        DTO sequence = DTO.getDTO();    // start with a new DTO
-        String type;
-
-        nav = this.sqlDM.executeQuery(
-                        Sprintf.sprintf(SEGMENT_TYPE, key));
-
-        if (nav.next()) {
-            rr = (RowReference) nav.getCurrent();
-            type = rr.getString(1);
-            sequence.set(DTOConstants.SegmentType, type);
-        }
-        nav.close();
-
-        return sequence;
-    }
 
     private static final String SEQ_KEY =
             "select ss._Sequence_key\n"+
@@ -516,11 +532,13 @@ public class SequenceFactory extends Factory {
 
     private static final String ACC_IDS =
             "select aa.accID, aa.preferred,adb.url, adb.name\n"+
-            "from ACC_Accession aa, ACC_ActualDB adb\n"+
+            "from ACC_Accession aa, ACC_ActualDB adb, MGI_SetMember msm\n"+
             "where aa._Object_key = %d\n"+
             "and aa._MGIType_key = 19\n"+
             "and aa._LogicalDB_key = adb._LogicalDB_key\n"+
-            "order by accID";
+            "and msm._Object_key = adb._ActualDB_key\n"+
+            "and msm._Set_key = 1009\n"+
+            "order by aa.accID, msm.sequenceNum";
 
     private static final String SEQ_VER =
             "select version\n"+
@@ -555,12 +573,73 @@ public class SequenceFactory extends Factory {
             "from SEQ_Sequence\n"+
             "where _Sequence_key = %d";
 
-    private static final String SEQ_SOURCE =
-            "select psv.age, psv.cellLine, psv.gender,\n"+
-            "       psv.organism, psv.strain, psv.tissue\n"+  // include library
+    private static final String SEQ_SOURCE_TABLE =
+            "select _Sequence_key,\n"+
+            "    library = psv.name,\n"+
+            "    organism = psv.organism,\n"+
+            "    strain = psv.strain,\n"+
+            "    tissue = psv.tissue,\n"+
+            "    age = psv.age,\n"+
+            "    sex = psv.gender,\n"+
+            "    cellLine = psv.cellLine\n"+
+            "into #seqSource\n"+
             "from PRB_Source_View psv, SEQ_Source_Assoc ssa\n"+
             "where ssa._Sequence_key = %d\n"+
-            "and psv._Source_key = ssa._Source_key";
+            "and ssa._Source_key = psv._Source_key";
+
+    private static final String RAW_LIBRARY =
+            "update #seqSource\n"+
+            "set library = ss.rawLibrary + '*'\n"+
+            "from SEQ_Sequence ss, #seqSource s\n"+
+            "where ss._Sequence_key = s._Sequence_key\n"+
+            "and s.library = 'Not Resolved' \n"+
+            "or  s.library = NULL";
+
+    private static final String RAW_ORGANISM =
+            "update #seqSource\n"+
+            "set organism = ss.rawOrganism + '*'\n"+
+            "from SEQ_Sequence ss, #seqSource s\n"+
+            "where ss._Sequence_key = s._Sequence_key\n"+
+            "and s.organism = 'Not Resolved'";
+
+    private static final String RAW_STRAIN =
+            "update #seqSource\n"+
+            "set strain = ss.rawStrain + '*'\n"+
+            "from SEQ_Sequence ss, #seqSource s\n"+
+            "where ss._Sequence_key = s._Sequence_key\n"+
+            "and s.strain = 'Not Resolved'";
+
+    private static final String RAW_TISSUE =
+            "update #seqSource\n"+
+            "set tissue = ss.rawTissue + '*'\n"+
+            "from SEQ_Sequence ss, #seqSource s\n"+
+            "where ss._Sequence_key = s._Sequence_key\n"+
+            "and s.tissue = 'Not Resolved'";
+
+    private static final String RAW_AGE =
+            "update #seqSource\n"+
+            "set age = ss.rawAge + '*'\n"+
+            "from SEQ_Sequence ss, #seqSource s\n"+
+            "where ss._Sequence_key = s._Sequence_key\n"+
+            "and s.age = 'Not Resolved'";
+
+    private static final String RAW_SEX =
+            "update #seqSource\n"+
+            "set sex = ss.rawSex + '*'\n"+
+            "from SEQ_Sequence ss, #seqSource s\n"+
+            "where ss._Sequence_key = s._Sequence_key\n"+
+            "and s.sex = 'Not Resolved'";
+
+    private static final String RAW_CELLLINE =
+            "update #seqSource\n"+
+            "set cellLine = ss.rawCellLine + '*'\n"+
+            "from SEQ_Sequence ss, #seqSource s\n"+
+            "where ss._Sequence_key = s._Sequence_key\n"+
+            "and s.cellLine = 'Not Resolved'";
+
+    private static final String SEQ_SOURCE =
+            "select library,organism,strain,tissue,age,sex,cellLine\n"+
+            "from #seqSource";
 
     private static final String CHROMOSOME =
             "select distinct mm.chromosome\n"+
@@ -577,16 +656,18 @@ public class SequenceFactory extends Factory {
             "GOCount      int NULL,\n"+
             "orthoCount   int NULL,\n"+
             "name         varchar(255)  NOT NULL,\n"+
-            "symbol       varchar(25)   NOT NULL\n"+
+            "symbol       varchar(25)   NOT NULL,\n"+
+            "_Refs_key    int NULL,\n"+
+            "refID        varchar(255) NULL\n"+
             ")";
 
     private static final String MARKER_NOMENCLATURE =
             "insert #mrk(_Marker_key,name,symbol,markerType)\n"+
-            "select mm._Marker_key, mm.name, mm.symbol, vt.term\n"+
-            "from MRK_Marker mm, SEQ_Marker_Cache smc, VOC_Term vt\n"+
+            "select mm._Marker_key, mm.name, mm.symbol, mt.name\n"+
+            "from MRK_Marker mm, SEQ_Marker_Cache smc, MRK_Types mt\n"+
             "where smc._Sequence_key = %s\n"+
             "and mm._Marker_key = smc._Marker_key\n"+
-            "and vt._Term_key = mm._Marker_Type_key";
+            "and mt._Marker_Type_key = mm._Marker_Type_key";
 
     private static final String MARKER_GO_COUNT =
             "update #mrk\n"+
@@ -614,51 +695,63 @@ public class SequenceFactory extends Factory {
             "from #mrk m, ALL_Allele al\n"+
             "where m._Marker_key = al._Marker_key";
 
-    private static final String MARKER_INFO =
-            "select _Marker_key, symbol, name, markerType,\n"+
-            "alleleCount,assayCount,GOCount,orthoCount\n"+
-            "from #mrk";
-
-    private static final String REFS =
-            "select smc._Refs_key, aa.accID\n"+
-            "from ACC_Accession aa, SEQ_Marker_Cache smc\n"+
-            "where smc._Sequence_key = %d\n"+
-            "and smc._Refs_key = aa._Object_key\n"+
+    private static final String MARKER_REF =
+            "update #mrk\n"+
+            "set _Refs_key = smc._Refs_key, refID = aa.accID\n"+
+            "from SEQ_Marker_Cache smc, ACC_Accession aa, #mrk m\n"+
+            "where smc._Refs_key = aa._Object_key\n"+
+            "and m._Marker_key = smc._Marker_key\n"+
             "and aa._MGIType_key = 1\n"+
             "and aa.preferred = 1";
 
+    private static final String MARKER_INFO =
+            "select _Marker_key, symbol, name, markerType,\n"+
+            "alleleCount,assayCount,GOCount,orthoCount, _Refs_key, refID\n"+
+            "from #mrk";
+
+    private static final String REFS =
+            "SELECT br._Refs_key, aa.accID, br.authors, br.authors2,\n"+
+            "br.title, br.title2,\n"+
+            "citation = br.journal + ' ' + br.date + ';' + br.vol "+
+            "+ '(' + br.issue + '):' + br.pgs \n"+
+            "from MGI_Reference_Assoc mra, BIB_Refs br, ACC_Accession aa\n"+
+            "where mra._Object_key = %d\n"+
+            "and mra._MGIType_key = 19\n"+
+            "and br._Refs_key = mra._Refs_key\n"+
+            "and aa._MGIType_key = 1\n"+
+            "and aa.prefixPart = 'J:'\n"+
+            "and aa._Object_key = br._Refs_key";
+
+    private static final String PROBE_TABLE =
+            "CREATE TABLE #prbs(\n"+
+            "_Probe_key   int NOT NULL,\n"+
+            "name         varchar(40)  NOT NULL,\n"+
+            "accID        varchar(30)  NULL,\n"+
+            "segmentType  varchar(255) NULL,\n"+
+            "collection   varchar(80)  NULL\n"+
+            ")";
+
+
     private static final String PROBES =
-            "select pp.name, pp._Probe_key\n"+
-            "from PRB_Probe pp, SEQ_Probe_Cache sqc\n"+
+            "insert #prbs(name,_Probe_key,segmentType)\n"+
+            "select distinct pp.name, pp._Probe_key, vt.term\n"+
+            "from PRB_Probe pp, SEQ_Probe_Cache sqc, VOC_Term vt\n"+
             "where sqc._Sequence_key = %d\n"+
-            "and pp._Probe_key = sqc._Probe_key";
+            "and pp._Probe_key = sqc._Probe_key\n"+
+            "and vt._Term_key = pp._SegmentType_key";
 
     private static final String CLONE_COLLECTION =
-            "select collection = ldb.name\n"+
-            "from ACC_LogicalDB ldb, ACC_Accession aa, SEQ_Probe_Cache sqc\n"+
-            "where sqc._Sequence_key = %d\n"+
-            "and aa._Object_key = sqc._Probe_key\n"+
+            "update #prbs\n"+
+            "set collection = ldb.name, accID = aa.accID\n"+
+            "from ACC_LogicalDB ldb, ACC_Accession aa, #prbs p\n"+
+            "where p._Probe_key = aa._Object_key\n"+
             "and aa._MGIType_key = 3\n"+
+            "and ldb._LogicalDB_key = aa._LogicalDB_key\n"+
             "and aa._LogicalDB_key in (select _Object_key\n"+
             "                          from MGI_SetMember\n"+
             "                          where _Set_key = 1000)";
 
-    private static final String CLONE_ID =
-            "select aa.accID\n"+
-            "from ACC_Accession aa, SEQ_Probe_Cache sqc\n"+
-            "where sqc._Sequence_key = %d\n"+
-            "and aa._Object_key = sqc._Probe_key\n"+
-            "and aa._MGIType_key = 3\n"+
-            "and aa.preferred = 1";
-
-    private static final String SEGMENT_TYPE =
-            "select type = vt.term\n"+
-            "from VOC_Term vt, SEQ_Probe_Cache sqc, PRB_Probe pp\n"+
-            "where sqc._Sequence_key = %d\n"+
-            "and pp._Probe_key = sqc._Probe_key\n"+
-            "and pp._SegmentType_key = vt._Term_key";
-
-
-
-
+    private static final String PROBE_INFO =
+            "select _Probe_key, name, accID,segmentType, collection\n"+
+            "from #prbs";
 }
