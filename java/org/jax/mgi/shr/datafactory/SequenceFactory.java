@@ -91,7 +91,7 @@ public class SequenceFactory extends Factory {
         if (accID != null) {
             key = this.getKeyForID (accID);
             if (key != -1) {
-                this.timeStamp ("Retrieved marker key from database");
+                this.timeStamp ("Retrieved sequence key from database");
                 return Integer.toString(key);
             }
         }
@@ -670,7 +670,7 @@ public class SequenceFactory extends Factory {
         this.sqlDM.execute(MARKER_ORTHOLOGY_UPDATE);
         this.sqlDM.execute(MARKER_ALLELE_COUNT);
         this.sqlDM.execute(MARKER_ALLELE_UPDATE);
-        this.sqlDM.execute(MARKER_REF);
+        this.sqlDM.execute(Sprintf.sprintf(MARKER_REF,key));
         nav = this.sqlDM.executeQuery(MARKER_INFO);
         while (nav.next()) {
             rr = (RowReference) nav.getCurrent();
@@ -929,8 +929,8 @@ public class SequenceFactory extends Factory {
             "set library = ss.rawLibrary + '*'\n"+
             "from SEQ_Sequence ss, #seqSource s\n"+
             "where ss._Sequence_key = s._Sequence_key\n"+
-            "and s.library = 'Not Resolved' \n"+
-            "or  s.library = NULL";
+            "and (s.library = 'Not Resolved' \n"+
+            "     or s.library = null)";
 
     // loads #seqSource with the raw organism if there was no
     // resolved value
@@ -1021,7 +1021,7 @@ public class SequenceFactory extends Factory {
     // fill in: sequence key (int)
     private static final String MARKER_NOMENCLATURE =
             "insert #mrk(_Marker_key,name,symbol,markerType)\n"+
-            "select mm._Marker_key, mm.name, mm.symbol, mt.name\n"+
+            "select distinct mm._Marker_key, mm.name, mm.symbol, mt.name\n"+
             "from MRK_Marker mm, SEQ_Marker_Cache smc, MRK_Types mt\n"+
             "where smc._Sequence_key = %s\n"+
             "and mm._Marker_key = smc._Marker_key\n"+
@@ -1030,13 +1030,13 @@ public class SequenceFactory extends Factory {
     // loads #goCnt with all _Marker_keys from #mrk and the count of
     // Gene Ontology terms associated with each of those markers
     private static final String MARKER_GO_COUNT =
-            "select GOCount = count(vt.term), m._Marker_key\n"+
+            "SELECT goCount = count(distinct va._Term_key),\n"+
+            "m._Marker_key\n"+
             "into #goCnt\n"+
-            "from VOC_Term vt, VOC_Annot va, #mrk m\n"+
-            "where m._Marker_key = va._Object_key\n"+
-            "and va._AnnotType_key = 1000\n"+
-            "and va._Term_key = vt._Term_key\n"+
-            "group by m._Marker_key";
+            "FROM VOC_Annot va, VOC_GOMarker_AnnotType_View gm,\n"+
+            "#mrk m\n"+
+            "WHERE va._Object_key = m._Marker_key\n"+
+            "AND va._AnnotType_key = gm._AnnotType_key";
 
     // updates #mrk, associating the count of GO terms with their marker keys
     private static final String MARKER_GO_UPDATE =
@@ -1061,14 +1061,28 @@ public class SequenceFactory extends Factory {
             "from #mrk m, #assayCnt ac\n"+
             "where m._Marker_key = ac._Marker_key\n";
 
-    // loads #orthoCnt with all _Marker_keys from #mrk and the count of
-    // orthologs associated with each of those markers
+
+    // get orthologous species
+    // fill in: marker key (int)
     private static final String MARKER_ORTHOLOGY_COUNT =
-            "select orthoCount = count(hhm._Homology_key), m._Marker_key\n"+
-            "into #orthoCnt\n"+
-            "from HMD_Homology_Marker hhm, #mrk m\n"+
-            "where m._Marker_key = hhm._Marker_key\n"+
-            "group by m._Marker_key";
+        "SELECT orthoCount = count(distinct mo._Organism_key),\n"+
+        "        m._Marker_key\n"+
+        "into #orthoCnt\n"+
+        "FROM MGI_Organism mo,\n"+
+        "MRK_Marker mm,\n"+
+        "HMD_Homology hh1,\n"+
+        "HMD_Homology_Marker hm1,\n"+
+        "HMD_Homology hh2,\n"+
+        "HMD_Homology_Marker hm2,\n"+
+        "#mrk m\n"+
+        "where hm1._Marker_key = m._Marker_key\n"+
+        "and hm1._Homology_key = hh1._Homology_key\n"+
+        "and hh1._Class_key = hh2._Class_key\n"+
+        "and hh2._Homology_key = hm2._Homology_key\n"+
+        "and hm2._Marker_key = mm._Marker_key\n"+
+        "and mm._Organism_key = mo._Organism_key\n"+
+        "and mo._Organism_key != 1\n"+
+        "group by m._Marker_key\n";
 
     // updates #mrk, associating the count of orthologs with their marker keys
     private static final String MARKER_ORTHOLOGY_UPDATE =
@@ -1084,6 +1098,7 @@ public class SequenceFactory extends Factory {
             "into #alleleCnt\n"+
             "from #mrk m, ALL_Allele al\n"+
             "where m._Marker_key = al._Marker_key\n"+
+            "and al.name !='wild type'\n"+
             "group by m._Marker_key";
 
     // updates #mrk, associating the count of alleles with their marker keys
@@ -1095,6 +1110,7 @@ public class SequenceFactory extends Factory {
 
     // updates #mrk with the information for the reference associating the
     // sequence and this marker
+    // fill in: sequence key (int)
     private static final String MARKER_REF =
             "update #mrk\n"+
             "set _Refs_key = smc._Refs_key, refID = aa.accID\n"+
@@ -1103,6 +1119,7 @@ public class SequenceFactory extends Factory {
             "and m._Marker_key = smc._Marker_key\n"+
             "and aa._MGIType_key = 1\n"+
             "and aa.prefixPart = 'J:'\n"+
+            "and smc._Sequence_key = %d\n"+
             "and aa.preferred = 1";
 
     // gets the marker information, the counts, and the association reference
