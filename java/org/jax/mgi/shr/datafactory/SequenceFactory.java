@@ -1250,13 +1250,30 @@ public class SequenceFactory extends Factory {
     // loads #prbs with the logicaldb name of the collection this probe
     // belongs to, if any and the providers accID for the probe.
     private static final String CLONE_COLLECTION_TABLE =
-            "select distinct collection = msclv.name, p._Probe_key\n"+
-            "into #collection\n"+
-            "from #prbs p, PRB_Probe pp,\n"+
-            "MGI_SetMember msm, MGI_Set_CloneLibrary_View msclv\n"+
-            "where p._Probe_key = pp._Probe_key\n"+
-            "and pp._Source_key = msm._Object_key\n"+
-            "and msm._Set_key = msclv._Set_key";
+	"SELECT DISTINCT collection = ldb.name, \n" +
+	    " _Probe_key = aa._Object_key \n" +
+	"INTO #collection \n" +
+	"FROM ACC_Accession aa, \n" +
+	    " ACC_LogicalDB ldb, \n" +
+	    " MGI_SetMember msm, \n" +
+	    " MGI_Set ms, \n" +
+	    " #prbs p \n" +
+	"WHERE p._Probe_key = aa._Object_key \n" +
+	    " AND aa._MGIType_key = 3 \n" +
+	    " AND aa._LogicalDB_key = ldb._LogicalDB_key \n" +
+	    " AND aa._LogicalDB_key = msm._Object_key \n" +
+	    " AND msm._Set_key = ms._Set_key \n" +
+	    " AND ms.name = 'Clone Collection (all)' \n";
+
+    /* previous version of CLONE_COLLECTION_TABLE query:
+    **      "select distinct collection = msclv.name, p._Probe_key\n"+
+    **      "into #collection\n"+
+    **      "from #prbs p, PRB_Probe pp,\n"+
+    **      "MGI_SetMember msm, MGI_Set_CloneLibrary_View msclv\n"+
+    **      "where p._Probe_key = pp._Probe_key\n"+
+    **      "and pp._Source_key = msm._Object_key\n"+
+    **      "and msm._Set_key = msclv._Set_key";
+    */
 
     private static final String CLONE_ACC_ID =
             "update #prbs\n"+
