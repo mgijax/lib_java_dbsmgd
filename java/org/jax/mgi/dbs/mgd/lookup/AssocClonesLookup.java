@@ -127,11 +127,11 @@ public class AssocClonesLookup extends CachedLookup
     }
 
     /**
-     * Get the query to fully initialize the cache.
+     * Get the query to add an object to the cache.
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The query to fully initialize the cache.
+     * @return The add object query
      */
     public String getAddQuery(Object o)
     {
@@ -145,6 +145,12 @@ public class AssocClonesLookup extends CachedLookup
                 MGD.prb_probe._name + " prb, " +
                 MGD.prb_source._name + " src " +
             "WHERE " +
+                "acc." + MGD.acc_accession._logicaldb_key + " = " +
+                        LogicalDBConstants.SEQUENCE + " " +
+            "AND " +
+                "acc." + MGD.acc_accession._mgitype_key + " = " +
+                        MGITypeConstants.CLONE + " " +
+            "AND " +
                 "acc." + MGD.acc_accession.accid + " = '" + accid + "' " +
             "AND " +
                 "acc." + MGD.acc_accession._object_key + " = " +
