@@ -26,6 +26,8 @@ public class DBConstants
     public static final int LogicalDB_DoTS = 36;
     public static final int LogicalDB_TrEMBL = 41;
     public static final int LogicalDB_NIA = 53;
+    public static final int LogicalDB_NCBI = 59;
+    public static final int LogicalDB_Ensembl = 60;
 
     // from ACC_ActualDB
 
@@ -69,6 +71,9 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.4  2004/05/24 15:15:05  jsb
+* added Marker_Interim status
+*
 * Revision 1.3  2004/04/06 16:50:59  jsb
 * added LogicalDB_NIA
 *

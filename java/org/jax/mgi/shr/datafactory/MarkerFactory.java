@@ -2319,63 +2319,60 @@ public class MarkerFactory
     *    'key'.
     * @param key the marker key of the marker whose data we seek
     * @return DTO which defines one field:  DTOConstants.Sequences which
-    *	 which maps to a List of DTOs.  Each of those sub-DTOs defines one
-    *	 associated term with four fields (all from DTOConstants):<BR>
-    *	    <OL>
-    *	    <LI> AccID : String
-    *	    <LI> SequenceType : String
-    *	    <LI> SequenceKey : Integer
-    *	    <LI> SequenceLength : Integer
-    *	    <LI> LogicalDbKey : Integer
-    *	    <LI> Strain : String
-    *	    <LI> RawStrain : String
-    *	    <LI> ActualDBs : List of DTO objects
-    *	    </OL><BR>
+    *	 which maps to a DTO containing a DTO for each representive sequence.
+    *	 the structure of these DTOs is identical to calling
+    *	 SequenceFactory.getBasicInfo.  Additionally, the total number of
+    *	 sequences associated with this marker key is included under
+    *	 DTOConstants.SequenceCount.<BR>
     *	 If the marker has no associated sequences, then an empty DTO is
     *	 returned.
     * @assumes nothing
     * @effects queries the database
     * @throws DBException if there are problems querying the database or
     *    stepping through the results
-    * @notes Each DTO in the List for ActualDBs defines two fields from
-    *    DTOConstants:  ActualDB (String name), URL (String).
     */
     public DTO getSequences(int key) throws DBException
     {
         DTO marker = DTO.getDTO();
-	DTO seq = null;
-	ResultsNavigator nav = null;   	// set of query results
-	RowReference rr = null;	       	// one row in 'nav'
-	ArrayList sequences = null;
+        DTO seq = null;
+        ResultsNavigator nav = null;   	// set of query results
+        RowReference rr = null;	       	// one row in 'nav'
 
-        nav = this.sqlDM.executeQuery (Sprintf.sprintf (SEQUENCES, key));
-	if (nav.next())
-	{
-	    rr = (RowReference) nav.getCurrent();
-	    sequences = new ArrayList();
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (SEQUENCE_COUNT, key));
+        if (nav.next())
+        {
+            rr = (RowReference) nav.getCurrent();
+            marker.set(DTOConstants.SequenceCount, rr.getInt(1));
+            nav.close();
+        }
 
-	    do
-	    {
-	        seq = DTO.getDTO();
-		seq.set (DTOConstants.SequenceKey, rr.getInt(1));
-		seq.set (DTOConstants.AccID, rr.getString(2));
-		seq.set (DTOConstants.SequenceType, rr.getString(3));
-		seq.set (DTOConstants.SequenceLength, rr.getInt(4));
-		seq.set (DTOConstants.LogicalDbKey, rr.getInt(5));
-		seq.set (DTOConstants.Strain, rr.getString(6));
-		seq.set (DTOConstants.RawStrain, rr.getString(7));
-		seq.set (DTOConstants.ActualDBs,
-		    this.getActualDBs (rr.getInt(5).intValue()));
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (
+                                        REPRESENTIVE_SEQUENCE_KEYS,
+                                        key));
+        if (nav.next())
+        {
+            SequenceFactory seqFact = new SequenceFactory(config,
+                                                          sqlDM,
+                                                          logger);
+            String seqType;
+            do
+            {
+                rr = (RowReference) nav.getCurrent();
+                seq = seqFact.getBasicInfo(rr.getInt(1).intValue());
+                seqType = rr.getString(2);
 
-	        sequences.add (seq);
+                if(seqType.equals("genomic")) {
+                    marker.set (DTOConstants.RepDNASeq,seq);
+                } else if (seqType.equals("transcript")) {
+                    marker.set (DTOConstants.RepRNASeq,seq);
+                } else if (seqType.equals("polypeptide")) {
+                    marker.set (DTOConstants.RepProteinSeq,seq);
+                }
+            } while (nav.next());
+        }
+        nav.close();
 
-	    } while (nav.next());
-
-	    marker.set (DTOConstants.Sequences, sequences);
-	}
-	nav.close();
-
-	return marker;
+        return marker;
     }
 
     /* -------------------------------------------------------------------- */
@@ -2879,7 +2876,7 @@ public class MarkerFactory
     * @notes A preferred protein ID will begin with a single letter and then
     *    have one or more digits.
     */
-    private static boolean isPreferredProteinID (String id)
+/*    private static boolean isPreferredProteinID (String id)
     {
         char c = ' ';			// current character being examined
 	int idLen = id.length();	// count of characters in 'id'
@@ -2912,7 +2909,7 @@ public class MarkerFactory
 	}
 	return true;
     }
-
+*/
     //////////////////
     // class variables
     //////////////////
@@ -3386,48 +3383,28 @@ public class MarkerFactory
 	+ " FROM MGI_Set "
 	+ " WHERE name LIKE '%References'";
 
-    // get all sequence IDs associated with a marker (now unused - can delete)
-    // fill in:  marker key (int)
-    private static final String SEQ_IDS =
-		"select a.accID, ldb.name, adb.url, ldb._LogicalDB_key "
-		+ "from ACC_Accession a, ACC_LogicalDB ldb, ACC_ActualDB adb "
-		+ "where a._LogicalDB_key = ldb._LogicalDB_key "
-		+    "and ldb._LogicalDB_key = adb._LogicalDB_key "
-		+    "and adb.name in ('GenBank', 'Swiss-Prot (SIB)', "
-		+    "    'RefSeq') "
-		+    "and a._Object_key = %d "
-		+    "and a.private = 0 "
-		+    "and a._MGIType_key = " + DBConstants.MGIType_Marker
-		+    " and a._LogicalDB_key in (" +
-			    DBConstants.LogicalDB_RefSeq + ", " +
-			    DBConstants.LogicalDB_SwissProt + ", " +
-			    DBConstants.LogicalDB_SequenceDB + ") "
-		+ " order by a.accID";
-
-    // get data for sequences associated with a marker
+    // get count of total number of sequences associated with a marker
     // fill in: marker key (int)
-    private static final String SEQUENCES =
-    		"SELECT DISTINCT seq._Sequence_key, aa.accID, typ.term, seq.length"
-		+	", aa._LogicalDB_key, st.strain, seq.rawStrain"
+    private static final String SEQUENCE_COUNT =
+    		"SELECT cnt = count(smc._Sequence_key)"
 		+ " FROM SEQ_Marker_Cache smc"
 		+	", ACC_Accession aa"
-		+	", SEQ_Sequence seq"
-		+	", VOC_Term typ"
-		+	", PRB_Source sou"
-		+	", PRB_Strain st"
-		+	", SEQ_Source_Assoc ssa"
 		+ " WHERE smc._Marker_key = %d"
-		+	" AND smc._Sequence_key = seq._Sequence_key"
-		+	" AND seq._Sequence_key = aa._Object_key"
+		+	" AND smc._Sequence_key = aa._Object_key"
 		+	" AND aa.private = 0"
 		+	" AND aa.preferred = 1"
 		+	" AND aa._MGIType_key = " +
-				DBConstants.MGIType_Sequence
-		+	" AND seq._SequenceType_key = typ._Term_key"
-		+	" AND seq._Sequence_key = ssa._Sequence_key"
-		+	" AND ssa._Source_key = sou._Source_key"
-		+	" AND sou._Strain_key = st._Strain_key"
-		+ " ORDER BY typ.term, seq.length desc";
+				DBConstants.MGIType_Sequence;
+
+    // get the sequence keys for the representitive sequence for a marker
+    // fill in: marker key (int)
+    private static final String REPRESENTIVE_SEQUENCE_KEYS =
+    		"SELECT smc._Sequence_key,type = vt.term"
+    		+ " FROM SEQ_Marker_Cache smc"
+    		+ 	", VOC_Term vt"
+		+ " WHERE smc._Marker_key = %d"
+		+	" AND vt._Term_key = smc._Qualifier_key"
+		+	" AND vt.term != 'Not Specified'";
 
     // get synonyms
     // fill in: marker key (int)
@@ -3451,6 +3428,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.12  2004/08/03 18:57:29  jw
+* Removed unknown go terms when there is another term in that ontology
+*
 * Revision 1.11  2004/08/03 10:47:53  jsb
 * Adjusted count for 'All' references to exclude certain sets, TR4920
 *
