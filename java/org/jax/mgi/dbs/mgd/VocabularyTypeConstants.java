@@ -24,4 +24,6 @@ public class VocabularyTypeConstants
     public static final int VECTORTYPE = 24;
     public static final int SEQUENCEPROVIDER = 25;
     public static final int SEQUENCESTATUS = 20;
+    public static final int MAPTYPE = 29;
+    public static final int MAPUNIT = 30;
 }
