@@ -2,8 +2,9 @@ package org.jax.mgi.dbs.mgd.lookup;
 
 import java.util.Vector;
 
-import org.jax.mgi.shr.cache.FullCachedLookup;
+import org.jax.mgi.shr.cache.CachedLookup;
 import org.jax.mgi.shr.cache.CacheException;
+import org.jax.mgi.shr.cache.CacheConstants;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.shr.dbutils.DBException;
@@ -31,7 +32,7 @@ import org.jax.mgi.dbs.mgd.MGD;
  * @version 1.0
  */
 
-public class AssocClonesLookup extends FullCachedLookup
+public class AssocClonesLookup extends CachedLookup
 {
 
   public static final String DELIMITER = ":";
@@ -48,7 +49,8 @@ public class AssocClonesLookup extends FullCachedLookup
     public AssocClonesLookup()
        throws CacheException, ConfigException, DBException
     {
-        super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
+        super(CacheConstants.FULL_CACHE,
+              SQLDataManagerFactory.getShared(SchemaConstants.MGD));
     }
 
     /**
@@ -111,6 +113,61 @@ public class AssocClonesLookup extends FullCachedLookup
                 "src." + MGD.prb_source.name + " != null";
         return stmt;
     }
+
+    /**
+     * Get the query to partially initialize the cache.
+     * @assumes Nothing
+     * @effects Nothing
+     * @param None
+     * @return The query to partially initialize the cache.
+     */
+    public String getPartialInitQuery()
+    {
+      return null;
+    }
+
+    /**
+     * Get the query to fully initialize the cache.
+     * @assumes Nothing
+     * @effects Nothing
+     * @param None
+     * @return The query to fully initialize the cache.
+     */
+    public String getAddQuery(Object o)
+    {
+        String accid = (String)o;
+        String stmt =
+            "SELECT " +
+               "acc." + MGD.acc_accession.accid + ", " +
+               "src." + MGD.prb_source.name + " " +
+            "FROM " +
+                MGD.acc_accession._name + " acc, " +
+                MGD.prb_probe._name + " prb, " +
+                MGD.prb_source._name + " src " +
+            "WHERE " +
+                "acc." + MGD.acc_accession.accid + " = '" + accid + "' " +
+            "AND " +
+                "acc." + MGD.acc_accession._object_key + " = " +
+                "prb." + MGD.prb_probe._probe_key + " " +
+            "AND " +
+                "prb." + MGD.prb_probe._source_key + " = " +
+                "src." + MGD.prb_source._source_key + " " +
+            "AND (" +
+                "prb." + MGD.prb_probe._segmenttype_key + " = " +
+                   SegmentTypeConstants.CDNA + " " +
+                "OR " +
+                "prb." + MGD.prb_probe._segmenttype_key + " = " +
+                   SegmentTypeConstants.GENOMIC + " " +
+                "OR " +
+                "prb." + MGD.prb_probe._segmenttype_key + " = " +
+                   SegmentTypeConstants.NOT_SPECIFIED + " " +
+                ")" +
+            "AND " +
+                "src." + MGD.prb_source.name + " != null";
+        return stmt;
+    }
+
+
 
     /**
      * Get a MultiRowInterpreter for creating a KeyValue object from a
