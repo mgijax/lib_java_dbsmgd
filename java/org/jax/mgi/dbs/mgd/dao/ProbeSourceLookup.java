@@ -4,7 +4,7 @@
 package org.jax.mgi.dbs.mgd.dao;
 
 import org.jax.mgi.shr.cache.CacheException;
-import org.jax.mgi.shr.cache.KeyValue;
+import org.jax.mgi.shr.types.KeyValue;
 import org.jax.mgi.shr.cache.RowDataCacheHandler;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
@@ -197,6 +197,9 @@ public class ProbeSourceLookup
 
 
 //  $Log$
+//  Revision 1.2  2003/09/25 17:54:11  dbm
+//  Continued development
+//
 //  Revision 1.1  2003/09/23 13:16:22  dbm
 //  Initial version
 //

@@ -4,7 +4,7 @@
 package org.jax.mgi.dbs.mgd.dao;
 
 import org.jax.mgi.shr.cache.CacheException;
-import org.jax.mgi.shr.cache.KeyValue;
+import org.jax.mgi.shr.types.KeyValue;
 import org.jax.mgi.shr.cache.RowDataCacheHandler;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
@@ -208,6 +208,9 @@ public class ProbeReferenceLookup
 
 
 //  $Log$
+//  Revision 1.1  2003/09/25 17:51:54  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *
