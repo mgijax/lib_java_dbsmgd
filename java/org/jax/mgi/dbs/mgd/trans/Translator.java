@@ -19,12 +19,12 @@ import org.jax.mgi.shr.config.ConfigException;
 
 /**
  *
- * @is: a RowDataCacheHandler for caching translation terms
- * @has: a RowDataCacheStrategy which can be set to type FULL_CACHE or
+ * @is a RowDataCacheHandler for caching translation terms
+ * @has a RowDataCacheStrategy which can be set to type FULL_CACHE or
  * LAZY_CACHE.
- * @does: provides a lookup method for translation terms stored and caches the
+ * @does provides a lookup method for translation terms stored and caches the
  * results
- * @company: The Jackson Laboratory
+ * @company The Jackson Laboratory
  * @author not attributable
  * @version 1.0
  */
@@ -77,7 +77,7 @@ public class Translator extends CachedLookup
    * @throws DBException thrown if there is an error with the db
    * @throws ConfigException thrown if there is an error accessing the
    * configuration
-   * @lookupException thrown if there is an error using the
+   * @throws LookupException thrown if there is an error using the
    */
   public Translator(int translationType, int cacheType)
   throws CacheException, DBException,
@@ -97,7 +97,7 @@ public class Translator extends CachedLookup
    * @throws DBException thrown if there is an error with the db
    * @throws ConfigException thrown if there is an error accessing the
    * configuration
-   * @lookupException thrown if there is an error using the
+   * @throws LookupException thrown if there is an error using the
    */
   public Translator(String translationType, int cacheType)
   throws CacheException, DBException,
@@ -268,13 +268,13 @@ public class Translator extends CachedLookup
 
   /**
    *
-   * @is: a RowDataCacheHandler for caching MGI types obtained from a database
+   * @is a RowDataCacheHandler for caching MGI types obtained from a database
    * query
-   * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
+   * @has a RowDataCacheStrategy of type FULL_CACHE used for creating the
    * cache and performing the cache lookup.
-   * @does: provides a lookup method for gender translation terms stored
+   * @does provides a lookup method for gender translation terms stored
    * within an in-memory cache.
-   * @company: The Jackson Laboratory
+   * @company The Jackson Laboratory
    * @author not attributable
    * @version 1.0
    */
@@ -347,12 +347,12 @@ public class Translator extends CachedLookup
 
   /**
    *
-   * @is: a FullCachedLookup for caching table information from the
+   * @is a FullCachedLookup for caching table information from the
    * ACC_MGIType table
-   * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
+   * @has a RowDataCacheStrategy of type FULL_CACHE used for creating the
    * cache and performing the cache lookup.
-   * @does: provides a lookup method for getting a HashMap.
-   * @company: The Jackson Laboratory
+   * @does provides a lookup method for getting a HashMap.
+   * @company The Jackson Laboratory
    * @author not attributable
    * @version 1.0
    */
@@ -431,13 +431,13 @@ public class Translator extends CachedLookup
 
   /**
    *
-   * @is: a FullCachedLookup for caching translation types and allowing
+   * @is a FullCachedLookup for caching translation types and allowing
    * queries on the translation name to get back the record key
-   * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
+   * @has a RowDataCacheStrategy of type FULL_CACHE used for creating the
    * cache and performing the cache lookup.
-   * @does: provides a lookup method for looking up translation type key by
+   * @does provides a lookup method for looking up translation type key by
    * translation name within a cache.
-   * @company: The Jackson Laboratory
+   * @company The Jackson Laboratory
    * @author not attributable
    * @version 1.0
    */
