@@ -114,7 +114,7 @@ public class LibraryKeyLookup extends FullCachedLookup
     String s = "SELECT " +
                MGD.prb_source._source_key + ", " +
                MGD.prb_source.name + " " +
-               "FROM " + MGD.prb_source._name + 
+               "FROM " + MGD.prb_source._name + " " +
                "WHERE " + MGD.prb_source.name + " != null";
     return s;
   }
