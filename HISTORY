@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-1-0-22
+DATE: 05/03/2004
+STAFF: jsb
+CHANGES:
+1) changed sorting of GO associations in MarkerFactory.java
+
 TAG: lib_java_dbsmgd-1-0-21
 DATE: 04/14/2004
 STAFF: mbw
