@@ -27,13 +27,14 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 public class LogicalDBLookup extends RowDataCacheHandler
 {
     /**
-     * Constructs a logical DB lookup object.
+     * Constructs a LogicalDBLookup object.
      * @assumes Nothing
      * @effects Nothing
      * @param None
      * @throws Nothing
      */
-    public LogicalDBLookup () throws ConfigException, DBException, CacheException
+    public LogicalDBLookup ()
+        throws ConfigException, DBException, CacheException
     {
         super(FULL_CACHE, SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
     }
@@ -48,7 +49,8 @@ public class LogicalDBLookup extends RowDataCacheHandler
      *         if the logical DB was not found.
      * @throws Nothing
      */
-    public Integer lookup (String logicalDB) throws DBException, CacheException
+    public Integer lookup (String logicalDB)
+        throws DBException, CacheException
     {
         Object obj = cacheStrategy.lookup(logicalDB, cache);
         if (obj != null)
@@ -82,8 +84,8 @@ public class LogicalDBLookup extends RowDataCacheHandler
      */
     public String getPartialInitQuery ()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getPartialInitQuery";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getPartialInitQuery";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -98,8 +100,8 @@ public class LogicalDBLookup extends RowDataCacheHandler
      */
     public String getAddQuery (Object addObject)
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getAddQuery";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getAddQuery";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -142,7 +144,8 @@ public class LogicalDBLookup extends RowDataCacheHandler
          * @return The KeyValue object.
          * @throws Nothing
          */
-        public Object interpret (RowReference row) throws DBException
+        public Object interpret (RowReference row)
+            throws DBException
         {
             String key = row.getString(1);
             int value = row.getInt(2);
@@ -155,6 +158,9 @@ public class LogicalDBLookup extends RowDataCacheHandler
 
 
 //  $Log$
+//  Revision 1.1  2003/09/18 14:26:12  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

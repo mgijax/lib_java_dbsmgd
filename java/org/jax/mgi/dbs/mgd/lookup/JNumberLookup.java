@@ -30,13 +30,14 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 public class JNumberLookup extends RowDataCacheHandler
 {
     /**
-     * Constructs a J-Number lookup object.
+     * Constructs a JNumberLookup object.
      * @assumes Nothing
      * @effects Nothing
      * @param None
      * @throws Nothing
      */
-    public JNumberLookup () throws ConfigException, DBException, CacheException
+    public JNumberLookup ()
+        throws ConfigException, DBException, CacheException
     {
         super(LAZY_CACHE, SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
     }
@@ -51,7 +52,8 @@ public class JNumberLookup extends RowDataCacheHandler
     *         a null if the J-Number was not found.
     * @throws Nothing
     */
-    public Integer lookup (String jNumber) throws DBException, CacheException
+    public Integer lookup (String jNumber)
+        throws DBException, CacheException
     {
         Object obj = cacheStrategy.lookup(jNumber, cache);
         if (obj != null)
@@ -71,8 +73,8 @@ public class JNumberLookup extends RowDataCacheHandler
      */
     public String getFullInitQuery ()
     {
-        String message = "Class " + this.getClass().getName() + " does not " +
-                         "support the method getFullInitQuery";
+        String message = "Class " + this.getClass().getName() +
+                         " does not support the method getFullInitQuery";
         throw new java.lang.UnsupportedOperationException(message);
     }
 
@@ -151,7 +153,8 @@ public class JNumberLookup extends RowDataCacheHandler
          * @return The KeyValue object.
          * @throws Nothing
          */
-        public Object interpret (RowReference row) throws DBException
+        public Object interpret (RowReference row)
+            throws DBException
         {
             String key = row.getString(1);
             int value = row.getInt(2);
@@ -164,6 +167,9 @@ public class JNumberLookup extends RowDataCacheHandler
 
 
 //  $Log$
+//  Revision 1.1  2003/09/18 14:26:12  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *
