@@ -35,7 +35,7 @@ import org.jax.mgi.dbs.mgd.MGD;
 public class AssocClonesLookup extends CachedLookup
 {
 
-  public static final String DELIMITER = ":";
+  public static final String DELIMITER = ":::";
 
     /**
      * Constructor
@@ -64,10 +64,13 @@ public class AssocClonesLookup extends CachedLookup
      * @throws DBException thrown if there is an error with the database
      * @throws CacheException thrown if there is an error accessing the cache
      */
-    public String lookup(String accid)
+    public String[] lookup(String accid)
     throws DBException, CacheException
     {
-        return (String)super.lookupNullsOk(accid);
+        String list = (String)super.lookupNullsOk(accid);
+        if (list == null)
+            return null;
+        return list.split(DELIMITER);
     }
 
     /**
@@ -108,7 +111,7 @@ public class AssocClonesLookup extends CachedLookup
                 "OR " +
                 "prb." + MGD.prb_probe._segmenttype_key + " = " +
                    SegmentTypeConstants.NOT_SPECIFIED + " " +
-                ") " +
+                ")" +
             "AND " +
                 "src." + MGD.prb_source.name + " != null " +
             "order by acc." + MGD.acc_accession.accid ;
