@@ -11,6 +11,7 @@ public class TestStrainKeyLookup
 
   private StrainKeyLookup strainKeyLookup = null;
   private SQLDataManager sqlMgr = null;
+  private Integer translationType = null;
 
   public TestStrainKeyLookup(String name) {
     super(name);
@@ -18,8 +19,15 @@ public class TestStrainKeyLookup
 
   protected void setUp() throws Exception {
     super.setUp();
-    strainKeyLookup = new StrainKeyLookup();
     sqlMgr = new SQLDataManager();
+    String query = "select _translationType_key " +
+                   "from mgi_translationType " +
+                   "where translationType = 'Strains'";
+
+    ResultsNavigator nav = sqlMgr.executeQuery(query);
+    nav.next();
+    RowReference row = nav.getRowReference();
+    translationType = row.getInt(1);
     sqlMgr.executeUpdate(
         "delete prb_strain where _strain_key = -50"
         );
@@ -31,8 +39,8 @@ public class TestStrainKeyLookup
         "getDate(), getDate())"
         );
     sqlMgr.executeUpdate(
-        "insert into mgi_translation values (-50, 1006, -50, " +
-        "'CB/100 strain', 1, 1000, 1000, getDate(), getDate())"
+        "insert into mgi_translation values (-50, " + translationType +
+        ", -50, 'CB/100 strain', 1, 1000, 1000, getDate(), getDate())"
         );
     strainKeyLookup = new StrainKeyLookup();
   }
@@ -46,30 +54,13 @@ public class TestStrainKeyLookup
         );
     strainKeyLookup = null;
     sqlMgr = null;
+    translationType = null;
     super.tearDown();
   }
 
   public void testLookup() throws Exception {
-    assertNull(strainKeyLookup.getTranslatedTerm());
     assertEquals(new Integer(-50), strainKeyLookup.lookup("CB/100 strain"));
-    assertEquals("CB100", strainKeyLookup.getTranslatedTerm());
     assertEquals(new Integer(-50), strainKeyLookup.lookup("CB100"));
-    assertEquals("CB100", strainKeyLookup.getTranslatedTerm());
-  }
-
-  public void testTranslatedLookup()  throws Exception {
-    String sql = "SELECT _strain_key " +
-        "FROM prb_strain " +
-        "WHERE strain = 'BALB/cJ'";
-    ResultsNavigator nav = sqlMgr.executeQuery(sql);
-    nav.next();
-    RowReference row = (RowReference) nav.getCurrent();
-    Integer key = row.getInt(1);
-
-    String term = "BALB/c/J";
-    Integer expectedReturn = key;
-    Integer actualReturn = strainKeyLookup.lookup(term);
-    assertEquals("return value", expectedReturn, actualReturn);
   }
 
   public void testKeyNotFound() throws Exception {

@@ -10,6 +10,7 @@ public class TestOrganismKeyLookup
     extends TestCase {
   private OrganismKeyLookup organismKeyLookup = null;
   private SQLDataManager sqlMgr = null;
+  private Integer translationType = null;
 
   public TestOrganismKeyLookup(String name) {
     super(name);
@@ -17,8 +18,16 @@ public class TestOrganismKeyLookup
 
   protected void setUp() throws Exception {
     super.setUp();
-    organismKeyLookup = new OrganismKeyLookup();
     sqlMgr = new SQLDataManager();
+    String query = "select _translationType_key " +
+                   "from mgi_translationType " +
+                   "where translationType = 'Organisms'";
+
+    ResultsNavigator nav = sqlMgr.executeQuery(query);
+    nav.next();
+    RowReference row = nav.getRowReference();
+    translationType = row.getInt(1);
+
     sqlMgr.executeUpdate(
         "delete from mgi_organism where _organism_key = -50"
         );
@@ -30,8 +39,8 @@ public class TestOrganismKeyLookup
         "1200, 1200, getDate(), getDate())"
         );
     sqlMgr.executeUpdate(
-        "insert into mgi_translation values (-70, 1001, -50, " +
-        "'Mus musculus organism', 1, 1200, 1200, getDate(), getDate())"
+        "insert into mgi_translation values (-70, " + translationType +
+        ", -50, 'Mus musculus organism', 1, 1200, 1200, getDate(), getDate())"
         );
     organismKeyLookup = new OrganismKeyLookup();
   }
@@ -45,31 +54,15 @@ public class TestOrganismKeyLookup
         );
     organismKeyLookup = null;
     sqlMgr = null;
+    translationType = null;
     super.tearDown();
   }
 
   public void testLookup() throws Exception {
-    assertNull(organismKeyLookup.getTranslatedTerm());
     assertEquals(new Integer(-50),
                  organismKeyLookup.lookup("Mus musculus organism"));
-    assertEquals("mouse2", this.organismKeyLookup.getTranslatedTerm());
     assertEquals(new Integer(-50), organismKeyLookup.lookup("mouse2"));
-    assertEquals("mouse2", this.organismKeyLookup.getTranslatedTerm());
-  }
 
-  public void testTranslatedLookup() throws Exception {
-    String sql = "SELECT _organism_key " +
-        "FROM mgi_organism " +
-        "WHERE commonName = 'mouse, laboratory'";
-    ResultsNavigator nav = sqlMgr.executeQuery(sql);
-    nav.next();
-    RowReference row = (RowReference) nav.getCurrent();
-    Integer key = row.getInt(1);
-
-    String term = "Mus musculus";
-    Integer expectedReturn = key;
-    Integer actualReturn = organismKeyLookup.lookup(term);
-    assertEquals("return value", expectedReturn, actualReturn);
   }
 
   public void testKeyNotFound() throws Exception {

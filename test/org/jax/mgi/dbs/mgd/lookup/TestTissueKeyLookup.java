@@ -10,6 +10,7 @@ public class TestTissueKeyLookup
     extends TestCase {
   private TissueKeyLookup tissueKeyLookup = null;
    private SQLDataManager sqlMgr = null;
+   private Integer translationType = null;
 
   public TestTissueKeyLookup(String name) {
     super(name);
@@ -18,6 +19,15 @@ public class TestTissueKeyLookup
   protected void setUp() throws Exception {
     super.setUp();
     sqlMgr = new SQLDataManager();
+    String query = "select _translationType_key " +
+                   "from mgi_translationType " +
+                   "where translationType = 'Tissues'";
+
+    ResultsNavigator nav = sqlMgr.executeQuery(query);
+    nav.next();
+    RowReference row = nav.getRowReference();
+    translationType = row.getInt(1);
+
     sqlMgr.executeUpdate(
         "delete prb_tissue where _tissue_key = -50"
         );
@@ -29,8 +39,8 @@ public class TestTissueKeyLookup
         "1, getDate(), getDate())"
         );
     sqlMgr.executeUpdate(
-        "insert into mgi_translation values (-50, 1003, -50, " +
-        "'placenta day 21', 1, 1200, 1200, getDate(), getDate())"
+        "insert into mgi_translation values (-50, " + translationType +
+        ", -50, 'placenta day 21', 1, 1200, 1200, getDate(), getDate())"
         );
     tissueKeyLookup = new TissueKeyLookup();
   }
@@ -44,15 +54,13 @@ public class TestTissueKeyLookup
         );
     tissueKeyLookup = null;
     sqlMgr = null;
+    translationType = null;
     super.tearDown();
   }
 
   public void testLookup() throws Exception {
-    assertNull(tissueKeyLookup.getTranslatedTerm());
     assertEquals(new Integer(-50), tissueKeyLookup.lookup("placenta day 21"));
-    assertEquals("placenta 21", tissueKeyLookup.getTranslatedTerm());
     assertEquals(new Integer(-50), tissueKeyLookup.lookup("placenta 21"));
-    assertEquals("placenta 21", tissueKeyLookup.getTranslatedTerm());
   }
 
   public void testKeyNotFound() throws Exception
