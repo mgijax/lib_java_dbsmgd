@@ -15,13 +15,13 @@ import org.jax.mgi.dbs.SchemaConstants;
 
 /**
  *
- * @is: a FullCachedLookup for caching translation types and allowing
+ * @is a FullCachedLookup for caching translation types and allowing
  * queries on the translation name to get back the record key
- * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
+ * @has a RowDataCacheStrategy of type FULL_CACHE used for creating the
  * cache and performing the cache lookup.
- * @does: provides a lookup method for looking up translation type key by
+ * @does provides a lookup method for looking up translation type key by
  * translation name within a cache.
- * @company: The Jackson Laboratory
+ * @company The Jackson Laboratory
  * @author not attributable
  * @version 1.0
  */

@@ -21,13 +21,13 @@ import org.jax.mgi.shr.config.ConfigException;
 
 /**
  *
- * @is: a RowDataCacheHandler for caching Organism terms
- * @has: a RowDataCacheStrategy of type FULL_CACHE used for creating the
+ * @is a RowDataCacheHandler for caching Organism terms
+ * @has a RowDataCacheStrategy of type FULL_CACHE used for creating the
  * cache and performing the cache lookup and has a Translator for translating
  * incoming terms before performing the lookup.
- * @does: provides a lookup method for gender translation terms stored
+ * @does provides a lookup method for gender translation terms stored
  * within in a cache. Also translates lookup names to known vocabulary terms.
- * @company: The Jackson Laboratory
+ * @company The Jackson Laboratory
  * @author not attributable
  * @version 1.0
  */
