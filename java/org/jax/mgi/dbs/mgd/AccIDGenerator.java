@@ -65,7 +65,7 @@ public class AccIDGenerator
             ResultsNavigator rn = sqlMgr.executeQuery(sql);
             rn.next();
             RowReference row = (RowReference)rn.getCurrent();
-            lastNumericMGI = row.getInt(1);
+            lastNumericMGI = row.getInt(1).intValue();
         }
         lastNumericMGI++;
 
@@ -94,7 +94,7 @@ public class AccIDGenerator
             ResultsNavigator rn = sqlMgr.executeQuery(sql);
             rn.next();
             RowReference row = (RowReference)rn.getCurrent();
-            lastNumericJ = row.getInt(1);
+            lastNumericJ = row.getInt(1).intValue();
         }
         lastNumericJ++;
 
@@ -157,6 +157,9 @@ public class AccIDGenerator
 
 
 //  $Log$
+//  Revision 1.2  2003/09/25 17:50:48  dbm
+//  Continued development
+//
 //  Revision 1.1  2003/09/19 17:49:37  dbm
 //  Initial version
 //
