@@ -25,7 +25,7 @@ public class GenderKeyLookup extends VocabKeyLookup {
              TranslationException
 
   {
-    super(VocabularyTypeConstants.CELLLINE, CacheConstants.FULL_CACHE,
+    super(VocabularyTypeConstants.GENDER, CacheConstants.FULL_CACHE,
           CacheConstants.FULL_CACHE);
   }
 
