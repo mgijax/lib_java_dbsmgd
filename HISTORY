@@ -1,3 +1,14 @@
+DATE: 02/19/2004
+STAFF: mbw
+CHANGES:
+1) fixed lookups with static caches to not run cache initialization for each instance
+2) added new AssocClonesLookup
+
+STAFF: mbw
+CHANGES:
+1) 
+
+
 TAG: lib_java_dbsmgd-1-0-11
 DATE: 02/18/2004
 STAFF: jsb
