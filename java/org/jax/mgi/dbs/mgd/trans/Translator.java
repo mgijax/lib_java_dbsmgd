@@ -129,7 +129,7 @@ public class Translator extends CachedLookup
   public KeyedDataAttribute translate(String term)
       throws LookupException
   {
-    return (KeyValue)super.lookup(term, true);
+    return (KeyedDataAttribute)super.lookup(term, true);
   }
 
   /**
