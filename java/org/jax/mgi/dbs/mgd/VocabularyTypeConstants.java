@@ -19,4 +19,7 @@ public class VocabularyTypeConstants
     public static final int GENDER = 15;
     public static final int CELLLINE = 17;
     public static final int SEQUENCETYPE = 22;
+    public static final int SEQUENCEQUALITY = 20;
+    public static final int SEQUENCEPROVIDER = 26;
+    public static final int SEQUENCESTATUS = 21;
 }
