@@ -39,8 +39,8 @@ public class ProbeSourceState
     private String name = null;
     private String description = null;
     private String age = null;
-    private Double ageMin = null;
-    private Double ageMax = null;
+    private Float ageMin = null;
+    private Float ageMax = null;
     private Integer isCuratorEdited = null;
 
 
@@ -174,7 +174,7 @@ public class ProbeSourceState
      * @return The ageMin attribute
      * @throws Nothing
      */
-    public Double getAgeMin () { return ageMin; }
+    public Float getAgeMin () { return ageMin; }
 
     /**
      * Get the ageMax attribute from this object.
@@ -184,7 +184,7 @@ public class ProbeSourceState
      * @return The ageMax attribute
      * @throws Nothing
      */
-    public Double getAgeMax () { return ageMax; }
+    public Float getAgeMax () { return ageMax; }
 
     /**
      * Get the isCuratorEdited attribute from this object.
@@ -314,7 +314,7 @@ public class ProbeSourceState
      * @return Nothing
      * @throws Nothing
      */
-    public void setAgeMin (Double pAgeMin) { ageMin = pAgeMin; }
+    public void setAgeMin (Float pAgeMin) { ageMin = pAgeMin; }
 
     /**
      * Set the ageMax attribute of this object to the given value.
@@ -324,7 +324,7 @@ public class ProbeSourceState
      * @return Nothing
      * @throws Nothing
      */
-    public void setAgeMax (Double pAgeMax) { ageMax = pAgeMax; }
+    public void setAgeMax (Float pAgeMax) { ageMax = pAgeMax; }
 
     /**
      * Set the isCuratorEdited attribute of this object to the given value.
@@ -366,6 +366,9 @@ public class ProbeSourceState
 
 
 //  $Log$
+//  Revision 1.1  2003/09/19 17:43:24  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *
