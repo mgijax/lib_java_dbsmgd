@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-1-0-29
+DATE: 08/04/2004
+STAFF: jsb, jw
+CHANGES:
+1) fixes to MarkerFactory.java and SequenceFactory.jar for 3.01 release
+
 TAG: lib_java_dbsmgd-1-0-28
 DATE: 05/27/2004
 STAFF: jsb
