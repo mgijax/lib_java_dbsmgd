@@ -41,7 +41,7 @@ public class ProbeSourceState
     private String age = null;
     private Float ageMin = null;
     private Float ageMax = null;
-    private String isCuratorEdited = null;
+    private Boolean isCuratorEdited = null;
 
 
     /**
@@ -194,7 +194,7 @@ public class ProbeSourceState
      * @return The isCuratorEdited attribute
      * @throws Nothing
      */
-    public String getIsCuratorEdited () { return isCuratorEdited; }
+    public Boolean getIsCuratorEdited () { return isCuratorEdited; }
 
     /**
      * Set the segmentTypeKey attribute of this object to the given value.
@@ -334,7 +334,7 @@ public class ProbeSourceState
      * @return Nothing
      * @throws Nothing
      */
-    public void setIsCuratorEdited (String pIsCuratorEdited) { isCuratorEdited = pIsCuratorEdited; }
+    public void setIsCuratorEdited (Boolean pIsCuratorEdited) { isCuratorEdited = pIsCuratorEdited; }
 
 
     /**
@@ -366,6 +366,9 @@ public class ProbeSourceState
 
 
 //  $Log$
+//  Revision 1.3  2003/10/01 14:52:17  dbm
+//  Use Strings to represent bit columns in DAO classes
+//
 //  Revision 1.2  2003/09/30 16:52:31  dbm
 //  Changed Double to Float
 //

@@ -41,7 +41,7 @@ public class ProbeState
     private String insertSize = null;
     private String repeatUnit = null;
     private String productSize = null;
-    private String moreProduct = null;
+    private Boolean moreProduct = null;
 
 
     /**
@@ -194,7 +194,7 @@ public class ProbeState
      * @return The moreProduct attribute
      * @throws Nothing
      */
-    public String getMoreProduct () { return moreProduct; }
+    public Boolean getMoreProduct () { return moreProduct; }
 
     /**
      * Set the name attribute of this object to the given value.
@@ -334,7 +334,7 @@ public class ProbeState
      * @return Nothing
      * @throws Nothing
      */
-    public void setMoreProduct (String pMoreProduct) { moreProduct = pMoreProduct; }
+    public void setMoreProduct (Boolean pMoreProduct) { moreProduct = pMoreProduct; }
 
 
     /**
@@ -366,6 +366,9 @@ public class ProbeState
 
 
 //  $Log$
+//  Revision 1.2  2003/10/01 14:52:17  dbm
+//  Use Strings to represent bit columns in DAO classes
+//
 //  Revision 1.1  2003/09/18 13:37:23  dbm
 //  Initial version
 //

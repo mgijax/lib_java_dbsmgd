@@ -50,7 +50,7 @@ public class ProbeSourceInterpreter implements RowDataInterpreter
         probeSrcState.setAge(row.getString("age"));
         probeSrcState.setAgeMin(row.getFloat("ageMin"));
         probeSrcState.setAgeMax(row.getFloat("ageMax"));
-        probeSrcState.setIsCuratorEdited(row.getString("isCuratorEdited"));
+        probeSrcState.setIsCuratorEdited(row.getBoolean("isCuratorEdited"));
         ProbeSourceDAO probeSrcDAO =
             new ProbeSourceDAO(probeSrcKey, probeSrcState);
         return probeSrcDAO;
@@ -59,6 +59,9 @@ public class ProbeSourceInterpreter implements RowDataInterpreter
 
 
 //  $Log$
+//  Revision 1.4  2003/10/01 14:52:16  dbm
+//  Use Strings to represent bit columns in DAO classes
+//
 //  Revision 1.3  2003/09/30 16:58:09  dbm
 //  Use Integer instead of int for attributes
 //

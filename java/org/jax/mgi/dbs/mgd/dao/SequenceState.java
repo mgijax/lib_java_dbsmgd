@@ -37,7 +37,7 @@ public class SequenceState
     private String description = null;
     private String version = null;
     private String division  = null;
-    private String virtual = null;
+    private Boolean virtual = null;
     private String rawType  = null;
     private String rawLibrary = null;
     private String rawOrganism = null;
@@ -95,7 +95,7 @@ public class SequenceState
       return division;
     }
 
-    public String getVirtual ()
+    public Boolean getVirtual ()
     {
       return virtual;
     }
@@ -200,7 +200,7 @@ public class SequenceState
       division = in;
     }
 
-    public void setVirtual(String in)
+    public void setVirtual(Boolean in)
     {
       virtual = in;
     }
@@ -289,6 +289,9 @@ public class SequenceState
 
 
 //  $Log$
+//  Revision 1.3  2003/10/01 14:52:18  dbm
+//  Use Strings to represent bit columns in DAO classes
+//
 //  Revision 1.2  2003/09/30 16:58:10  dbm
 //  Use Integer instead of int for attributes
 //

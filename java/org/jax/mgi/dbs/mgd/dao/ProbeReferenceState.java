@@ -31,8 +31,8 @@ public class ProbeReferenceState
     private Integer probeKey = null;
     private Integer refsKey = null;
     private String holder = null;
-    private String hasRmap = null;
-    private String hasSequence = null;
+    private Boolean hasRmap = null;
+    private Boolean hasSequence = null;
 
 
     /**
@@ -85,7 +85,7 @@ public class ProbeReferenceState
      * @return The hasRmap attribute
      * @throws Nothing
      */
-    public String getHasRmap () { return hasRmap; }
+    public Boolean getHasRmap () { return hasRmap; }
 
     /**
      * Get the hasSequence attribute from this object.
@@ -95,7 +95,7 @@ public class ProbeReferenceState
      * @return The hasSequence attribute
      * @throws Nothing
      */
-    public String getHasSequence () { return hasSequence; }
+    public  Boolean getHasSequence () { return hasSequence; }
 
     /**
      * Set the probeKey attribute of this object to the given value.
@@ -135,7 +135,7 @@ public class ProbeReferenceState
      * @return Nothing
      * @throws Nothing
      */
-    public void setHasRmap (String pHasRmap) { hasRmap = pHasRmap; }
+    public void setHasRmap (Boolean pHasRmap) { hasRmap = pHasRmap; }
 
     /**
      * Set the hasSequence attribute of this object to the given value.
@@ -145,7 +145,7 @@ public class ProbeReferenceState
      * @return Nothing
      * @throws Nothing
      */
-    public void setHasSequence (String pHasSequence) { hasSequence = pHasSequence; }
+    public void setHasSequence (Boolean pHasSequence) { hasSequence = pHasSequence; }
 
 
     /**
@@ -168,6 +168,9 @@ public class ProbeReferenceState
 
 
 //  $Log$
+//  Revision 1.2  2003/10/01 14:52:16  dbm
+//  Use Strings to represent bit columns in DAO classes
+//
 //  Revision 1.1  2003/09/18 13:37:22  dbm
 //  Initial version
 //

@@ -33,8 +33,8 @@ public class AccessionState
     private Integer logicalDBKey = null;
     private Integer objectKey = null;
     private Integer mgiTypeKey = null;
-    private String privateAcc = null;
-    private String preferred = null;
+    private Boolean privateAcc = null;
+    private Boolean preferred = null;
 
     // Accession reference attributes.
     //
@@ -101,7 +101,7 @@ public class AccessionState
      * @return The privateAcc attribute
      * @throws Nothing
      */
-    public String getPrivateAcc () { return privateAcc; }
+    public Boolean getPrivateAcc () { return privateAcc; }
 
     /**
      * Get the preferred attribute from this object.
@@ -111,7 +111,7 @@ public class AccessionState
      * @return The preferred attribute
      * @throws Nothing
      */
-    public String getPreferred () { return preferred; }
+    public Boolean getPreferred () { return preferred; }
 
     /**
      * Get the refsKey attribute from this object.
@@ -171,7 +171,7 @@ public class AccessionState
      * @return Nothing
      * @throws Nothing
      */
-    public void setPrivateAcc (String pPrivateAcc) { privateAcc = pPrivateAcc; }
+    public void setPrivateAcc (Boolean pPrivateAcc) { privateAcc = pPrivateAcc; }
 
     /**
      * Set the preferred attribute of this object to the given value.
@@ -181,7 +181,7 @@ public class AccessionState
      * @return Nothing
      * @throws Nothing
      */
-    public void setPreferred (String pPreferred) { preferred = pPreferred; }
+    public void setPreferred (Boolean pPreferred) { preferred = pPreferred; }
 
     /**
      * Set the refsKey attribute of this object to the given value.
@@ -216,6 +216,9 @@ public class AccessionState
 
 
 //  $Log$
+//  Revision 1.2  2003/10/01 14:52:14  dbm
+//  Use Strings to represent bit columns in DAO classes
+//
 //  Revision 1.1  2003/09/18 13:37:21  dbm
 //  Initial version
 //
