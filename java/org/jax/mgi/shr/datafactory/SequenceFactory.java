@@ -512,7 +512,11 @@ public class SequenceFactory extends Factory {
         if (nav.next()) {
             rr = (RowReference) nav.getCurrent();
             len= rr.getInt(1);
-            sequence.set(DTOConstants.SequenceLength, len.toString());
+            if (len != null) {
+                sequence.set(DTOConstants.SequenceLength, len.toString());
+            } else {
+                sequence.set(DTOConstants.SequenceLength, null );
+            }
         }
         nav.close();
 
