@@ -17,6 +17,7 @@ import org.jax.mgi.dbs.mgd.trans.TranslationException;
 import org.jax.mgi.dbs.mgd.MGD;
 import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.config.ConfigException;
+import org.jax.mgi.shr.cache.KeyNotFoundException;
 
 /**
  * @is: a RowDataCacheHandler for caching tissue terms and their
@@ -61,7 +62,7 @@ public class TissueKeyLookup extends FullCachedLookup
    * @return the key value
    */
   public Integer lookup(String term) throws CacheException,
-      DBException, TranslationException, ConfigException
+      DBException, TranslationException, ConfigException, KeyNotFoundException
   {
     if (translator == null)
     {
@@ -81,7 +82,8 @@ public class TissueKeyLookup extends FullCachedLookup
     else  // no translation found so lookup in PRB_Strain
     {
       this.translatedTerm = term;
-      return (Integer)super.cacheStrategy.lookup(term, cache);
+      //return (Integer)super.cacheStrategy.lookup(term, cache);
+      return (Integer)super.lookup(term);
     }
   }
 
