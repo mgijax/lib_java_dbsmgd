@@ -1,3 +1,6 @@
+//  $Header$
+//  $Name$
+
 package org.jax.mgi.dbs.mgd.dao;
 
 import java.util.Vector;
@@ -6,13 +9,14 @@ import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.dao.DAO;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.Table;
+import org.jax.mgi.shr.exception.MGIException;
 
 /**
- * @is An object that represents a record in the PRB_Probe table.
+ * @is An object that represents a record in the PRB_Sequence table.
  * @has
  *   <UL>
- *   <LI> ProbeKey object
- *   <LI> ProbeState object
+ *   <LI> SequenceeKey object
+ *   <LI> SequenceState object
  *   </UL>
  * @does
  *   <UL>
@@ -27,11 +31,11 @@ import org.jax.mgi.shr.dbutils.Table;
 public class SequenceDAO extends DAO
 {
 
-    // ProbeKey object.
+    // SequenceKey object.
     //
     private SequenceKey sequenceKey = null;
 
-    // ProbeState object.
+    // SequenceState object.
     //
     private SequenceState sequenceState = null;
 
@@ -137,11 +141,11 @@ public class SequenceDAO extends DAO
         // Populate the vector with attributes that are needed to create a
         // bcp record for the PRB_Probe table.
         //
-        if (table.getName().equals("PRB_Probe"))
+        if (table.getName().equals("SEQ_SEQUENCE"))
         {
             // Add the attributes to the vector.
             //
-            v.add(new Integer(sequenceKey.getPrimaryKey()));
+            v.add(sequenceKey.getPrimaryKey());
             v.add(sequenceState.getSequenceQualityKey());
             v.add(sequenceState.getSequenceStatusKey());
             v.add(sequenceState.getSegmentTypeKey());
@@ -182,9 +186,7 @@ public class SequenceDAO extends DAO
      */
     public String getInsertSQL()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getInsertSQL";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 
 
@@ -199,9 +201,7 @@ public class SequenceDAO extends DAO
      */
     public String getUpdateSQL()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getUpdateSQL";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 
 
@@ -216,8 +216,32 @@ public class SequenceDAO extends DAO
      */
     public String getDeleteSQL()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getDeleteSQL";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 }
+
+
+//  $Log$
+//
+/**************************************************************************
+*
+* Warranty Disclaimer and Copyright Notice
+*
+*  THE JACKSON LABORATORY MAKES NO REPRESENTATION ABOUT THE SUITABILITY OR
+*  ACCURACY OF THIS SOFTWARE OR DATA FOR ANY PURPOSE, AND MAKES NO WARRANTIES,
+*  EITHER EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR A
+*  PARTICULAR PURPOSE OR THAT THE USE OF THIS SOFTWARE OR DATA WILL NOT
+*  INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS, OR OTHER RIGHTS.
+*  THE SOFTWARE AND DATA ARE PROVIDED "AS IS".
+*
+*  This software and data are provided to enhance knowledge and encourage
+*  progress in the scientific community and are to be used only for research
+*  and educational purposes.  Any reproduction or use for commercial purpose
+*  is prohibited without the prior express written permission of The Jackson
+*  Laboratory.
+*
+* Copyright \251 1996, 1999, 2002, 2003 by The Jackson Laboratory
+*
+* All Rights Reserved
+*
+**************************************************************************/

@@ -10,6 +10,7 @@ import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.dao.DAO;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.Table;
+import org.jax.mgi.shr.exception.MGIException;
 
 /**
  * @is An object that represents records in the ACC_Accession and
@@ -156,7 +157,7 @@ public class AccessionDAO extends DAO
 
             // Add the attributes to the vector.
             //
-            v.add(new Integer(accessionKey.getPrimaryKey()));
+            v.add(accessionKey.getPrimaryKey());
             v.add(accessionState.getAccID());
             v.add(vParts.get(0));
             v.add((Integer)vParts.get(1));
@@ -174,7 +175,7 @@ public class AccessionDAO extends DAO
         {
             // Add the attributes to the vector.
             //
-            v.add(new Integer(accessionKey.getPrimaryKey()));
+            v.add(accessionKey.getPrimaryKey());
             v.add(accessionState.getRefsKey());
         }
 
@@ -195,9 +196,7 @@ public class AccessionDAO extends DAO
      */
     public String getInsertSQL()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getInsertSQL";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 
 
@@ -212,9 +211,7 @@ public class AccessionDAO extends DAO
      */
     public String getUpdateSQL()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getUpdateSQL";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 
 
@@ -229,9 +226,7 @@ public class AccessionDAO extends DAO
      */
     public String getDeleteSQL()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getDeleteSQL";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 
 
@@ -289,6 +284,9 @@ public class AccessionDAO extends DAO
 
 
 //  $Log$
+//  Revision 1.4  2003/09/25 17:52:55  dbm
+//  Continued development
+//
 //  Revision 1.3  2003/09/24 15:12:56  dbm
 //  Changed DataInstance to DAO
 //

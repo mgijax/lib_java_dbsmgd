@@ -9,6 +9,7 @@ import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.dao.DAO;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.Table;
+import org.jax.mgi.shr.exception.MGIException;
 
 /**
  * @is An object that represents a record in the PRB_Source table.
@@ -147,7 +148,7 @@ public class ProbeSourceDAO extends DAO
         {
             // Add the attributes to the vector.
             //
-            v.add(new Integer(probeSrcKey.getPrimaryKey()));
+            v.add(probeSrcKey.getPrimaryKey());
             v.add(probeSrcState.getSegmentTypeKey());
             v.add(probeSrcState.getVectorKey());
             v.add(probeSrcState.getOrganismKey());
@@ -181,9 +182,7 @@ public class ProbeSourceDAO extends DAO
      */
     public String getInsertSQL()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getInsertSQL";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 
 
@@ -198,9 +197,7 @@ public class ProbeSourceDAO extends DAO
      */
     public String getUpdateSQL()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getUpdateSQL";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 
 
@@ -215,14 +212,15 @@ public class ProbeSourceDAO extends DAO
      */
     public String getDeleteSQL()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getDeleteSQL";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 }
 
 
 //  $Log$
+//  Revision 1.3  2003/09/24 15:12:57  dbm
+//  Changed DataInstance to DAO
+//
 //  Revision 1.2  2003/09/23 13:23:54  dbm
 //  Continued development
 //

@@ -37,20 +37,20 @@ public class ProbeSourceInterpreter implements RowDataInterpreter
         ProbeSourceKey probeSrcKey =
             new ProbeSourceKey(row.getInt("_Source_key"));
         ProbeSourceState probeSrcState = new ProbeSourceState();
-        probeSrcState.setSegmentTypeKey(new Integer(row.getInt("_SegmentType_key")));
-        probeSrcState.setVectorKey(new Integer(row.getInt("_Vector_key")));
-        probeSrcState.setOrganismKey(new Integer(row.getInt("_Organism_key")));
-        probeSrcState.setStrainKey(new Integer(row.getInt("_Strain_key")));
-        probeSrcState.setTissueKey(new Integer(row.getInt("_Tissue_key")));
-        probeSrcState.setGenderKey(new Integer(row.getInt("_Gender_key")));
-        probeSrcState.setCellLineKey(new Integer(row.getInt("_CellLine_key")));
-        probeSrcState.setRefsKey(new Integer(row.getInt("_Refs_key")));
+        probeSrcState.setSegmentTypeKey(row.getInt("_SegmentType_key"));
+        probeSrcState.setVectorKey(row.getInt("_Vector_key"));
+        probeSrcState.setOrganismKey(row.getInt("_Organism_key"));
+        probeSrcState.setStrainKey(row.getInt("_Strain_key"));
+        probeSrcState.setTissueKey(row.getInt("_Tissue_key"));
+        probeSrcState.setGenderKey(row.getInt("_Gender_key"));
+        probeSrcState.setCellLineKey(row.getInt("_CellLine_key"));
+        probeSrcState.setRefsKey(row.getInt("_Refs_key"));
         probeSrcState.setName(row.getString("name"));
         probeSrcState.setDescription(row.getString("description"));
         probeSrcState.setAge(row.getString("age"));
-        probeSrcState.setAgeMin(new Double(row.getFloat("ageMin")));
-        probeSrcState.setAgeMax(new Double(row.getFloat("ageMax")));
-        probeSrcState.setIsCuratorEdited(new Integer(row.getInt("isCuratorEdited")));
+        probeSrcState.setAgeMin(row.getFloat("ageMin"));
+        probeSrcState.setAgeMax(row.getFloat("ageMax"));
+        probeSrcState.setIsCuratorEdited(row.getInt("isCuratorEdited"));
         ProbeSourceDAO probeSrcDAO =
             new ProbeSourceDAO(probeSrcKey, probeSrcState);
         return probeSrcDAO;
@@ -59,6 +59,9 @@ public class ProbeSourceInterpreter implements RowDataInterpreter
 
 
 //  $Log$
+//  Revision 1.2  2003/09/25 17:54:10  dbm
+//  Continued development
+//
 //  Revision 1.1  2003/09/23 13:16:21  dbm
 //  Initial version
 //

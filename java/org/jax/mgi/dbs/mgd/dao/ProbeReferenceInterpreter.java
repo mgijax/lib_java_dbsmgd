@@ -37,11 +37,11 @@ public class ProbeReferenceInterpreter implements RowDataInterpreter
         ProbeReferenceKey probeRefKey =
             new ProbeReferenceKey(row.getInt("_Reference_key"));
         ProbeReferenceState probeRefState = new ProbeReferenceState();
-        probeRefState.setProbeKey(new Integer(row.getInt("_Probe_key")));
-        probeRefState.setRefsKey(new Integer(row.getInt("_Refs_key")));
+        probeRefState.setProbeKey(row.getInt("_Probe_key"));
+        probeRefState.setRefsKey(row.getInt("_Refs_key"));
         probeRefState.setHolder(row.getString("holder"));
-        probeRefState.setHasRmap(new Integer(row.getInt("hasRmap")));
-        probeRefState.setHasSequence(new Integer(row.getInt("hasSequence")));
+        probeRefState.setHasRmap(row.getInt("hasRmap"));
+        probeRefState.setHasSequence(row.getInt("hasSequence"));
         ProbeReferenceDAO probeRefDAO =
             new ProbeReferenceDAO(probeRefKey, probeRefState);
         return probeRefDAO;
@@ -50,6 +50,9 @@ public class ProbeReferenceInterpreter implements RowDataInterpreter
 
 
 //  $Log$
+//  Revision 1.1  2003/09/25 17:51:53  dbm
+//  Initial version
+//
 //
 /**************************************************************************
 *

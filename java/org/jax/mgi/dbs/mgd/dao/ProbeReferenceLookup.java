@@ -11,6 +11,7 @@ import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
+import org.jax.mgi.shr.exception.MGIException;
 
 /**
  * @is An object that knows how to look up a PRB_Reference record.
@@ -112,9 +113,7 @@ public class ProbeReferenceLookup
          */
         public String getFullInitQuery()
         {
-            String message = "Class " + this.getClass().getName() +
-                " does not support the method getFullInitQuery";
-            throw new java.lang.UnsupportedOperationException(message);
+            throw MGIException.getUnsupportedMethodException();
         }
 
         /**
@@ -127,9 +126,7 @@ public class ProbeReferenceLookup
          */
         public String getPartialInitQuery()
         {
-            String message = "Class " + this.getClass().getName() +
-                " does not support the method getPartialInitQuery";
-            throw new java.lang.UnsupportedOperationException(message);
+            throw MGIException.getUnsupportedMethodException();
         }
 
         /**
@@ -208,6 +205,9 @@ public class ProbeReferenceLookup
 
 
 //  $Log$
+//  Revision 1.2  2003/09/25 20:24:21  mbw
+//  fixed import for KeyValue
+//
 //  Revision 1.1  2003/09/25 17:51:54  dbm
 //  Initial version
 //
