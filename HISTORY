@@ -1,3 +1,10 @@
+TAG: lib_java_dbsmgd-1-0-6
+DATE: 02/02/2004
+STAFF: mbw
+RELEASE: dev
+CHANGES: fixed compile errors found while building production version for RPCI
+         updated build.targets.xml
+
 TAG: lib_java_dbsmgd-1-0-5
 DATE: 02/02/2004
 STAFF: mbw
