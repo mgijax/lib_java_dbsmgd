@@ -25,8 +25,7 @@ public class MGIRefAssocTypeConstants {
         public static final int BROADCAST = 1004;
         public static final int DO_NOT_BROADCAST = 1005;
         public static final int PROVIDER = 1006;
-        public static final int LOAD = 1007;
-        public static final int CURATOR = 1008;
+        public static final int CURATOR = 1007;
 }
 
 
