@@ -17,7 +17,8 @@ import org.jax.mgi.dbs.SchemaConstants;
 /**
  * @is An object that knows how to look up an accession id for a given MGI Type,
  *     logicalDB, and preferred value to get its _Object_key
- * @has A query. A logicalDB, and MGIType and a preferred value.
+ * @has A query to lookup an _Object_key for an accession id.<BR>
+ *      A logicalDB, and MGIType and a preferred value.
  * @does
  *   <UL>
  *   <LI> Provides a method to look up the key for an accession id
@@ -57,7 +58,7 @@ public class AccessionLookup extends LazyCachedLookup {
      * @assumes Nothing
      * @effects Nothing
      * @param None
-     * @return The query to partially initialize the cache.
+     * @return null this lookup does not prime the cache.
      * @throws Nothing
      */
 
@@ -69,7 +70,8 @@ public class AccessionLookup extends LazyCachedLookup {
      * Get the query to add an object to the cache
      * @assumes Nothing
      * @effects Nothing
-     * @param addObject The object to add.
+     * @param add The accid to add to the query, expects a String or an object
+     *        with a toString method.
      * @return The query to add an object to the cache
      * @throws Nothing
      */
@@ -92,7 +94,7 @@ public class AccessionLookup extends LazyCachedLookup {
     * @assumes nothing
     * @effects nothing
     * @param None
-    * @return The RowDataInterpreter object
+    * @return A RowDataInterpreter object
     * @throws Nothing
     */
 
@@ -113,7 +115,7 @@ public class AccessionLookup extends LazyCachedLookup {
     * @assumes Nothing
     * @effects Nothing
     * @param accid the accession id to look up.
-    * @return The _object_key
+    * @return The _object_key for that accession id
     * @throws LookupException
     */
     public Integer lookup (String accid)
