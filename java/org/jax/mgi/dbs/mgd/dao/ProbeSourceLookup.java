@@ -4,14 +4,14 @@
 package org.jax.mgi.dbs.mgd.dao;
 
 import org.jax.mgi.shr.cache.CacheException;
-import org.jax.mgi.shr.types.KeyValue;
-import org.jax.mgi.shr.cache.RowDataCacheHandler;
+import org.jax.mgi.shr.cache.FullCachedLookup;
+import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.exception.MGIException;
+import org.jax.mgi.shr.types.KeyValue;
 
 /**
  * @is An object that knows how to look up a PRB_Source record.
@@ -48,7 +48,7 @@ public class ProbeSourceLookup
      * @throws Nothing
      */
     public ProbeSourceDAO findByName (String name)
-        throws ConfigException, DBException, CacheException
+        throws CacheException, ConfigException, DBException, LookupException
     {
         NamedSourceLookup namedSourceLookup = new NamedSourceLookup();
         return namedSourceLookup.lookup(name);
@@ -67,7 +67,7 @@ public class ProbeSourceLookup
      * @version 1.0
      */
 
-    private class NamedSourceLookup extends RowDataCacheHandler
+    private class NamedSourceLookup extends FullCachedLookup
     {
         /**
          * Constructs a NamedSourceLookup object.
@@ -79,8 +79,8 @@ public class ProbeSourceLookup
         public NamedSourceLookup()
            throws ConfigException, DBException, CacheException
         {
-            super(FULL_CACHE,
-                SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+            super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+            super.setOkToAllowNulls(true);
         }
 
         /**
@@ -92,9 +92,9 @@ public class ProbeSourceLookup
          * @throws Nothing
          */
         public ProbeSourceDAO lookup(String name)
-            throws DBException, CacheException
+            throws LookupException
         {
-            return (ProbeSourceDAO) cacheStrategy.lookup(name, cache);
+            return (ProbeSourceDAO)super.lookup(name);
         }
 
         /**
@@ -113,32 +113,6 @@ public class ProbeSourceLookup
         }
 
         /**
-         * Get the query to partially initialize the cache.
-         * @assumes Nothing
-         * @effects Nothing
-         * @param None
-         * @return The query to partially initialize the cache.
-         * @throws Nothing
-         */
-        public String getPartialInitQuery()
-        {
-            throw MGIException.getUnsupportedMethodException();
-        }
-
-        /**
-         * Get the query to add an object to the database.
-         * @assumes Nothing
-         * @effects Nothing
-         * @param addObject The object to add.
-         * @return The query to add an object to the database.
-         * @throws Nothing
-         */
-        public String getAddQuery(Object addObject)
-        {
-            throw MGIException.getUnsupportedMethodException();
-        }
-
-        /**
          * Get a RowDataInterpreter for creating a KeyValue object from a
          * database used for creating a new cache entry.
          * @assumes nothing
@@ -149,51 +123,30 @@ public class ProbeSourceLookup
          */
         public RowDataInterpreter getRowDataInterpreter()
         {
-            return new InnerInterpreter();
-        }
-
-        /**
-         * @is An object that knows how to create a KeyValue object for a row of
-         *     data retrieved by this lookup.
-         * @has Nothing
-         * @does
-         *   <UL>
-         *   <LI> Provides a RowDataInterpreter implementation.
-         *   </UL>
-         * @company The Jackson Laboratory
-         * @author dbm
-         * @version 1.0
-         */
-
-        private class InnerInterpreter implements RowDataInterpreter
-        {
-            private RowDataInterpreter probeSrcInterpreter =
-                new ProbeSourceInterpreter();
-
-            /**
-             * Create a KeyValue object from a row of data.
-             * @assumes nothing
-             * @effects nothing
-             * @param row The row reference.
-             * @return The KeyValue object.
-             * @throws Nothing
-             */
-            public Object interpret(RowReference row)
-                throws DBException
+            class Interpreter implements RowDataInterpreter
             {
-                ProbeSourceDAO probeSrcDAO =
-                    (ProbeSourceDAO) probeSrcInterpreter.interpret(row);
-                KeyValue keyValue =
-                    new KeyValue(probeSrcDAO.getProbeSrcState().getName(), probeSrcDAO);
+                private RowDataInterpreter probeSrcInterpreter =
+                    new ProbeSourceInterpreter();
 
-                return keyValue;
+                public Object interpret (RowReference row)
+                    throws DBException
+                {
+                    ProbeSourceDAO probeSrcDAO =
+                        (ProbeSourceDAO) probeSrcInterpreter.interpret(row);
+                    return new KeyValue(probeSrcDAO.getProbeSrcState().getName(),
+                                        probeSrcDAO);
+                }
             }
+            return new Interpreter();
         }
     }
 }
 
 
 //  $Log$
+//  Revision 1.4  2003/09/30 16:58:10  dbm
+//  Use Integer instead of int for attributes
+//
 //  Revision 1.3  2003/09/25 20:24:21  mbw
 //  fixed import for KeyValue
 //

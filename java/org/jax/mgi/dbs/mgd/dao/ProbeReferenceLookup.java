@@ -4,14 +4,14 @@
 package org.jax.mgi.dbs.mgd.dao;
 
 import org.jax.mgi.shr.cache.CacheException;
-import org.jax.mgi.shr.types.KeyValue;
-import org.jax.mgi.shr.cache.RowDataCacheHandler;
+import org.jax.mgi.shr.cache.LazyCachedLookup;
+import org.jax.mgi.shr.cache.LookupException;
 import org.jax.mgi.shr.config.ConfigException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
-import org.jax.mgi.shr.exception.MGIException;
+import org.jax.mgi.shr.types.KeyValue;
 
 /**
  * @is An object that knows how to look up a PRB_Reference record.
@@ -50,7 +50,7 @@ public class ProbeReferenceLookup
      * @throws Nothing
      */
     public ProbeReferenceDAO findByPrbRef (Integer probeKey, Integer refsKey)
-        throws ConfigException, DBException, CacheException
+        throws CacheException, ConfigException, DBException, LookupException
     {
         ProbeRefLookup prbRefLookup = new ProbeRefLookup();
         return prbRefLookup.lookup(probeKey, refsKey);
@@ -69,7 +69,7 @@ public class ProbeReferenceLookup
      * @version 1.0
      */
 
-    private class ProbeRefLookup extends RowDataCacheHandler
+    private class ProbeRefLookup extends LazyCachedLookup
     {
         /**
          * Constructs a ProbeRefLookup object.
@@ -79,10 +79,10 @@ public class ProbeReferenceLookup
          * @throws Nothing
          */
         public ProbeRefLookup()
-           throws ConfigException, DBException, CacheException
+           throws CacheException, ConfigException, DBException
         {
-            super(LAZY_CACHE,
-                SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+            super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
+            super.setOkToAllowNulls(true);
         }
 
         /**
@@ -96,24 +96,11 @@ public class ProbeReferenceLookup
          * @throws Nothing
          */
         public ProbeReferenceDAO lookup(Integer probeKey, Integer refsKey)
-            throws DBException, CacheException
+            throws LookupException
         {
             String key = probeKey + "," + refsKey;
 
-            return (ProbeReferenceDAO) cacheStrategy.lookup(key, cache);
-        }
-
-        /**
-         * Get the query to fully initialize the cache.
-         * @assumes Nothing
-         * @effects Nothing
-         * @param None
-         * @return The query to fully initialize the cache.
-         * @throws Nothing
-         */
-        public String getFullInitQuery()
-        {
-            throw MGIException.getUnsupportedMethodException();
+            return (ProbeReferenceDAO)super.lookup(key);
         }
 
         /**
@@ -159,52 +146,32 @@ public class ProbeReferenceLookup
          */
         public RowDataInterpreter getRowDataInterpreter()
         {
-            return new InnerInterpreter();
-        }
-
-        /**
-         * @is An object that knows how to create a KeyValue object for a row of
-         *     data retrieved by this lookup.
-         * @has Nothing
-         * @does
-         *   <UL>
-         *   <LI> Provides a RowDataInterpreter implementation.
-         *   </UL>
-         * @company The Jackson Laboratory
-         * @author dbm
-         * @version 1.0
-         */
-
-        private class InnerInterpreter implements RowDataInterpreter
-        {
-            private RowDataInterpreter probeRefInterpreter =
-                new ProbeReferenceInterpreter();
-
-            /**
-             * Create a KeyValue object from a row of data.
-             * @assumes nothing
-             * @effects nothing
-             * @param row The row reference.
-             * @return The KeyValue object.
-             * @throws Nothing
-             */
-            public Object interpret(RowReference row)
-                throws DBException
+            class Interpreter implements RowDataInterpreter
             {
-                ProbeReferenceDAO probeRefDAO =
-                    (ProbeReferenceDAO) probeRefInterpreter.interpret(row);
-                String key = probeRefDAO.getProbeReferenceState().getProbeKey() + "," +
-                             probeRefDAO.getProbeReferenceState().getRefsKey();
-                KeyValue keyValue = new KeyValue(key, probeRefDAO);
+                private RowDataInterpreter probeRefInterpreter =
+                    new ProbeReferenceInterpreter();
 
-                return keyValue;
+                public Object interpret (RowReference row)
+                    throws DBException
+                {
+                    ProbeReferenceDAO probeRefDAO =
+                        (ProbeReferenceDAO)probeRefInterpreter.interpret(row);
+                    String key = probeRefDAO.getProbeReferenceState().
+                        getProbeKey() + "," +
+                        probeRefDAO.getProbeReferenceState().getRefsKey();
+                    return new KeyValue(key, probeRefDAO);
+                }
             }
+            return new Interpreter();
         }
     }
 }
 
 
 //  $Log$
+//  Revision 1.4  2003/10/01 14:52:15  dbm
+//  Use Strings to represent bit columns in DAO classes
+//
 //  Revision 1.3  2003/09/30 16:58:09  dbm
 //  Use Integer instead of int for attributes
 //
