@@ -1084,7 +1084,7 @@ public class SequenceFactory extends Factory {
             "GOCount      int default 0 NULL,\n"+
             "orthoCount   int default 0 NULL,\n"+
             "name         varchar(255)  NOT NULL,\n"+
-            "symbol       varchar(25)   NOT NULL,\n"+
+            "symbol       varchar(50)   NOT NULL,\n"+
             "_Refs_key    int NULL,\n"+
             "refID        varchar(255) NULL\n"+
             ")";
