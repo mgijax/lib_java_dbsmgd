@@ -18,9 +18,9 @@ public class TranslationTypeConstants
     //
     public static final int GENDER = 1000;
     public static final int ORGANISM = 1001;
-    public static final int SEQUENCETYPE = 1002;
-    public static final int TISSUE = 1003;
-    public static final int CELL = 1004;
-    public static final int LIBRARY = 1005;
-    public static final int STRAIN = 1006;
+    public static final int SEQUENCETYPE = 1003;
+    public static final int TISSUE = 1004;
+    public static final int CELL = 1005;
+    public static final int LIBRARY = 1006;
+    public static final int STRAIN = 1007;
 }
