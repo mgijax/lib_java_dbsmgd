@@ -110,7 +110,7 @@ public class AssocClonesLookup extends CachedLookup
                    SegmentTypeConstants.NOT_SPECIFIED + " " +
                 ")" +
             "AND " +
-                "src." + MGD.prb_source.name + " != null" +
+                "src." + MGD.prb_source.name + " != null " +
             "order by acc." + MGD.acc_accession.accid ;
         return stmt;
     }
