@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-1-0-7
+DATE: 02/04/2004
+STAFF: mbw
+RELEASE: dev
+CHANGES: merged jsam branch to trunk
+
 TAG: lib_java_dbsmgd-1-0-6
 DATE: 02/02/2004
 STAFF: mbw
@@ -35,6 +41,25 @@ DATE: 12/28/2003
 STAFF: mbw
 RELEASE: dev
 CHANGES: incorporated new build procedure
+
+TAG: lib_java_dbsmgd-jsam-3
+DATE: 01/16/2004
+STAFF: mbw
+RELEASE: jsam branch (mgd 3.0)
+CHANGES: added dburl property to build.properties
+
+TAG: lib_java_dbsmgd-jsam-2
+DATE: 01/05/2004
+STAFF: mbw
+RELEASE: jsam branch (mgd 3.0)
+CHANGES: revised build procedure
+
+TAG: lib_java_dbsmgd-jsam-1
+DATE: 11/04/2003
+STAFF: sc
+RELEASE: jsam branch (mgd 3.0)
+CHANGES: removed PRB_SourceInterpreter.java PRB_SourceLookup.java 
+         PRB_ReferenceInterpreter.java PRB_ReferenceLookup.javS
 
 TAG: lib_java_dbsmgd-jsam_BP
 DATE: 11/04/2003
