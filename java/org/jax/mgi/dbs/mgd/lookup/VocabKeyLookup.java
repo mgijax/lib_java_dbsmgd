@@ -67,7 +67,7 @@ public class VocabKeyLookup extends LazyCachedLookup
    */
   public VocabKeyLookup(int vocabType)
       throws CacheException, DBException,
-             ConfigException, KeyNotFoundException,
+             ConfigException,
              TranslationException
   {
     super(SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD));
@@ -207,10 +207,10 @@ public class VocabKeyLookup extends LazyCachedLookup
      * @return the translation type for this vocabulary
      */
     public Integer lookup(int vocabularyType) throws DBException,
-        ConfigException, KeyNotFoundException, CacheException
+        ConfigException, CacheException
     {
       Integer transType =
-          (Integer)super.lookup(new Integer(vocabularyType));
+          (Integer)super.lookupNullsOk(new Integer(vocabularyType));
       return transType;
     }
 
