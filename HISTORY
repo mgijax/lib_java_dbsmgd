@@ -1,3 +1,8 @@
+TAG: lib_java_dbsmgd-1-0-34
+DATE: 12/02/2004
+STAFF: mbw
+CHANGES: changed the use of floats to doubls in MarkerFactory and SequenceFactory
+
 TAG: lib_java_dbsmgd-tr6365-BP
 DATE: 12/01/2004
 STAFF: sc
