@@ -171,16 +171,18 @@ public class Translator extends CachedLookup
     String object_key = MGD.mgi_translation._object_key;
     String transType = MGD.mgi_translation._translationtype_key;
     String badName = MGD.mgi_translation.badname;
-
-    String s = "SELECT tr." + badName + ", " +
+    // if query term has a single quote in it, it must be escaped
+    String s = term.toString();
+    s = s.replaceAll("'","''");
+    String sql = "SELECT tr." + badName + ", " +
                "       tg." + this.targetIdentity + ", " +
                "       tg." + this.targetPrimaryKey + " " +
                " FROM " + this.targetTable + " tg, " +
                "     " + transTable + " tr " +
                " WHERE tr." + object_key + " = tg." + this.targetPrimaryKey +
                " AND tr." + transType + " = " + this.translationType +
-               " AND tr." + badName + " = '" + term.toString() + "'";
-    return s;
+               " AND tr." + badName + " = '" + s + "'";
+    return sql;
   }
 
   /**
