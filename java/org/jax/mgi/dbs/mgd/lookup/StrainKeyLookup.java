@@ -36,6 +36,9 @@ public class StrainKeyLookup extends FullCachedLookup
   // the Translator object shared by all instances of this class
   private static Translator translator = null;
 
+  // indicator of whether or not the cache has been initialized
+  private static boolean hasBeenInitialized = false;
+
   /**
    * constructor
    * @throws CacheException thrown if there is an error with the cache
@@ -47,7 +50,11 @@ public class StrainKeyLookup extends FullCachedLookup
       throws CacheException, DBException, ConfigException
   {
     super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
-    setCache(cache);
+    // since cache is static make sure you do not reinit
+    if (!hasBeenInitialized)
+      initCache(cache);
+    hasBeenInitialized = true;
+
   }
   /**
    * look up the primary key for a Strain term in the PRB_Strain table

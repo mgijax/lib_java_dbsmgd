@@ -296,7 +296,7 @@ public class Translator extends CachedLookup
       super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
       // override the super class instance of the cache with a static one so
       // that all instances of the Translator will see the same cache
-      setCache(mgiTypeCache);
+      initCache(mgiTypeCache);
     }
 
     /**
@@ -373,7 +373,7 @@ public class Translator extends CachedLookup
       super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
       // override the super class instance of the cache with a static one so
       // that all instances of the Translator will see the same cache
-      setCache(mgiTypeTableCache);
+      initCache(mgiTypeTableCache);
     }
 
     /**

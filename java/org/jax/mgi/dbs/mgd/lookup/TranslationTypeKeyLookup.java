@@ -43,7 +43,7 @@ public class TranslationTypeKeyLookup extends FullCachedLookup
          ConfigException, KeyNotFoundException
   {
     super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
-    setCache(cache);
+    initCache(cache);
   }
 
   /**

@@ -75,7 +75,7 @@ public class VocabKeyLookup extends CachedLookup
       translator = new Translator(translationType.intValue(),
                                   CacheConstants.LAZY_CACHE);
       // make the translation and vocabulary cache the same
-      translator.setCache(getCache());
+      translator.initCache(getCache());
     }
   }
 
@@ -113,7 +113,7 @@ public class VocabKeyLookup extends CachedLookup
       translator = new Translator(translationType.intValue(),
                                   translationCacheType);
       // make the translation and vocabulary cache the same
-      translator.setCache(getCache());
+      translator.initCache(getCache());
     }
   }
 
