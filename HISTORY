@@ -1,3 +1,10 @@
+TAG: lib_java_dbsmgd-1-0-5
+DATE: 02/02/2004
+STAFF: mbw
+RELEASE: dev
+CHANGES: fixed build.targets to pass in the dburl parameter to the code.gen target
+         updated build.properties values
+
 TAG: lib_java_dbsmgd-1-0-4
 DATE: 01/21/2004
 STAFF: mbw
