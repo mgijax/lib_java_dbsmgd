@@ -7,8 +7,8 @@ import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.dbs.mgd.dao.PRB_SourceDAO;
 import org.jax.mgi.dbs.mgd.dao.PRB_SourceKey;
 import org.jax.mgi.dbs.mgd.dao.PRB_SourceState;
-import org.jax.mgi.dbs.mgd.trans.Translator;
-import org.jax.mgi.dbs.mgd.trans.TranslationException;
+import org.jax.mgi.dbs.mgd.lookup.Translator;
+import org.jax.mgi.dbs.mgd.lookup.TranslationException;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.FullCachedLookup;
 import org.jax.mgi.shr.cache.LazyCachedLookup;
@@ -105,10 +105,10 @@ public class ProbeSourceLookup
     {
         if (trans != null)
         {
-            KeyedDataAttribute kda = trans.translate(name);
-            if (kda != null)
+            Integer key = trans.translate(name);
+            if (key != null)
             {
-                return keyedSourceLookup.lookup(kda.getKey());
+                return keyedSourceLookup.lookup(key);
             }
         }
         return namedSourceLookup.lookup(name);
@@ -377,6 +377,9 @@ public class ProbeSourceLookup
 
 
 //  $Log$
+//  Revision 1.2  2004/02/04 19:44:47  mbw
+//  merged jsam branch to the trunk
+//
 //  Revision 1.1  2003/12/10 13:31:51  dbm
 //  New
 //
