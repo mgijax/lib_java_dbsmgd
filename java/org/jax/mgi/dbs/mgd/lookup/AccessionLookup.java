@@ -70,7 +70,7 @@ public class AccessionLookup extends LazyCachedLookup {
      * Get the query to add an object to the cache
      * @assumes Nothing
      * @effects Nothing
-     * @param add The accid to add to the query, expects a String or an object
+     * @param accid The accid to add to the query, expects a String or an object
      *        with a toString method.
      * @return The query to add an object to the cache
      * @throws Nothing
