@@ -2906,7 +2906,7 @@ public class MarkerFactory
 		+	"AND ms._MGIType_key = amt._MGIType_key "
 		+	"AND amt.name = 'Allele Type' "
 		+ "GROUP BY ms.name, ms._Set_key "
-		+ "ORDER BY ms._Set_key";
+		+ "ORDER BY ms.sequenceNum";
 
     // get a count of the antibodies associated with the marker
     // fill in: marker key (int)
@@ -3365,6 +3365,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.9  2004/06/25 11:11:25  jsb
+* Updated handling of allele counts, per TR5750
+*
 * Revision 1.8  2004/05/27 15:53:35  jsb
 * updated sequence retrieval to ensure DISTINCT sequences
 *
