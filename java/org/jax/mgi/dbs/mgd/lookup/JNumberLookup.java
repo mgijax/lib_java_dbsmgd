@@ -13,6 +13,7 @@ import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
+import org.jax.mgi.shr.exception.MGIException;
 
 /**
  * @is An object that knows how to look up a J-Number to find its
@@ -73,9 +74,7 @@ public class JNumberLookup extends RowDataCacheHandler
      */
     public String getFullInitQuery ()
     {
-        String message = "Class " + this.getClass().getName() +
-                         " does not support the method getFullInitQuery";
-        throw new java.lang.UnsupportedOperationException(message);
+        throw MGIException.getUnsupportedMethodException();
     }
 
 
@@ -157,9 +156,9 @@ public class JNumberLookup extends RowDataCacheHandler
             throws DBException
         {
             String key = row.getString(1);
-            int value = row.getInt(2);
+            Integer value = row.getInt(2);
 
-            KeyValue keyValue = new KeyValue(key, new Integer(value));
+            KeyValue keyValue = new KeyValue(key, value);
             return keyValue;
         }
     }
@@ -167,6 +166,9 @@ public class JNumberLookup extends RowDataCacheHandler
 
 
 //  $Log$
+//  Revision 1.4  2003/09/25 20:23:43  mbw
+//  fixed imports for KeyValue
+//
 //  Revision 1.3  2003/09/25 17:55:29  dbm
 //  Continued development
 //
