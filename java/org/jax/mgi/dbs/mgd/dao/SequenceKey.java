@@ -44,7 +44,7 @@ public class SequenceKey
     {
         SQLDataManager sqlMgr =
             SQLDataManagerFactory.getShared(SQLDataManagerFactory.MGD);
-        primaryKey = new Table("SEQ_Sequence",sqlMgr).getNextKey();
+        primaryKey = Table.getInstance("SEQ_Sequence",sqlMgr).getNextKey();
     }
 
 
@@ -74,6 +74,9 @@ public class SequenceKey
 
 
 //  $Log$
+//  Revision 1.2  2003/09/30 17:53:53  dbm
+//  Change int to Integer for primary key
+//
 //
 /**************************************************************************
 *

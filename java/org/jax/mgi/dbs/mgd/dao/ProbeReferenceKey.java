@@ -46,7 +46,7 @@ public class ProbeReferenceKey
         throws ConfigException, DBException
     {
         SQLDataManager sqlMgr = SQLDataManagerFactory.getShared("MGD");
-        primaryKey = new Table("PRB_Reference",sqlMgr).getNextKey();
+        primaryKey = Table.getInstance("PRB_Reference",sqlMgr).getNextKey();
     }
 
 
@@ -76,6 +76,9 @@ public class ProbeReferenceKey
 
 
 //  $Log$
+//  Revision 1.3  2003/09/30 17:53:52  dbm
+//  Change int to Integer for primary key
+//
 //  Revision 1.2  2003/09/23 13:23:54  dbm
 //  Continued development
 //

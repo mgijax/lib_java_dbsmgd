@@ -46,7 +46,7 @@ public class AccessionKey
         throws ConfigException, DBException
     {
         SQLDataManager sqlMgr = SQLDataManagerFactory.getShared("MGD");
-        primaryKey = new Table("ACC_Accession",sqlMgr).getNextKey();
+        primaryKey = Table.getInstance("ACC_Accession",sqlMgr).getNextKey();
     }
 
 
@@ -76,6 +76,9 @@ public class AccessionKey
 
 
 //  $Log$
+//  Revision 1.3  2003/09/30 17:53:51  dbm
+//  Change int to Integer for primary key
+//
 //  Revision 1.2  2003/09/23 13:23:52  dbm
 //  Continued development
 //
