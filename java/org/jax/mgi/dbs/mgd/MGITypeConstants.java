@@ -27,10 +27,14 @@ public class MGITypeConstants
     public static final int VOCABULARY = 13;
     public static final int ORGANISM = 20;
     public static final int TISSUE = 24;
+    public static final int SEQUENCE = 19;
 }
 
 
 //  $Log$
+//  Revision 1.3  2003/09/25 20:25:32  mbw
+//  added new constants
+//
 //  Revision 1.2  2003/09/25 17:36:02  mbw
 //  changed MGI to REF
 //
