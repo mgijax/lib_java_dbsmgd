@@ -27,7 +27,7 @@ public class TestLibraryKeyLookup
     super.tearDown();
   }
 
-  public void testLookup() throws CacheException, DBException,
+  public void testLookup() throws Exception,
       TranslationException, ConfigException {
     String sql = "SELECT _source_key " +
         "FROM prb_source " +
