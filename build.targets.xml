@@ -5,7 +5,8 @@
         <jvmarg value="-DDBNAME=${dbname}"/>
         <jvmarg value="-DDBSERVER=${dbserver}"/>
         <jvmarg value="-DDBUSER=${dbuser}"/>
-        <jvmarg value="-DBPASSWORDFILE=${dbpasswordfile}"/>
+        <jvmarg value="-DDBPASSWORDFILE=${dbpasswordfile}"/>
+        <jvmarg value-"-DDBURL=${dburl}"/>
     </java>
   </target>
 
