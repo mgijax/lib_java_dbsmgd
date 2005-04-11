@@ -2647,9 +2647,19 @@ public class MarkerFactory
             throws MalformedURLException, IOException
     {
         URL minimapURL = new URL (url + key);
-	BufferedReader minimapReader = new BufferedReader (
+	BufferedReader minimapReader = null;
+
+	try
+	{
+	    minimapReader = new BufferedReader (
 	                                   new InputStreamReader (
 					       minimapURL.openStream() ));
+	}
+	catch (Exception e)
+	{
+	    // just let the minimap reader be returned as a null
+	    ;
+	}
         return minimapReader;
     }
 
@@ -2671,8 +2681,26 @@ public class MarkerFactory
     {
         DTO marker = DTO.getDTO();		// start with a new DTO
 
-        String result = reader.readLine();
-	reader.close();
+	// if we were not able to get a connection to the minimap CGI, then
+	// the reader will be null
+
+	if (reader == null)
+	{
+	    return marker;
+	}
+
+	String result = null;
+
+	try
+	{
+            result = reader.readLine();
+	    reader.close();
+	}
+	catch (Exception e)
+	{
+	    // if an exception occurred, just bail out with no minimap URL
+	    return marker;
+	}
 
 	// if a marker has no map location, then the minimap CGI should
 	// return "None".
@@ -3403,6 +3431,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.15.2.1  2005/04/07 16:54:30  jsb
+* removed code for counting phenoslim annotations; added count for 'all' alleles
+*
 * Revision 1.15  2005/01/26 15:10:53  pf
 * lib_java_dbsmgd-3-1-1-1
 *
