@@ -514,6 +514,10 @@ public class AlleleFactory
         }
         nav.close();
 
+        /*  This section of code is used to determine if the marker 
+            associated with the given allele is in IMSR.  Unfortunately
+            this code assumes there is an IMSR db in the same server as
+            the MGD database.  For now we'll just return true in all cases.
         cmd = Sprintf.sprintf(IMSR, key);
         System.out.println(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
@@ -524,6 +528,8 @@ public class AlleleFactory
         else {
             allele.set(DTOConstants.InIMSR, new Boolean(false));
         }
+        */
+        allele.set(DTOConstants.InIMSR, new Boolean(true));
         return allele;
     }
 
