@@ -63,6 +63,11 @@ public class SubAnnotation extends Annotation {
             if (evidence.size() == 1) {
                 onlyOne = true;
             }
+
+            //  Deal with refs for the term first, then deal with notes.
+            //  This is somewhat redundant for notes with multiple different
+            //  refs, but for cases where it's the same ref over and over the
+            //  ref won't be displayed with the note.
             for (Iterator i = evidence.iterator(); i.hasNext(); ) {
                 MPEvidence ev = (MPEvidence) i.next();
                 //  We don't want to display the same ref next to the
@@ -88,8 +93,25 @@ public class SubAnnotation extends Annotation {
                 if (! refAlreadyGotOne) {
                     refs.append(curRef);
                 }
+            }
+            sb.append(" (").append(refs).append(")")
+;
+            //  Not iterate on evidence that has a note.  Skip the ref stuff if
+            //  there is only one above.
+            for (Iterator i = evidence.iterator(); i.hasNext(); ) {
+                MPEvidence ev = (MPEvidence) i.next();
 
                 if (ev.hasNote()) {
+                    //  if there was only one ref used for the term, for all
+                    //  the notes, then we don't need to display it again.
+                    StringBuffer curRef = new StringBuffer();
+                    if (refsUsed.size() > 1) {
+                        curRef.append("<a href=\"REFURL").append(ev.getRefKey()).append("\"><i>");
+                        curRef.append(ev.getJNum()).append("</i></a>");
+                    }
+                    else {
+                        onlyOne = true;
+                    }
                     notes.append("<li>");
                     notes.append(ev.getNote());
                     if (! onlyOne) {
@@ -98,7 +120,6 @@ public class SubAnnotation extends Annotation {
                     notes.append("</li>");
                 }
             }
-            sb.append(" (").append(refs).append(")");
         }
         if (! notes.equals("")) {
             sb.append("<ul type=circle><font class=\"small\">").append(notes).append("</font></ul>");
