@@ -586,6 +586,7 @@ public class AlleleFactory
         allele.set (DTOConstants.MarkerSymbol, rr.getString(2));
         allele.set (DTOConstants.MarkerName, rr.getString(3));
         allele.set (DTOConstants.Chromosome, rr.getString(4));
+        allele.set (DTOConstants.MarkerType, rr.getString(6));
 
         // only define the cytogenetic offset if it is non-null
 
@@ -1196,10 +1197,11 @@ public class AlleleFactory
     // fill in: allele key (int)
     private static final String MARKER =
         "select a._Marker_key, isnull(m.symbol,a.nomenSymbol), m.name, " 
-        + " m.chromosome, m.cytogeneticOffset "
-        + " from ALL_Allele a, MRK_Marker m "
+        + " m.chromosome, m.cytogeneticOffset, mt.name as type "
+        + " from ALL_Allele a, MRK_Marker m, MRK_Types mt "
         + " where a._Allele_key = %d "
-        + " and a._Marker_key *= m._Marker_key";
+        + " and a._Marker_key *= m._Marker_key "
+        + " and m._Marker_Type_key *= mt._Marker_Type_key";
 
 
     // get MGI map position (in centimorgans)
