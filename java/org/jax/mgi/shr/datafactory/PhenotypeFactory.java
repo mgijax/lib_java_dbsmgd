@@ -225,7 +225,7 @@ public class PhenotypeFactory {
             rr = (RowReference)nav.getCurrent();
 
             // If this is our first time through, just set values
-            if (noteKey == null) {
+            if (evidenceKey == null) {
                 genoKey = rr.getInt(1);
                 annotTermKey = rr.getInt(2);
                 refKey = rr.getInt(3);
@@ -236,7 +236,7 @@ public class PhenotypeFactory {
             }
             //  If this is the second time through with the same evidence
             //  just add to the note
-            else if (noteKey.equals(rr.getInt(6))) {
+            else if (noteKey != null && noteKey.equals(rr.getInt(6))) {
                 note += rr.getString(7);
             }
             //  We have a new evidence code, so we need to store the last one
