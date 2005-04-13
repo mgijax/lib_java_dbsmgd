@@ -76,7 +76,7 @@ public class SubAnnotation extends Annotation {
                 }
 
                 //  Don't need a comma on the first reference
-                if (! firstRef) {
+                if (! firstRef && ! refAlreadyGotOne) {
                     refs.append(", ");
                 }
                 else {
@@ -101,7 +101,7 @@ public class SubAnnotation extends Annotation {
             sb.append(" (").append(refs).append(")");
         }
         if (! notes.equals("")) {
-            sb.append("<ul type=circle>").append(notes).append("</ul>");
+            sb.append("<ul type=circle><font class=\"small\">").append(notes).append("</font></ul>");
         }
 
         if (hasDescendents()) {
