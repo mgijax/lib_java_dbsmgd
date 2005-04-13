@@ -1099,7 +1099,7 @@ public class AlleleFactory
         + " and p1._Strain_key > 0 "
         + " and a._Mode_key *= imvt._Term_key "
         + " and imvt._Vocab_key = 35 "
-        + " and imvt.abbreviation ! = 'NA' "
+        + " and imvt.term ! = 'Not Applicable' "
         + " and a._Allele_Type_key = atvt._Term_key "
         + " and atvt._Vocab_key = 38 "
         + " and a._Allele_Status_key = asvt._Term_key "
