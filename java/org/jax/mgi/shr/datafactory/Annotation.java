@@ -45,11 +45,19 @@ public abstract class Annotation implements Comparable {
         return this.orderVal;
     }
 
+    /**
+     *  This method adds the passed annotation as a descendent of this
+     *  annotation or one of it's existing descendents.  Where appropriate, 
+     *  this annotation has a descendent which is a descendent for the
+     *  annotation passed, it will handle this appropriately as well.
+     */
     public void addDescendent(Annotation a) {
         if (this.descendents == null) {
             this.descendents = new TreeSet();
         }
 
+        //  This object is a static class attribute which is used to 
+        //  determine ancestor/descendent releationships.
         ExpiringObjectCache eoc = ExpiringObjectCache.getSharedCache();
         MPClosureDAG cdag = 
             (MPClosureDAG)eoc.get(PhenotypeFactory.CLOSURE_CACHE_KEY);
@@ -58,18 +66,25 @@ public abstract class Annotation implements Comparable {
         for (Iterator i = this.descendents.iterator(); i.hasNext(); ) {
             Annotation fromList = (Annotation)i.next();
             if (cdag.isDescendent(fromList.getKey(), a.getKey())) {
+                //  If the passed annotation is actually a descendent of
+                //  one of this annotations direct descendents, add it under
+                //  the descendent instead.
                 fromList.addDescendent(a);
                 added = true;
                 break;
             }
             else if (cdag.isDescendent(a.getKey(), fromList.getKey())) {
-                this.descendents.remove(fromList);
+                //  The passed annotation may have descendents that
+                //  are currently listed as descendents of this annotation.
+                //  Move them under the passed annotation.
+                i.remove();
                 a.addDescendent(fromList);
-                this.descendents.add(a);
-                added = true;
-                break;
             }
         }
+
+        //  If the passed annotation has not been added to any of this
+        //  annotations descendents, then it must be a direct descendent of
+        //  this.
         if (! added ) {
             this.descendents.add(a);
         }
