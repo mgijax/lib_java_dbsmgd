@@ -678,9 +678,10 @@ public class PhenotypeFactory {
     // fill in:  mp term id (String)
     private static final String ADD_DESCENDENTGENOS_TO_TMP =
         "insert into #genotypes"
-        + " select distinct gag._Genotype_key, vt2._Term_key, ac.accID"
+        + " select distinct gag._Genotype_key, vt2._Term_key, ac2.accID"
         + " from ACC_Accession ac, VOC_Term vt, DAG_Node dn1, DAG_Closure dc," 
-        + " DAG_Node dn2, VOC_Term vt2, VOC_Annot va, GXD_AlleleGenotype gag"
+        + " DAG_Node dn2, VOC_Term vt2, VOC_Annot va, GXD_AlleleGenotype gag, "
+        + " ACC_Accession ac2 "
         + " where ac.accID = '%s'"
         + " and ac._Object_key = vt._Term_key"
         + " and ac._MGIType_key = " + DBConstants.MGIType_VocTerm
@@ -693,7 +694,10 @@ public class PhenotypeFactory {
         + " and vt2._Vocab_key = 5" 
         + " and vt2._Term_key = va._Term_key"
         + " and va._AnnotType_key = " + DBConstants.VOCAnnotType_MP
-        + " and va._Object_key = gag._Genotype_key"
+        + " and va._Object_key = gag._Genotype_key "
+        + " and vt2._Term_key = ac2._Object_key "
+        + " and ac2._MGIType_key = " + DBConstants.MGIType_VocTerm
+        + " and ac2.preferred = 1 "
         + " and not exists (select 1 from #genotypes" 
         + "                 where _Genotype_key = gag._Genotype_key"
         + "                 and _Term_key = vt2._Term_key)";
