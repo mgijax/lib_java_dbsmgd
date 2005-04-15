@@ -76,9 +76,9 @@ public class DBConstants
 
 
     // from MGI_NoteType
-    public static final int MGINoteType_AlleleGeneral = 1019;
-    public static final int MGINoteType_AlleleMolecular = 1020;
-    public static final int MGINoteType_Nomenclature = 1021;
+    public static final int MGINoteType_AlleleGeneral = 1020;
+    public static final int MGINoteType_AlleleMolecular = 1021;
+    public static final int MGINoteType_Nomenclature = 1022;
 
     // from VOC_AnnotType
     public static final int VOCAnnotType_MP = 1002;
@@ -86,6 +86,9 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.6  2005/04/12 17:42:10  dow
+* lib_java_dbsmgd-3-2-0-0
+*
 * Revision 1.5.6.1  2005/04/10 16:27:45  dow
 * Additions for mpr release.
 *
