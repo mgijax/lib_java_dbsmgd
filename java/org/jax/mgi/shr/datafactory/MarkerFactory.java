@@ -1627,6 +1627,12 @@ public class MarkerFactory
             typeData.set (DTOConstants.AlleleTypeKey, rr.getInt(2));
             typeData.set (DTOConstants.AlleleTypeCount, rr.getInt(3));
 
+	    alleleCounts.add (typeData);
+	}
+	nav.close();
+
+	// always define this field, even if no allele counts
+
 	marker.set (DTOConstants.AlleleCounts, alleleCounts);
 
 	nav = this.sqlDM.executeQuery (
@@ -3494,6 +3500,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.17  2005/04/12 17:42:10  dow
+* lib_java_dbsmgd-3-2-0-0
+*
 *
 * Revision 1.16  2005/04/02 19:57:55  pf
 * 3.12 maint6496 release
