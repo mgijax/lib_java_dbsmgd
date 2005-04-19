@@ -82,13 +82,13 @@ public class DBConstants
 
     // from VOC_AnnotType
     public static final int VOCAnnotType_MP = 1002;
+
+    // from MGI_RefAssocType
+    public static final int MGIRefAssocType_ALLOriginal = 1011;
 }
 
 /*
 * $Log$
-* Revision 1.6  2005/04/12 17:42:10  dow
-* lib_java_dbsmgd-3-2-0-0
-*
 * Revision 1.5.6.1  2005/04/10 16:27:45  dow
 * Additions for mpr release.
 *
