@@ -653,17 +653,25 @@ public class PhenotypeFactory {
         + " and ac.preferred = 1";
 
     //  Create a temp table for holding the genotype/term relationships
-    //  for a given mp term and it's descendents
+    //  for a given mp term and it's descendents.
+    //  It was necessary to add an orderVal column, as sometimes a genotyp
+    //  will have to sequenceNum values.  I want the lowest for sorting.
     //  fill in: nothing
     private static final String CREATE_GENOTYPESTMP =
         "create table #genotypes "
-        + "(_Genotype_key int, _Term_key int,  MPID varchar(50))";
+        + "(_Genotype_key int, "
+        + " _Term_key int,  "
+        + " MPID varchar(50), "
+        + " orderVal int)";
 
     //  Add all genotypes to temptable for the given term
+    //  It was necessary to add an orderVal column, as sometimes a genotyp
+    //  will have to sequenceNum values.  I want the lowest for sorting.
     //  fill in:  mp term id (String)
     private static final String ADD_TERMGENOS_TO_TMP =
         "insert into #genotypes"
-        + " select distinct gag._Genotype_key, vt._Term_key, ac.accID"
+        + " select distinct gag._Genotype_key, vt._Term_key, ac.accID, "
+        + " min(gag.sequenceNum) as orderVal "
         + " from ACC_Accession ac, VOC_Term vt, VOC_Annot va, "
         + " GXD_AlleleGenotype gag"
         + " where ac.accID = '%s'"
@@ -672,13 +680,17 @@ public class PhenotypeFactory {
         + " and ac.preferred = 1"
         + " and vt._Term_key = va._Term_key"
         + " and va._AnnotType_key = " + DBConstants.VOCAnnotType_MP
-        + " and va._Object_key = gag._Genotype_key";
+        + " and va._Object_key = gag._Genotype_key "
+        + " group by gag._Genotype_key, vt._Term_key, ac.accID";
 
     // Add all genotypes to temptable for descendents of term
+    //  It was necessary to add an orderVal column, as sometimes a genotyp
+    //  will have to sequenceNum values.  I want the lowest for sorting.
     // fill in:  mp term id (String)
     private static final String ADD_DESCENDENTGENOS_TO_TMP =
         "insert into #genotypes"
-        + " select distinct gag._Genotype_key, vt2._Term_key, ac2.accID"
+        + " select distinct gag._Genotype_key, vt2._Term_key, ac2.accID, "
+        + " min(gag.sequenceNum) as orderVal "
         + " from ACC_Accession ac, VOC_Term vt, DAG_Node dn1, DAG_Closure dc," 
         + " DAG_Node dn2, VOC_Term vt2, VOC_Annot va, GXD_AlleleGenotype gag, "
         + " ACC_Accession ac2 "
@@ -700,7 +712,8 @@ public class PhenotypeFactory {
         + " and ac2.preferred = 1 "
         + " and not exists (select 1 from #genotypes" 
         + "                 where _Genotype_key = gag._Genotype_key"
-        + "                 and _Term_key = vt2._Term_key)";
+        + "                 and _Term_key = vt2._Term_key) "
+        + " group by gag._Genotype_key, vt2._Term_key, ac2.accID";
 
     //  returns the number of records in the genotype tmp table.  This 
     //  represents the unique set of genotype/term associations.
@@ -710,12 +723,15 @@ public class PhenotypeFactory {
 
     // find the allelic compositions and background strains for the
     // genotype keys in the #genotypes tmp table.
+    //  It was necessary to add an orderVal column, as sometimes a genotyp
+    //  will have to sequenceNum values.  I want the lowest for sorting.
     // fill in: nothing
     private static final String GENOTYPE_DATA_FROM_TMP =
-		"select distinct gt._Genotype_key, gag.sequenceNum, "
+		"select distinct gt._Genotype_key, gt.orderVal, "
         + "nc.note as alleleCombination, nc.sequenceNum, "
         + "s.strain as background "
-        + "from #genotypes gt, GXD_AlleleGenotype gag, MGI_Note n, "
+        + "from #genotypes gt, GXD_AlleleGenotype gag, "
+        + "MGI_Note n, "
         + "MGI_NoteType nt, MGI_NoteChunk nc, GXD_Genotype g, PRB_Strain s "
 		+ "where gt._Genotype_key = gag._Genotype_key "
         + "and gag._Genotype_key = n._Object_key "
@@ -725,7 +741,7 @@ public class PhenotypeFactory {
         + "and n._Note_key = nc._Note_key "
         + "and gag._Genotype_key = g._Genotype_key "
         + "and g._Strain_key = s._Strain_key "
-        + "order by gag.sequenceNum, nc.sequenceNum";
+        + "order by gt.orderVal, nc.sequenceNum";
 
 
     // find the mp annotation terms for the genotype/term key combinations
