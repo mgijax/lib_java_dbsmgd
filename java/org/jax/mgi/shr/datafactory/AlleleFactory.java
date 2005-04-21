@@ -234,7 +234,7 @@ public class AlleleFactory
     public DTO getFullInfo (Map parms)
             throws DBException, MalformedURLException, IOException
     {
-        System.out.println("Getting Full Allele Info");
+        logger.logDebug("Getting Full Allele Info");
 
         // all data for the allele with the given 'key'
         DTO allele = DTO.getDTO();
@@ -340,7 +340,7 @@ public class AlleleFactory
      */
     public DTO getBasicInfo (int key) throws DBException
     {
-        System.out.println("Getting Allele Basic Info");
+        logger.logDebug("Getting Allele Basic Info");
         ResultsNavigator nav = null;	// set of query results
         RowReference rr = null;		// one row in 'nav'
         DTO allele = DTO.getDTO();	// start with an empty DTO
@@ -348,7 +348,7 @@ public class AlleleFactory
         // get the most basic allele data.  If we find no results, then just
         // return an empty DTO.
         String cmd = Sprintf.sprintf (BASIC_ALLELE_DATA, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.
             executeQuery ( cmd );
 
@@ -396,7 +396,7 @@ public class AlleleFactory
         //  Get the nomenclature notes.
         StringBuffer notes = new StringBuffer();  // nomenclature notes
         cmd = Sprintf.sprintf (NOMEN_NOTE, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         while (nav.next()) {
             rr = (RowReference) nav.getCurrent();
@@ -433,7 +433,7 @@ public class AlleleFactory
         // get the allele synonyms.  If we find no results, then just
         // return an empty DTO.
         String cmd = Sprintf.sprintf (SYNONYMS, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.
             executeQuery ( cmd );
 
@@ -464,7 +464,7 @@ public class AlleleFactory
         // get the mutations.  
         Vector mutations = null;		// has one String per mutation
         String cmd = Sprintf.sprintf (MUTATIONS, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.
             executeQuery ( cmd );
 
@@ -486,7 +486,7 @@ public class AlleleFactory
         //  Get the molecular notes.
         StringBuffer notes = new StringBuffer();  // molecular notes
         cmd = Sprintf.sprintf (MOLECULARNOTES, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         while (nav.next()) {
             rr = (RowReference) nav.getCurrent();
@@ -495,7 +495,6 @@ public class AlleleFactory
 
         if (notes.length() > 0) {
             allele.set(DTOConstants.MolecularNotes, notes.toString());
-            System.out.println("####NOMENNOTE#### : " + notes.toString());
         }
         nav.close();
 
@@ -503,7 +502,7 @@ public class AlleleFactory
         //  Get the molecular references.
         ArrayList refs = new ArrayList();  // molecular refs
         cmd = Sprintf.sprintf (MOLECULARREFS, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         while (nav.next()) {
             HashMap hm = new HashMap();
@@ -523,7 +522,7 @@ public class AlleleFactory
             this code assumes there is an IMSR db in the same server as
             the MGD database.  For now we'll just return true in all cases.
         cmd = Sprintf.sprintf(IMSR, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         if (nav.next()) {
             rr = (RowReference)nav.getCurrent();
@@ -546,7 +545,7 @@ public class AlleleFactory
         // get the gxd count.  If we find no results, then just
         // return an empty DTO.
         String cmd = Sprintf.sprintf (GENEEXPRESSION, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.
             executeQuery ( cmd );
 
@@ -573,7 +572,7 @@ public class AlleleFactory
         // If we find no results, then just
         // return an empty DTO.
         String cmd = Sprintf.sprintf (MARKER, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.
             executeQuery ( cmd );
 
@@ -662,7 +661,7 @@ public class AlleleFactory
         //  Get the general notes.
         StringBuffer notes = new StringBuffer();  // general notes
         String cmd = Sprintf.sprintf (GENERALNOTES, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         while (nav.next()) {
             rr = (RowReference) nav.getCurrent();
@@ -671,7 +670,6 @@ public class AlleleFactory
 
         if (notes.length() > 0) {
             allele.set(DTOConstants.Notes, notes.toString());
-            System.out.println("####GENERALNOTE#### : " + notes.toString());
         }
         nav.close();
         
@@ -691,7 +689,7 @@ public class AlleleFactory
         String jnum = null;
         String notes = null;  // expt notes with jnum link prepended
         String cmd = Sprintf.sprintf (QTL_EXPTS, key);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         while (nav.next()) {
             rr = (RowReference) nav.getCurrent();
@@ -827,7 +825,7 @@ public class AlleleFactory
         String cmd = Sprintf.sprintf (REFERENCE_COUNT, 
                                            Integer.toString(key),
                                       excludedKeys);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.
             executeQuery ( cmd );
         if (nav.next())
