@@ -10,8 +10,25 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import org.jax.mgi.shr.cache.ExpiringObjectCache;
 
+/**
+ * @module Phenotype.java
+ * @author dow
+ */
+
+/** The Phenotype is specifically for defining a phenotype/genotype concept
+ *  used in the WI.  It represetns an allelic composition, it's associated 
+ *  background strain, and the annotations associated with it..
+ * @is a class for representing phenotypes/genotypes..
+ * @has all data necessary for displaying a given genotype/phenotype and it's
+ *      associated MP annotations.
+ * @does very little on it's own.  Is used for holding and displaying phenotype
+ *       data specifically associated with the MP.
+*/
 public class Phenotype implements Comparable {
 
+    /////////////////////
+    // instance variables
+    /////////////////////
     private Integer genotypeKey;
     private Integer orderVal;
     private String allelicComposition;
@@ -20,6 +37,19 @@ public class Phenotype implements Comparable {
     private HashMap annots;
     private String htmlCompound = null;
 
+    ///////////////
+    // Constructors
+    ///////////////
+
+    /** constructor; instantiates and initializes a new Phenotype.
+     * @param genotype this is the database key for this genotype
+     * @param orderVal used for sorting genotypes
+     * @param compound the display value for the genotype/allelic composition
+     * @param background the background strain associated with this genotype
+     * @assumes nothing
+     * @effects nothing
+     * @throws nothing
+     */
     public Phenotype (Integer genotype, 
                       Integer orderVal,
                       String compound, 
@@ -33,19 +63,45 @@ public class Phenotype implements Comparable {
         this.annots  = new HashMap();
     }
 
+    //////////////////
+    // public methods
+    //////////////////
+
+    /** returns the database key for this genotype.
+     * @assumes nothing
+     * @effects nothing
+     * @returns Integer representation of database key
+     * @throws nothing
+     */
     public Integer getGenotypeKey() {
         return genotypeKey;
     }
 
+    /** returns the allelic compositions exactly as it was stored in the
+     *  database.
+     * @assumes nothing
+     * @effects nothing
+     * @returns String  value of the allelic composition
+     * @throws nothing
+     */
     public String getCompound() {
         return allelicComposition;
     }
 
+    /** returns the allelic compositions in an HTML based format, intended for
+     *  the allele detail page in the WI..
+     * @assumes nothing
+     * @effects nothing
+     * @returns String  value of the allelic composition
+     * @throws nothing
+     */
     public String getHTMLCompound(String javaWI) {
+        // Build it only once!
         if (this.htmlCompound == null && this.allelicComposition != null) {
             StringBuffer sb = new StringBuffer();
-            //topTable.append("WIFetch?page=alleleDetail&id=");
             boolean first = true;
+
+            //  Pull apart the compound into multiple rows for each allele pair
             for (Iterator i = getParsedCompound().iterator(); i.hasNext(); ) {
                 //  If there are multiple allele pairs they are seperated by
                 //  a line break.
@@ -100,14 +156,34 @@ public class Phenotype implements Comparable {
         return this.htmlCompound;
     }
 
+    /** return the strain background.
+     * @assumes nothing
+     * @effects nothing
+     * @returns String  value of the strain background
+     * @throws nothing
+     */
     public String getBackground() {
         return strainBackground;
     }
 
+    /** return the value used for sorting genotypes associated with a given
+     *  allele.
+     * @assumes nothing
+     * @effects nothing
+     * @returns Integer value for sorting.
+     * @throws nothing
+     */
     public Integer getOrderVal() {
         return this.orderVal;
     }
 
+    /** return a list of allele pairs in the order they appear in the 
+     *  allelic composition.
+     * @assumes nothing
+     * @effects nothing
+     * @returns List of the allele pairs.
+     * @throws nothing
+     */
     public List getParsedCompound() {
         ArrayList al = new ArrayList();
         //  When there are multiple allele pairs in the composition,
@@ -122,6 +198,16 @@ public class Phenotype implements Comparable {
         return al;
     }
 
+    /** add a header term value to this phenotype.
+     * @param termKey is the database key for this header term.
+     * @param id is the MGI Accession ID for this header term.
+     * @param headerTerm the actual term value
+     * @param orderVal Used for sorting header terms.
+     * @assumes nothing
+     * @effects nothing
+     * @returns nothing.
+     * @throws nothing
+     */
     public void addHeaderTerm(Integer termKey, String id, String headerTerm, 
                               Integer orderVal) {
         HeaderAnnotation header = new HeaderAnnotation(termKey, id, headerTerm,
@@ -129,6 +215,16 @@ public class Phenotype implements Comparable {
         this.headers.put(termKey, header);
     }
 
+    /** add a MP annotation term value to this phenotype.
+     * @param termKey is the database key for this mp term.
+     * @param id is the MGI Accession ID for this mp term.
+     * @param headerTerm the actual term value
+     * @param orderVal Used for sorting mp annotation terms.
+     * @assumes nothing
+     * @effects nothing
+     * @returns nothing.
+     * @throws nothing
+     */
     public void addAnnotTerm(Integer termKey, String id, String annotTerm,
                              Integer orderVal) {
         SubAnnotation annot = new SubAnnotation(termKey, id, annotTerm, 
@@ -136,6 +232,18 @@ public class Phenotype implements Comparable {
         this.annots.put(termKey, annot);
     }
 
+    /** add a MP annotation evidence associated with a term to this phenotype.
+     * @param termKey is the database key for the mp term associated with
+     *        this evidence.
+     * @param evidenceKey the database key for the evidence entry.
+     * @param refKey the database key of the reference for this evidence
+     * @param jNum the J number for the reference
+     * @param note if there is written evidence, it will be in this note..
+     * @assumes nothing
+     * @effects nothing
+     * @returns nothing.
+     * @throws nothing
+     */
     public void addAnnotEvidence(Integer termKey, Integer evidenceKey,
                                  Integer refKey, String jNum, String note) {
         
@@ -143,6 +251,12 @@ public class Phenotype implements Comparable {
         a.addEvidence(evidenceKey, refKey, jNum, note);
    }
 
+    /** if true, then there are headers associated with this phenotype.
+     * @assumes nothing
+     * @effects nothing
+     * @returns true has headers, false does not.
+     * @throws nothing
+     */
     public boolean hasHeaders() {
         if (this.headers.size() > 0) {
             return true;
@@ -153,6 +267,12 @@ public class Phenotype implements Comparable {
 
     }
 
+    /** if true, then there are annotationss associated with this phenotype.
+     * @assumes nothing
+     * @effects nothing
+     * @returns true has annotations, false does not.
+     * @throws nothing
+     */
     public boolean hasAnnotations() {
         if (this.annots.size() > 0) {
             return true;
@@ -162,6 +282,32 @@ public class Phenotype implements Comparable {
         }
     }
 
+    /** This method will associate all of the headers that have been added
+     *  to the phenotype with all of the annotations that have been added to
+     *  the phenotype.
+     *  <P>
+     *  The proper organization of headers and annotations associated with a
+     *  phenotype can be found in the 3.2 requirements document under the
+     *  section for the allele detail page.  I will address the organization
+     *  briefly.
+     *  <P>
+     *  First we find which annotations are descendents of which headers.  An
+     *  annotation can be added under multiple headers.  Then under each 
+     *  header, the annotations are organized so that if a term is a 
+     *  descendent of another term it will be added under that, instead of
+     *  directly under the header term.  
+     *  <P>
+     *  This is primarily for the purposes of display in the WI Allele Detail
+     *  page.
+     * @assumes It assumes that you've already added all the headers and
+     *    annotations you are going to.  If you don't have some of both,
+     *    the method won't continue.  If you add more after running this
+     *    method, they will not be organized with the rest.
+     * @effects alters the structure of the header and annotations internal
+     *    structures for this object.
+     * @returns nothing.
+     * @throws nothing
+     */
     public void organizeAnnotations() {
 
         //  Get the ClosureDag from memory.  We use this to determine
@@ -212,6 +358,12 @@ public class Phenotype implements Comparable {
         }
     }
 
+    /** Returns the list of all headers for this phenotype.
+     * @assumes nothing
+     * @effects nothing
+     * @returns List of header terms as HeaderAnnotation objects.
+     * @throws nothing
+     */
     public List getHeaders() {
         Collection headColl = headers.values();
         HeaderAnnotation[] headarray = 
@@ -220,6 +372,12 @@ public class Phenotype implements Comparable {
         return Arrays.asList(headarray);
     }
 
+    /** Returns the list of all annotations for this phenotype.
+     * @assumes nothing
+     * @effects nothing
+     * @returns List of Mp Annotation terms as SubAnnotation objects.
+     * @throws nothing
+     */
     public List getAnnotations() {
         Collection annotColl = annots.values();
         SubAnnotation[] annotarray = 
@@ -228,6 +386,25 @@ public class Phenotype implements Comparable {
         return Arrays.asList(annotarray);
     }
 
+    /** Over-rides the compareTo method necessary for the Comparable interface.
+     *  This method orders by the "order value" passed into the constructor.
+     * @assumes nothing
+     * @effects nothing
+     * @returns List of Mp Annotation terms as SubAnnotation objects.
+     * @throws nothing
+     */
+    public int compareTo(Object o) {
+        Phenotype p = (Phenotype)o;
+        int ret = this.orderVal.compareTo(p.getOrderVal());
+        return ret;
+    }
+
+    /*  This is the old version of compareTo.  In it I did some
+        additional sorting.  In theory this should now be unnecessary
+        as all of this should now be done in the database.
+
+        I wanted to wait to totally throw the method until after testing
+        in 3.2 is completed.
     public int compareTo(Object o) {
         Phenotype p = (Phenotype)o;
         int ret = this.orderVal.compareTo(p.getOrderVal());
@@ -269,11 +446,14 @@ public class Phenotype implements Comparable {
         }
         return ret;
     }
+    */
 
     ///////////////////////////
     // private instance methods
     ///////////////////////////
 
+    /*  These three methods wer used in conjunction with the old
+        compareTo method.  When it is gone, they should go as well.
     private boolean isInvolves(String s) {
         if (s.startsWith("involves:")) {
             return true;
@@ -300,7 +480,10 @@ public class Phenotype implements Comparable {
             return false;
         }
     }
+    */
 
+    //  This method is used to parse an allele pair that was part of
+    //  an allelic composition returned from the database.
     private Map parseAllelePair(String ap) {
         HashMap hm = new HashMap();
         //  An allele pair is seperated by a forward slash character.
@@ -315,6 +498,8 @@ public class Phenotype implements Comparable {
         return hm;
     }
 
+    //  This method is used to parse an allele into two parts. The
+    //  allele is likely the result of a call to parseAllelePair.
     private Map parseAllele(String allele) {
         HashMap hm = new HashMap();
         if (! allele.startsWith("\\Allele") ) {
