@@ -506,8 +506,11 @@ public class AlleleFactory
         System.out.println(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         while (nav.next()) {
+            HashMap hm = new HashMap();
             rr = (RowReference) nav.getCurrent();
-            refs.add(rr.getString(1));
+            hm.put("jnum", rr.getString(1));
+            hm.put("key", rr.getInt(2));
+            refs.add(hm);
         }
 
         if (refs.size() > 0) {
@@ -1167,7 +1170,7 @@ public class AlleleFactory
     // get allele molecular references 
     // fill in: allele key (int)
     private static final String MOLECULARREFS =
-		"select r.jnumID "
+		"select r.jnumID, r._Refs_key "
 		+ " from MGI_RefAssocType rat, MGI_Reference_Assoc ra, BIB_View r "
 		+ " where ra._Object_key = %d "
 		+ "  and ra._MGIType_key = " + DBConstants.MGIType_Allele
