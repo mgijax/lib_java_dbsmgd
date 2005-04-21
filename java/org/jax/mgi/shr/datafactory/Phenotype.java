@@ -306,7 +306,12 @@ public class Phenotype implements Comparable {
         //  An allele pair is seperated by a forward slash character.
         String[] pair = ap.split("\\)/");
         hm.put("allele1", parseAllele(pair[0]) );
-        hm.put("allele2", parseAllele(pair[1]) );
+        if (pair.length > 1) {
+            hm.put("allele2", parseAllele(pair[1]) );
+        }
+        else {
+            hm.put("allele2", parseAllele(""));
+        }
         return hm;
     }
 
