@@ -29,6 +29,7 @@ public class PhenotypeFactory {
     public static final String CLOSURE_CACHE_KEY = "phenotypeClosureCache";
     public static final long CLOSURE_LIFE = 86400;  // 24hrs in seconds
 
+
     // provides access to the database
     private SQLDataManager sqlDM = null;
 
@@ -169,7 +170,7 @@ public class PhenotypeFactory {
     public DTO getPhenotypes (int alleleKey)
             throws DBException, MalformedURLException, IOException
     {
-        System.out.println("Getting Phenotype Info");
+        logger.logDebug("Getting Phenotype Info");
 
         // all phenotype data for the allele with the given 'key'
         DTO phenotypes = DTO.getDTO();
@@ -183,7 +184,7 @@ public class PhenotypeFactory {
 
         //  Get phenotype headers and add them to hash
         String cmd = Sprintf.sprintf (GENOTYPE_HEADER_TERMS, alleleKey);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
 
         Phenotype p = null;
@@ -197,7 +198,7 @@ public class PhenotypeFactory {
 
         //  Get phenotype annotations and add them to hash
         cmd = Sprintf.sprintf (GENOTYPE_ANNOT_TERMS, alleleKey);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
 
         while (nav.next()) {
@@ -211,7 +212,7 @@ public class PhenotypeFactory {
         
         //  Get phenotype annotation, notes and references and add them to hash
         cmd = Sprintf.sprintf (GENOTYPE_EVIDENCE_NOTES, alleleKey);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         
         Integer genoKey = null;
@@ -301,7 +302,7 @@ public class PhenotypeFactory {
             throws DBException, MalformedURLException, IOException
     {
         
-        System.out.println("Getting Phenotype Annotations Info");
+        logger.logDebug("Getting Phenotype Annotations Info");
 
         // all phenotype data for the MP Annotation ID submitted
         DTO phenotypes = DTO.getDTO();
@@ -325,7 +326,7 @@ public class PhenotypeFactory {
         String mpid = "";
         //  Get the term for this mpid
         String cmd = Sprintf.sprintf(MP_TERM, key);
-        System.out.println( cmd );
+        logger.logDebug( cmd );
         nav = this.sqlDM.executeQuery ( cmd );
 
         if (nav.next()) {
@@ -344,24 +345,24 @@ public class PhenotypeFactory {
 
         //  Create genotype temp table
         cmd = CREATE_GENOTYPESTMP;
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         int res = this.sqlDM.executeUpdate ( cmd );
 
 
         //  Get genotypes, and genotype key for the term itself
         cmd = Sprintf.sprintf (ADD_TERMGENOS_TO_TMP, mpid);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         res = this.sqlDM.executeUpdate ( cmd );
 
         //  Get genotypes, and genotype key for the term descendents
         cmd = Sprintf.sprintf (ADD_DESCENDENTGENOS_TO_TMP, mpid);
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         res = this.sqlDM.executeUpdate ( cmd );
 
 
         //  Get the count of genotype/term relationships.
         cmd = COUNT_GENOTYPES_IN_TMP;
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         if (nav.next()) {
             rr = (RowReference)nav.getCurrent();
@@ -371,7 +372,7 @@ public class PhenotypeFactory {
         //  Get all genotypes associated with genotype temp table, and
         //  their allelic compositions and background strains.
         cmd = GENOTYPE_DATA_FROM_TMP;
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery( cmd );
 
         //  The set of Phenotype classes, keyed by genotype key
@@ -379,7 +380,7 @@ public class PhenotypeFactory {
 
         //  Get phenotype annotations and add them to hash
         cmd = GENOTYPE_ANNOT_TERMS_FROM_TMP;
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
 
         Phenotype p = null;
@@ -388,7 +389,7 @@ public class PhenotypeFactory {
         while (nav.next()) {
             rr = (RowReference)nav.getCurrent();
             if (! atleastone) { 
-                System.out.println("at least one annotation -> " + rr.getString(3) + " " + rr.getString(4));
+                logger.logDebug("at least one annotation -> " + rr.getString(3) + " " + rr.getString(4));
                 atleastone = true;
             }
             p = (Phenotype)phenoHash.get(rr.getInt(1));
@@ -399,7 +400,7 @@ public class PhenotypeFactory {
 
         //  Get phenotype annotation, notes and references and add them to hash
         cmd = GENOTYPE_EVIDENCE_FROM_TMP;
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         
         Integer genoKey = null;
@@ -437,7 +438,7 @@ public class PhenotypeFactory {
     public HashMap getBasicPhenotypes ( String dbCmd, int alleleKey)
             throws DBException, MalformedURLException, IOException
     {
-        System.out.println("Getting Basic Phenotype Info");
+        logger.logDebug("Getting Basic Phenotype Info");
 
         ResultsNavigator nav = null;	// set of query results
         RowReference rr = null;		// one row in 'nav'
@@ -451,7 +452,7 @@ public class PhenotypeFactory {
         else {
             cmd = dbCmd;
         }
-        System.out.println(cmd);
+        logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
 
         //  This holds the set of Phenotype objects we are building keyed on 
