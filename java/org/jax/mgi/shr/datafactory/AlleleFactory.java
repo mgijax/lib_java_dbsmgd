@@ -1271,7 +1271,7 @@ public class AlleleFactory
     // get a count of references for the marker
     // fill in: allele key (int)
     private static final String REFERENCE_COUNT =
-		"select count (1) "
+		"select count (distinct _Refs_key) "
 		+ " from MGI_Reference_Assoc "
 		+ " where _Object_key = %s "
         +    " AND _MGIType_key = " + DBConstants.MGIType_Allele
