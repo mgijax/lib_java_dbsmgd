@@ -662,7 +662,6 @@ public class SequenceFactory extends Factory {
             sequence.set(DTOConstants.StartCoord,rr.getDouble(1));
             sequence.set(DTOConstants.StopCoord,rr.getDouble(2));
             sequence.set(DTOConstants.Strand,rr.getString(3));
-            sequence.set(DTOConstants.Chromosome, rr.getString(4));
         }
         nav.close();
 
@@ -1094,17 +1093,15 @@ public class SequenceFactory extends Factory {
     // (if any)
     // fill in: sequence key (int)
     private static final String ASSEMBLY_COORDS =
-            "select mcf.startCoordinate, mcf.endCoordinate, mcf.strand, mrkc.chromosome\n"+
+            "select mcf.startCoordinate, mcf.endCoordinate, mcf.strand\n"+
             "from VOC_Term vt, MAP_Coordinate mc, MAP_Coord_Feature mcf,\n"+
-            "SEQ_Sequence ss, MRK_Chromosome mrkc \n"+
+            "SEQ_Sequence ss\n"+
             "where ss._Sequence_key = mcf._Object_key\n"+
             "and mcf._MGIType_key = 19\n"+
             "and mcf._Map_key = mc._Map_key\n"+
             "and vt.term = 'Assembly'\n"+
             "and mc._MapType_key = vt._Term_key\n"+
-            "and ss._Sequence_key = %d\n"+
-            "and mc._MGIType_key = 27\n"+
-            "and mc._Object_key = mrkc._Chromosome_key";
+            "and ss._Sequence_key = %d";
 
     // sets up a temp table, #mrk to hold all the information about all
     //  markers associated with this sequence

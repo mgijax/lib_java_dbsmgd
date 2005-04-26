@@ -1,21 +1,3 @@
-TAG: lib_java_dbsmgd-3-2-0-0
-DATE: 04/12/2005
-STAFF: dow
-CHANGES:
-1) merge of the tr 6496 to trunk for mpr release.
-
-TAG: lib_java_dbsmgd-tr6046-BP
-DATE: 04/07/2005
-STAFF: mbw
-CHANGES:
-1) branch point for tr6046 entrez gene load
-
-TAG: lib_java_dbsmgd-maint6496-BP
-DATE: 03/24/2005
-STAFF: pf
-CHANGES: 
-1) branch point for maint6496
-
 TAG: lib_java_dbsmgd-mpr-BP
 DATE: 03/08/2005
 STAFF: jsb

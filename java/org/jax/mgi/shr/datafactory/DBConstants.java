@@ -55,7 +55,6 @@ public class DBConstants
     public static final int MGIType_Assay = 8;
     public static final int MGIType_Image = 9;
     public static final int MGIType_Allele = 11;
-    public static final int MGIType_Genotype = 12;
     public static final int MGIType_VocTerm = 13;
     public static final int MGIType_Sequence = 19;
 
@@ -68,33 +67,10 @@ public class DBConstants
     // from BIB_ReviewStatus
 
     public static final int ReviewStatus_MGI = 2;
-
-    // from ALL_Status
-    // For reasons that are unclear to me, this is changing back and forth...
-    //public static final int Allele_Approved = 765354;
-    public static final String Allele_Approved = "Approved";
-
-
-    // from MGI_NoteType
-    public static final int MGINoteType_AlleleGeneral = 1020;
-    public static final int MGINoteType_AlleleMolecular = 1021;
-    public static final int MGINoteType_Nomenclature = 1022;
-
-    // from VOC_AnnotType
-    public static final int VOCAnnotType_MP = 1002;
-
-    // from MGI_RefAssocType
-    public static final int MGIRefAssocType_ALLOriginal = 1011;
 }
 
 /*
 * $Log$
-* Revision 1.5.6.1  2005/04/10 16:27:45  dow
-* Additions for mpr release.
-*
-* Revision 1.5  2004/10/21 17:50:39  jw
-* Changes for the 3.1 assembly release
-*
 * Revision 1.4  2004/05/24 15:15:05  jsb
 * added Marker_Interim status
 *
