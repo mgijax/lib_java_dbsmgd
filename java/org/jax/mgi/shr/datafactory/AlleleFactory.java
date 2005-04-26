@@ -370,6 +370,7 @@ public class AlleleFactory
         allele.set (DTOConstants.ESCellLineStrain, rr.getString(8));
         allele.set (DTOConstants.MutantESCellLine, rr.getString(9));
         allele.set (DTOConstants.CellLineProvider, rr.getString(10));
+        allele.set (DTOConstants.ProviderURL, rr.getString(14));
         allele.set (DTOConstants.DatabaseDate, rr.getString(11));
         allele.set (DTOConstants.ApprovalDate, rr.getString(12));
         allele.set (DTOConstants.SubmittedBy, rr.getString(13));
@@ -546,8 +547,7 @@ public class AlleleFactory
         // return an empty DTO.
         String cmd = Sprintf.sprintf (GENEEXPRESSION, key);
         logger.logDebug(cmd);
-        nav = this.sqlDM.
-            executeQuery ( cmd );
+        nav = this.sqlDM.executeQuery ( cmd );
 
         if (!nav.next()) {
             return allele;
@@ -1093,10 +1093,10 @@ public class AlleleFactory
         + " c.cellLine as esCellLine, p2.strain as cellLineStrain, "
         + " mc.cellLine as MutatntESCellLine, mc.provider,  "
 		+    " convert(varchar, db.lastdump_date, 101), "
-        + " a.approval_date, mu.login as submittedBy "
+        + " a.approval_date, mu.login as submittedBy, adb.url "
 		+ " from ALL_Allele a, PRB_Strain p1, VOC_Term imvt, VOC_Term atvt, "
         + " VOC_Term asvt, ALL_CellLine c, PRB_Strain p2, ALL_CellLine mc, "
-        + " MGI_dbInfo db, MGI_User mu "
+        + " MGI_dbInfo db, MGI_User mu, ACC_Accession ac, ACC_ActualDB adb "
 		+ " where _Allele_key = %d "
         + " and a._Strain_key *= p1._Strain_key "
         + " and p1._Strain_key > 0 "
@@ -1113,6 +1113,8 @@ public class AlleleFactory
         + " and p2._Strain_key > 0 "
         + " and a._MutantESCellLine_key *= mc._CellLine_key "
         + " and mc._CellLine_key > 0 " 
+        + " and mc.cellLine *= ac.accID "
+        + " and ac._LogicalDB_key *= adb._LogicalDB_key "
         + " and a._CreatedBy_key *= mu._User_key ";
 
     //  Nomenclature notes should only be displayed in the production version
@@ -1139,7 +1141,7 @@ public class AlleleFactory
     // get synonyms
     // fill in: allele key (int)
     private static final String SYNONYMS =
-		  "select synonym"
+		  "select distinct synonym"
 		+ " from MGI_Synonym"
 		+ " where _Object_key = %d"
 		+ " and _MGIType_key = " + DBConstants.MGIType_Allele
@@ -1191,10 +1193,11 @@ public class AlleleFactory
     // get gene expression count for allele
     // fill in: allele key (int)
     private static final String GENEEXPRESSION =
-        "select count(distinct _Assay_key) "
-        + " from GXD_AlleleGenotype gag, GXD_Expression ge "
+        "select count(distinct _Expression_key) "
+        + " from GXD_AlleleGenotype gag, GXD_Expression ge, GXD_AssayType gat "
         + " where gag._Allele_key = %d "
-        + " and gag._Genotype_key = ge._Genotype_key";
+        + " and gag._Genotype_key = ge._Genotype_key "
+        + " and ge._AssayType_key = gat._AssayType_key";
 
     // get marker information for allele
     // fill in: allele key (int)
