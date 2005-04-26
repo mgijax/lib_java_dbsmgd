@@ -19,8 +19,9 @@ public class SubAnnotation extends Annotation {
     }
 
     public void addEvidence(Integer evidenceKey, Integer refKey, String jNum, 
-                            String note) {
-        MPEvidence e = new MPEvidence(evidenceKey, refKey, jNum, note);
+                            String note, String noteType) {
+        MPEvidence e = new MPEvidence(evidenceKey, refKey, jNum, note, 
+                                      noteType);
         evidence.add(e);
     }
 
@@ -106,13 +107,21 @@ public class SubAnnotation extends Annotation {
                     //  the notes, then we don't need to display it again.
                     StringBuffer curRef = new StringBuffer();
                     if (refsUsed.size() > 1) {
-                        curRef.append("<a href=\"REFURL").append(ev.getRefKey()).append("\"><i>");
-                        curRef.append(ev.getJNum()).append("</i></a>");
+                        //  Removed these two lines and replaced with 3rd.
+                        //  curators don't want the link on the ref after
+                        //  the note.  Leave in, incase they change their 
+                        //  minds.
+                        //curRef.append("<a href=\"REFURL").append(ev.getRefKey()).append("\"><i>");
+                        //curRef.append("\"><i>").append(ev.getJNum()).append("</i></a>");
+                        curRef.append("<i>").append(ev.getJNum()).append("</i>");
                     }
                     else {
                         onlyOne = true;
                     }
                     notes.append("<li>");
+                    if (ev.getNoteType().equals("Background Sensitivity")) {
+                        notes.append("Background Sensitivity: ");
+                    }
                     notes.append(ev.getNote());
                     if (! onlyOne) {
                         notes.append(" (").append(curRef).append(")");
@@ -130,6 +139,7 @@ public class SubAnnotation extends Annotation {
             for (Iterator i = descendents.iterator(); i.hasNext();) {
                 sb.append("<dt><dd>");
                 sb.append((Annotation)i.next());
+                sb.append("</dd></dt>");
             }
             sb.append("</dl>");
         }
