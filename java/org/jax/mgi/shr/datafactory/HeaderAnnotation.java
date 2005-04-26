@@ -31,6 +31,7 @@ public class HeaderAnnotation extends Annotation {
             for (Iterator i = descendents.iterator(); i.hasNext();) {
                 sb.append("<dt><dd>");
                 sb.append((Annotation)i.next());
+                sb.append("</dd></dt>");
             }
         }
         sb.append("</dl>");
