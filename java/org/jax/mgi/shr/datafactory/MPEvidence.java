@@ -6,12 +6,15 @@ public class MPEvidence {
     private Integer refkey;
     private String jnum;
     private String note;
+    private String noteType;
 
-    public MPEvidence(Integer key, Integer refkey, String jnum, String note) {
+    public MPEvidence(Integer key, Integer refkey, String jnum, String note,
+                      String noteType) {
         this.key = key;
         this.refkey = refkey;
         this.jnum = jnum;
         this.note = note;
+        this.noteType = noteType;
     }
 
     public final Integer getKey() {
@@ -37,5 +40,9 @@ public class MPEvidence {
 
     public final String getNote() {
         return this.note;
+    }
+
+    public final String getNoteType() {
+        return this.noteType;
     }
 }

@@ -222,6 +222,7 @@ public class PhenotypeFactory {
         Integer evidenceKey = null;
         Integer noteKey = null;
         String  note = null;
+        String  noteType = null;
         while (nav.next()) {
             rr = (RowReference)nav.getCurrent();
 
@@ -234,6 +235,7 @@ public class PhenotypeFactory {
                 evidenceKey = rr.getInt(5);
                 noteKey = rr.getInt(6);
                 note = rr.getString(7);
+                noteType = rr.getString(9);
             }
             //  If this is the second time through with the same evidence
             //  just add to the note
@@ -244,7 +246,7 @@ public class PhenotypeFactory {
             else {
                 p = (Phenotype)phenoHash.get(genoKey);
                 p.addAnnotEvidence(annotTermKey, evidenceKey, refKey, jNum, 
-                                   note);
+                                   note, noteType);
 
                 genoKey = rr.getInt(1);
                 annotTermKey = rr.getInt(2);
@@ -253,13 +255,15 @@ public class PhenotypeFactory {
                 evidenceKey = rr.getInt(5);
                 noteKey = rr.getInt(6);
                 note = rr.getString(7);
+                noteType = rr.getString(9);
             }
         
         }
         //  add the lastone.
         if (evidenceKey != null) {
             p = (Phenotype)phenoHash.get(genoKey);
-            p.addAnnotEvidence(annotTermKey, evidenceKey, refKey, jNum, note);
+            p.addAnnotEvidence(annotTermKey, evidenceKey, refKey, jNum, note,
+                               noteType);
         }
         nav.close();
 
@@ -418,7 +422,7 @@ public class PhenotypeFactory {
             evidenceKey = rr.getInt(5);
             p = (Phenotype)phenoHash.get(genoKey);
             p.addAnnotEvidence(annotTermKey, evidenceKey, refKey, jNum, 
-                               new String(""));        
+                               new String(""), new String(""));        
         }
         nav.close();
 
@@ -622,9 +626,10 @@ public class PhenotypeFactory {
         "select gag._Genotype_key, vt._Term_key as annot, "
         + " ve._Refs_key, ac.accID as jnum, ve._AnnotEvidence_key, "
         + " nc._Note_key, nc.note, "
-        + " nc.sequenceNum "
+        + " nc.sequenceNum, nt.noteType "
         + " from GXD_AlleleGenotype gag, VOC_Annot va, VOC_Evidence ve,  "
-        + " VOC_Term vt, MGI_Note n, MGI_NoteChunk nc, ACC_Accession ac "
+        + " VOC_Term vt, MGI_Note n, MGI_NoteChunk nc, ACC_Accession ac, "
+        + " MGI_NoteType nt "
         + " where gag._Allele_key = %d "
         + " and gag._Genotype_key = va._Object_key "
         + " and va._AnnotType_key = " + DBConstants.VOCAnnotType_MP
@@ -636,8 +641,10 @@ public class PhenotypeFactory {
         + " and ac.preferred = 1 "
         + " and ve._AnnotEvidence_key *= n._Object_key "
         + " and n._MGIType_key = 25 "
+        + " and n._NoteType_key *= nt._NoteType_key "
         + " and n._Note_key *= nc._Note_key "
-        + " order by gag._Genotype_key, ve._AnnotEvidence_key, nc._Note_key, "
+        + " order by gag._Genotype_key, nt.noteType, ve._AnnotEvidence_key, "
+        + " nc._Note_key, "
         + " nc.sequenceNum";
 
     //  Get the MP Term for a given MP Id

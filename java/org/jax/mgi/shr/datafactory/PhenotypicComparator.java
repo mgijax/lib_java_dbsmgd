@@ -77,16 +77,22 @@ public class PhenotypicComparator implements Comparator {
                else if ((list2 == null || list2.size() ==0) && 
                    (list1 != null && list1.size() > 0))
                    iReturn = 1;
-               else {         
-                   HashMap ap = (HashMap)list1.get(0);
-                   HashMap a = (HashMap)ap.get("allele1");
+               else {      
+                   //  Get first allele from first allele pair of
+                   //  the first comparator
+                   HashMap ap1 = (HashMap)list1.get(0);
+                   List l1 = (List)ap1.get("allele1");
+                   HashMap a1 = (HashMap)l1.get(0);
+                   String val1 = (String)a1.get("symbol");
+
                    
-                   String val1 = (String)a.get("symbol");
-                       //    (String)((HashMap)((HashMap)list1.get(0)).
-                       //     get("allele1")).get("symbol");
-                   String val2 = 
-                       (String)((HashMap)((HashMap)list2.get(0)).
-                                get("allele1")).get("symbol");
+                   //  Get first allele from first allele pair of
+                   //  the second comparator
+                   HashMap ap2 = (HashMap)list2.get(0);
+                   List l2 = (List)ap2.get("allele1");
+                   HashMap a2 = (HashMap)l2.get(0);
+                   String val2 = (String)a2.get("symbol");
+                   
                    iReturn = val1.toLowerCase().compareTo(val2.toLowerCase());
                }
 

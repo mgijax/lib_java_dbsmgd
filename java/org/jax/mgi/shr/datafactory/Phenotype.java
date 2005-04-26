@@ -109,42 +109,74 @@ public class Phenotype implements Comparable {
                     first = false;
                 }
                 else {
-                    sb.append("<br>");
+                    sb.append("<br>"); 
                 }
                 
                 Map allelePair = (Map)i.next();
-                Map allele1 = (Map)allelePair.get("allele1");
-                Map allele2 = (Map)allelePair.get("allele2");
-                String a1MGIID = (String)allele1.get("id");
-                String a1Symbol = (String)allele1.get("symbol");
-                String a2MGIID = (String)allele2.get("id");
-                String a2Symbol = (String)allele2.get("symbol");
 
-                //  If there is no mgi id, don't put in a link.
-                if (a1MGIID == null) {
-                    sb.append(superscript(a1Symbol));
-                    sb.append("/");
-                }
-                else {
-                    sb.append("<a href=\"");
-                    sb.append(javaWI);
-                    sb.append(a1MGIID);
-                    sb.append("\">");
-                    sb.append(superscript(a1Symbol));
-                    sb.append("</a>/");
-                }
+                //  There might actually be multiple alleles within
+                //  each allele part
+                List allele1 = (List)allelePair.get("allele1");
+                List allele2 = (List)allelePair.get("allele2");
 
-                //  If there is no mgi id, don't put in a link.
-                if (a2MGIID == null) {
-                    sb.append(superscript(a2Symbol));
+                boolean firstAllele = true;
+                for (int j = 0; j < allele1.size(); j++) {
+                    String a1MGIID = 
+                        (String)((HashMap)allele1.get(j)).get("id");
+                    String a1Symbol = 
+                        (String)((HashMap)allele1.get(j)).get("symbol");
+
+                    //  if there are multiple alleles, put a space between
+                    //  them.
+                    if (! firstAllele) {
+                        sb.append(" ");
+                    }
+                    else {
+                        firstAllele = false;
+                    }
+                    //  If there is no mgi id, don't put in a link.
+                    if (a1MGIID == null) {
+                        sb.append(superscript(a1Symbol));
+                    }
+                    else {
+                        sb.append("<a href=\"");
+                        sb.append(javaWI);
+                        sb.append(a1MGIID);
+                        sb.append("\">");
+                        sb.append(superscript(a1Symbol));
+                        sb.append("</a>");
+                    }
                 }
-                else {
-                    sb.append("<a href=\"");
-                    sb.append(javaWI);
-                    sb.append(a2MGIID);
-                    sb.append("\">");
-                    sb.append(superscript(a2Symbol));
-                    sb.append("</a>");
+                sb.append("/");
+
+
+                firstAllele = true;
+                for (int j = 0; j < allele2.size(); j++) {
+                    String a2MGIID =  
+                        (String)((HashMap)allele2.get(j)).get("id");
+                    String a2Symbol =  
+                        (String)((HashMap)allele2.get(j)).get("symbol");
+
+                    //  if there are multiple alleles, put a space between
+                    //  them.
+                    if (! firstAllele) {
+                        sb.append(" ");
+                    }
+                    else {
+                        firstAllele = false;
+                    }
+                    //  If there is no mgi id, don't put in a link.
+                    if (a2MGIID == null) {
+                        sb.append(superscript(a2Symbol));
+                    }
+                    else {
+                        sb.append("<a href=\"");
+                        sb.append(javaWI);
+                        sb.append(a2MGIID);
+                        sb.append("\">");
+                        sb.append(superscript(a2Symbol));
+                        sb.append("</a>");
+                    }
                 }
             }
             this.htmlCompound = sb.toString();
@@ -245,10 +277,11 @@ public class Phenotype implements Comparable {
      * @throws nothing
      */
     public void addAnnotEvidence(Integer termKey, Integer evidenceKey,
-                                 Integer refKey, String jNum, String note) {
+                                 Integer refKey, String jNum, String note,
+                                 String noteType) {
         
         SubAnnotation a = (SubAnnotation)this.annots.get(termKey);
-        a.addEvidence(evidenceKey, refKey, jNum, note);
+        a.addEvidence(evidenceKey, refKey, jNum, note, noteType);
    }
 
     /** if true, then there are headers associated with this phenotype.
@@ -500,19 +533,31 @@ public class Phenotype implements Comparable {
 
     //  This method is used to parse an allele into two parts. The
     //  allele is likely the result of a call to parseAllelePair.
-    private Map parseAllele(String allele) {
-        HashMap hm = new HashMap();
-        if (! allele.startsWith("\\Allele") ) {
-            hm.put("id",null);
-            hm.put("symbol", allele);
+    private List parseAllele(String allele) {
+        ArrayList ret = new ArrayList();
+
+        String[] vals = allele.split(" ");
+        if (vals.length > 1) {
+            for (int i = 0; i < vals.length; i++) {
+                ret.addAll((List)parseAllele(vals[i]));
+            }
         }
         else {
-            String value = allele.substring(8, allele.length()-1);
-            String[] pair = value.split("\\|");
-            hm.put("id",pair[0]);
-            hm.put("symbol",pair[1]);
+        
+            HashMap hm = new HashMap();
+            if (! allele.startsWith("\\Allele") ) {
+                hm.put("id",null);
+                hm.put("symbol", allele);
+            }
+            else {
+                String value = allele.substring(8, allele.length()-1);
+                String[] pair = value.split("\\|");
+                hm.put("id",pair[0]);
+                hm.put("symbol",pair[1]);
+            }
+            ret.add(hm);
         }
-        return hm;
+        return ret;
     }
 
     /** convert all "<" and ">" pairs in 's' to be HTML superscript tags.
