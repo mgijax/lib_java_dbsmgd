@@ -349,24 +349,29 @@ public class Phenotype implements Comparable {
         MPClosureDAG cdag = 
             (MPClosureDAG)eoc.get(PhenotypeFactory.CLOSURE_CACHE_KEY);
 
-        //  If there are not headers and no annotations, there is no point!
-        if (hasHeaders() && hasAnnotations()) {
-            //  For each header term, check to see if any of the annotations
-            //  are descendents.  If they are, add them to the header.
-            for (Iterator i = headers.values().iterator(); i.hasNext(); ) {
-                HeaderAnnotation ha = (HeaderAnnotation)i.next();
-                for (Iterator j = annots.values().iterator(); j.hasNext(); ) {
-                    SubAnnotation sa = (SubAnnotation)j.next();
-                    // If the sub annotation is a descendent of the header
-                    // or they are the same annotation, add as descendent.
-                    if ((ha.getKey().equals(sa.getKey())) ||
-                         (cdag.isDescendent(ha.getKey(), sa.getKey()))) {
-                        ha.addDescendent(sa);
-                        //  Mark annotation as used.  Any left over will
-                        //  be added to a special header later.
-                        sa.use();
-                    }
-                }             
+
+        if (hasHeaders() || hasAnnotations()) {
+
+            //  If there are not headers and no annotations, there is no point!
+            if (hasHeaders() && hasAnnotations()) {
+                //  For each header term, check to see if any of the annots
+                //  are descendents.  If they are, add them to the header.
+                for (Iterator i = headers.values().iterator(); i.hasNext(); ) {
+                    HeaderAnnotation ha = (HeaderAnnotation)i.next();
+                    for (Iterator j = annots.values().iterator(); 
+                         j.hasNext(); ) {
+                        SubAnnotation sa = (SubAnnotation)j.next();
+                        // If the sub annotation is a descendent of the header
+                        // or they are the same annotation, add as descendent.
+                        if ((ha.getKey().equals(sa.getKey())) ||
+                            (cdag.isDescendent(ha.getKey(), sa.getKey()))) {
+                            ha.addDescendent(sa);
+                            //  Mark annotation as used.  Any left over will
+                            //  be added to a special header later.
+                            sa.use();
+                        }
+                    }             
+                }
             }
 
             //  Create an Other Annotations header in case there are
@@ -376,6 +381,7 @@ public class Phenotype implements Comparable {
                                                           "Other Annotations",
                                                           new Integer(999));
             boolean someOthers = false;
+            //  Organize the case where there are annots with no headers.
             for (Iterator i = annots.values().iterator(); i.hasNext(); ) {
                 SubAnnotation sa = (SubAnnotation)i.next();
                 if (! sa.used()) {
