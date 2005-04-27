@@ -1276,8 +1276,6 @@ public class AlleleFactory
 		+ " from MGI_Reference_Assoc "
 		+ " where _Object_key = %s "
         +    " AND _MGIType_key = " + DBConstants.MGIType_Allele
-                + " and _RefAssocType_key != " 
-                + DBConstants.MGIRefAssocType_ALLOriginal
 		+    " AND _Refs_key NOT IN "
 		+	" (SELECT _Object_key "
 		+	" FROM MGI_SetMember "
