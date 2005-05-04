@@ -687,6 +687,7 @@ public class AlleleFactory
         Integer exptKey = null;
         Integer refsKey = null;
         String jnum = null;
+        String refPart = null;
         String notes = null;  // expt notes with jnum link prepended
         String cmd = Sprintf.sprintf (QTL_EXPTS, key);
         logger.logDebug(cmd);
@@ -699,24 +700,28 @@ public class AlleleFactory
                 exptKey = rr.getInt(1);
                 refsKey = rr.getInt(2);
                 jnum    = rr.getString(3);
-                notes   = "(<a href=\"REFURL" + refsKey + "\"><i>" + jnum +
-                    "</i></a>)<br>" + rr.getString(4);
+                refPart = "(<a href=\"REFURL" + refsKey + "\"><i>" + jnum +
+                    "</i></a>)<br>";
+                notes   =  rr.getString(4);
             }
             else if (exptKey.equals(rr.getInt(1))) {
                 notes += rr.getString(4);
             }
             else {
+		notes = refPart + superscript(notes);
                 expts.add(notes);
 
                 exptKey = rr.getInt(1);
                 refsKey = rr.getInt(2);
                 jnum    = rr.getString(3);
-                notes   = "(<a href=\"REFURL" + refsKey + "\"><i>" + jnum +
-                    "</i></a>)<br>" + rr.getString(4);
+                refPart = "(<a href=\"REFURL" + refsKey + "\"><i>" + jnum +
+                    "</i></a>)<br>";
+                notes   =  rr.getString(4);
             }                
         }
 
         if (notes != null) {
+	    notes = refPart + superscript(notes);
             expts.add(notes);
         }
 
@@ -1053,6 +1058,87 @@ public class AlleleFactory
         // otherwise, 's' and 't' are both non-null, so we use both
 
         return s + t;
+    }
+
+    /* -------------------------------------------------------------------- */
+
+    /** convert all "<" and ">" pairs in 's' to be HTML superscript tags.
+     * @param s the source String
+     * @return String as 's', but with the noted replacement made.  returns
+     *    null if 's' is null.
+     * @assumes nothing
+     * @effects nothing
+     * @throws nothing
+     */
+    private  String superscript (String s)
+    {
+        return superscript (s, "<", ">");
+    }
+
+    /* -------------------------------------------------------------------- */
+
+    /** convert all 'start' and 'stop' pair in 's' to be HTML
+     *    superscript tags.
+     * @param s the source String
+     * @param start the String which indicates the position for the HTML
+     *    superscript start tag "<SUP>"
+     * @param stop the String which indicates the position for the HTML
+     *    superscript stop tag "</SUP>"
+     * @return String as 's', but with the noted replacement made.  returns
+     *    null if 's' is null.  returns 's' if either 'start' or 'stop' is
+     *    null.
+     * @assumes nothing
+     * @effects nothing
+     * @throws nothing
+     */
+    private String superscript (String s, String start, String stop)
+    {
+        if (s == null)
+            {
+                return null;                    // no source string
+            }
+
+        if ((start == null) || (stop == null))
+            {
+                return s;                               // no start/stop string
+            }
+
+        // Otherwise, find the first instance of 'start' and 'stop' in 's'.
+        // If either does not appear, then short-circuit and just return 's'
+        // as-is.
+
+        int startPos = s.indexOf(start);
+        if (startPos == -1)
+            {
+                return s;
+            }
+
+        int stopPos = s.indexOf(stop);
+        if (stopPos == -1)
+            {
+                return s;
+            }
+
+        int startLen = start.length();  // how many chars to cut out for start
+        int stopLen = stop.length();    // how many chars to cut out for stop
+        int sectionStart = 0;           // position of char starting section
+
+        StringBuffer sb = new StringBuffer();
+
+        while ((startPos != -1) && (stopPos != -1))
+            {
+                sb.append (s.substring(sectionStart, startPos));
+                sb.append ("<SUP>");
+                sb.append (s.substring(startPos + startLen, stopPos));
+                sb.append ("</SUP>");
+
+                sectionStart = stopPos + stopLen;
+                startPos = s.indexOf(start, sectionStart);
+                stopPos = s.indexOf(stop, sectionStart);
+            }
+        sb.append (s.substring(sectionStart));
+
+        return sb.toString();
     }
 
     /* -------------------------------------------------------------------- */
