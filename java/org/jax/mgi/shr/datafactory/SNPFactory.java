@@ -99,7 +99,7 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
 
         for(int i=0;i<commands.size();i++) {
             String curCmd = (String)commands.get(i);
-//System.out.println(curCmd);
+System.out.println(curCmd);
             try {
                 this.sqlDM.execute(curCmd);
             } catch(Throwable t) {
@@ -107,7 +107,7 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
             }
         }
 
-//System.out.println(resultsCommand);
+System.out.println(resultsCommand);
         nav = this.sqlDM.executeQuery(resultsCommand);
         while(nav.next()) {
             SNP curSnp = new SNP();
@@ -127,7 +127,7 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         }
         nav.close();
 
-//System.out.println(alleleCommand);
+System.out.println(alleleCommand);
         nav = this.sqlDM.executeQuery(alleleCommand);
         while(nav.next()) {
             Map strainAlleleMap;
@@ -148,7 +148,7 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         }
         nav.close();
 
-//System.out.println(markerCommand);
+System.out.println(markerCommand);
         nav = this.sqlDM.executeQuery(markerCommand);
         while(nav.next()) {
             rr = (RowReference) nav.getCurrent();
@@ -276,13 +276,13 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         List values = Arrays.asList(rwa.getValues());
         ArrayList clauses = new ArrayList();
 
-        if(values.contains("coding-NonSynonymous"))
+        if(values.contains("Coding-NonSynonymous"))
             clauses.add("snp.functionalLocation = 'Cn'");
-        if(values.contains("coding-Synonymous")) {
+        if(values.contains("Coding-Synonymous")) {
             clauses.add("snp.functionalLocation = 'Cs'");
             clauses.add("snp.functionalLocation = 'Cx'");
         }
-        if(values.contains("intron")) {
+        if(values.contains("Intron")) {
             clauses.add("snp.functionalLocation = 'I'");
             clauses.add("snp.functionalLocation = 'S'");
         }
