@@ -39,7 +39,7 @@ import org.jax.mgi.shr.ListHash;
 *        for details.</I>
 *    </OL>
 */
-public class SequenceFactory extends Factory {
+public class SequenceFactory extends Factory implements DetailPageFactory {
 
 
     public final static String NOT_SPECIFIED = "Not Specified";
