@@ -42,6 +42,7 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         Integer _SNP_key;
         Integer lastKey = null;
         ListHash snpMarker = new ListHash();
+        ListHash restrictQuery,restrictCount;
         Map snpAlleleHash = new HashMap();
         Map snpHash = new HashMap();
         ResultsNavigator nav = null;
@@ -50,7 +51,9 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         String alleleCommand, resultsCommand, markerCommand,lim,vals;
         String markerSymbol;
         String strainName;
+        String snpKeys;
         WebArgs wa = new WebArgs(QueryParameters);
+        int rowCount =0;
 
 
         sanityCheck(wa);
@@ -61,7 +64,8 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         if((Integer.parseInt(lim)>5000) || (lim == null)) {
             lim = "5000";
         }
-
+System.out.println("argCount:"+wa.argCount());
+System.out.flush();
         if(wa.hasArg("restrictStrains"))
             vals = wa.getArg(("restrictStrains")).getValues()[0];
         else vals = "no";
@@ -74,7 +78,24 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         }
 
         //Get the sql that will find all the SNPs requested by the user
-        commands.add(getMatchingSNPs(wa));
+		restrictQuery = getMatchingSNPs(wa);
+		restrictQuery.put(SELECT_CLAUSE, "cnt=count(distinct snp._SNP_key)");
+        nav = this.sqlDM.executeQuery(buildQuery(restrictQuery));
+        while(nav.next()) {
+            rr = (RowReference) nav.getCurrent();
+            rowCount = rr.getInt(1).intValue();
+
+        }
+        if(rowCount>5000)
+        	throw new IOException("Your query will return too many results, please add additional query parameters.");
+		else snps.set("unlimited",new Integer(rowCount));
+
+		restrictQuery.remove(SELECT_CLAUSE);
+		restrictQuery.put(SELECT_CLAUSE,"distinct snp._SNP_key");
+        restrictQuery.put(INTO_CLAUSE, TMP_TABLE);
+
+
+		commands.add(buildQuery(restrictQuery));
         //create our temp tables to store our adorned results in
         commands.add(Sprintf.sprintf(CREATE_RESULTS_TABLE,RESULTS_TABLE));
         commands.add(Sprintf.sprintf(CREATE_ALLELE_RESULTS_TABLE,
@@ -84,12 +105,22 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
 
         // load our temp tables with the adorned results
         commands.add("set rowcount "+lim);
-        commands.addAll(getSNPAdornment(TMP_TABLE,RESULTS_TABLE));
+        commands.add(Sprintf.sprintf("insert into %s (_SNP_key, chromosome, coordinate)\n"+
+                        "select snp._SNP_key, loc.chromosome, loc.coordinate\n"+
+                        "from %s snp, %s loc, %s keys\n"+
+                        "where snp._Location_key = loc._Location_key\n"+
+                        "and snp._SNP_key = keys._SNP_key\n",
+                        RESULTS_TABLE,
+                        SNP_TABLE,
+                        LOCATION_TABLE,
+                        TMP_TABLE));
         commands.add("set rowcount 0");
-        commands.addAll(getStrainAdornment(TMP_TABLE,
+		commands.add("drop table "+TMP_TABLE);
+        commands.addAll(getSNPAdornment(RESULTS_TABLE,RESULTS_TABLE));
+        commands.addAll(getStrainAdornment(RESULTS_TABLE,
                                            RESULTS_TABLE,
                                            allowedStrains));
-        commands.addAll(getMarkerAdornment(TMP_TABLE, RESULTS_TABLE));
+        commands.addAll(getMarkerAdornment(RESULTS_TABLE, RESULTS_TABLE));
 
 
         //Pull the results out of our temp tables
@@ -158,12 +189,7 @@ System.out.println(markerCommand);
         }
 
         nav.close();
-        nav = this.sqlDM.executeQuery("select cnt=count(*) from "+TMP_TABLE);
-        while(nav.next()) {
-            rr = (RowReference) nav.getCurrent();
-            snps.set("unlimited",rr.getInt(1));
 
-        }
 
 
         snps.set("mrks",snpMarker);
@@ -180,11 +206,9 @@ System.out.println(markerCommand);
     }
 
     //-------------------------------------------------------------
-    private String getMatchingSNPs(WebArgs wa) throws IOException,
+    private ListHash getMatchingSNPs(WebArgs wa) throws IOException,
                                                       DBException {
         ListHash sqlClauses = new ListHash();
-        sqlClauses.put(SELECT_CLAUSE, "distinct snp._SNP_key");
-        sqlClauses.put(INTO_CLAUSE, TMP_TABLE);
         sqlClauses.put(FROM_CLAUSE, SNP_TABLE+" snp");
 
         if(wa.hasArg("accID")) {
@@ -231,7 +255,7 @@ System.out.println(markerCommand);
             sqlClauses.merge(getFunctionalLocationSQL(wa.getArg("fxn")));
         }
 
-        return buildQuery(sqlClauses);
+        return sqlClauses;
 
 
     }
@@ -399,60 +423,18 @@ System.out.println(markerCommand);
                                                 ResolvedWebArg flank) throws DBException {
 
         ListHash results = new ListHash();
-        ArrayList curWhere;
-        ArrayList whereClauses = new ArrayList();
+        ListHash tmpCmd = new ListHash();
         String flankOp = flank.getOperator();
         Integer flankVal = new Integer( Integer.parseInt(flank.getValues()[0])*1000);
-        String val;
-        HashMap orient;
-        Object[] keys;
 
-        orient = findMarkerOrientation(marker);
-        keys = orient.keySet().toArray();
+		this.sqlDM.execute("Create table #flankingSNPs(_SNP_key int not null)");
+        findMarkerOrientation(marker, "#orient");
 
-        results.put(FROM_CLAUSE, LOCATION_TABLE + " loc");
-        results.put(FROM_CLAUSE, "VOC_Term vt");
+		this.sqlDM.execute(getForwardCommand("#flankingSNPs", "#orient", flankVal,flankOp));
+		this.sqlDM.execute(getReverseCommand("#flankingSNPs", "#orient", flankVal,flankOp));
 
-        results.put(WHERE_CLAUSE, "vt.term = 'genomic'");
-        results.put(WHERE_CLAUSE, "loc._Location_key = snp._Location_key");
-
-        for(int i=0;i<keys.length;i++) {
-            curWhere = new ArrayList();
-            results.put(FROM_CLAUSE, "SEQ_Marker_Cache smc"+i);
-            results.put(FROM_CLAUSE, "MAP_Coord_Feature mcf"+i);
-            results.put(FROM_CLAUSE, "MRK_Chromosome chromo"+i);
-            results.put(FROM_CLAUSE, "MAP_Coordinate mcoord"+i);
-
-            results.put(WHERE_CLAUSE,"smc"+i+"._Qualifier_key = vt._Term_key");
-            results.put(WHERE_CLAUSE,"smc"+i+"._Marker_key = "+keys[i]);
-            results.put(WHERE_CLAUSE,"mcf"+i+"._Object_key = smc"+i+"._Sequence_key");
-            results.put(WHERE_CLAUSE,"mcf"+i+"._MGIType_key = 19");
-            results.put(WHERE_CLAUSE,"loc.chromosome = chromo"+i+".chromosome");
-            results.put(WHERE_CLAUSE,"mcoord"+i+"._Object_key = chromo"+i+"._Chromosome_key");
-            results.put(WHERE_CLAUSE,"mcoord"+i+"._MGIType_key = 27");
-            results.put(WHERE_CLAUSE,"mcoord"+i+"._Map_key = mcf"+i+"._Map_key");
-            if(!flankOp.equals("upstream")) {
-                if(((String)orient.get(keys[i])).equals("+"))
-                    curWhere.add("loc.coordinate>=mcf"+i+".startCoordinate-"+flankVal);
-                else curWhere.add("loc.coordinate<=mcf"+i+".endCoordinate+"+flankVal);
-            } else {
-                if(((String)orient.get(keys[i])).equals("+"))
-                    curWhere.add("loc.coordinate>=mcf"+i+".startCoordinate");
-                else curWhere.add("loc.coordinate<=mcf"+i+".endCoordinate");
-            }
-
-            if(!flankOp.equals("downstream")) {
-                if(((String)orient.get(keys[i])).equals("+"))
-                   curWhere.add("loc.coordinate<=mcf"+i+".endCoordinate+"+flankVal);
-                else curWhere.add("loc.coordinate>=mcf"+i+".startCoordinate-"+flankVal);
-            } else {
-                 if(((String)orient.get(keys[i])).equals("+"))
-                   curWhere.add("loc.coordinate<=mcf"+i+".endCoordinate");
-                else curWhere.add("loc.coordinate>=mcf"+i+".startCoordinate");
-            }
-            whereClauses.add(StringLib.join(curWhere, "\nand "));
-        }
-        results.put(WHERE_CLAUSE, "("+StringLib.join(whereClauses, "\nor ")+")");
+		results.put(FROM_CLAUSE, "#flankingSNPs flnk");
+		results.put(WHERE_CLAUSE, "flnk._SNP_key = snp._SNP_key");
         return results;
     }
 
@@ -505,15 +487,6 @@ System.out.println(markerCommand);
     private static ArrayList getSNPAdornment(String keyTable, String resultsTable) {
         ArrayList commands = new ArrayList();
 
-        commands.add(Sprintf.sprintf("insert into %s (_SNP_key, chromosome, coordinate)\n"+
-                        "select snp._SNP_key, loc.chromosome, loc.coordinate\n"+
-                        "from %s snp, %s loc, %s keys\n"+
-                        "where snp._Location_key = loc._Location_key\n"+
-                        "and snp._SNP_key = keys._SNP_key\n",
-                        RESULTS_TABLE,
-                        SNP_TABLE,
-                        LOCATION_TABLE,
-                        keyTable));
         for(int i=0;i<NULL_COLS.length;i++)
             commands.add(Sprintf.sprintf("update %s\n"+
                             "set %s = snp.%s\n"+
@@ -591,6 +564,8 @@ System.out.println(markerCommand);
         sqlClauses.removeDuplicates(FROM_CLAUSE);
         sqlClauses.removeDuplicates(WHERE_CLAUSE);
 
+		if(sqlClauses.containsKey(INSERT_CLAUSE))
+			command.append("insert into "+StringLib.join((List)sqlClauses.get(INSERT_CLAUSE),", ")+"\n");
         if(sqlClauses.containsKey(SELECT_CLAUSE))
             command.append("select "+StringLib.join((List)sqlClauses.get(SELECT_CLAUSE),", ")+"\n");
         else return null;
@@ -602,19 +577,19 @@ System.out.println(markerCommand);
         if(sqlClauses.containsKey(WHERE_CLAUSE))
             command.append("where "+StringLib.join((List)sqlClauses.get(WHERE_CLAUSE),"\nand ")+"\n");
 
-
+		System.out.println(command);
         return command.toString();
     }
 
     //--------------------------------------------------------------
-    protected HashMap findMarkerOrientation(ResolvedWebArg marker) throws DBException {
+    protected void findMarkerOrientation(ResolvedWebArg marker, String tableName) throws DBException {
         ListHash tmpCmd = new ListHash();
         ResultsNavigator nav = null;
         RowReference rr = null;
         HashMap results = new HashMap();
-        String query;
 
         tmpCmd.put(SELECT_CLAUSE, "distinct mrkl._Marker_key, mcf.strand");
+        tmpCmd.put(INTO_CLAUSE, tableName);
         tmpCmd.put(FROM_CLAUSE, "SEQ_Marker_Cache smc");
         tmpCmd.put(FROM_CLAUSE, "MAP_Coord_Feature mcf");
         tmpCmd.put(FROM_CLAUSE, "VOC_Term vt");
@@ -625,15 +600,66 @@ System.out.println(markerCommand);
         tmpCmd.put(WHERE_CLAUSE, "mcf._MGIType_key = 19");
         tmpCmd.merge(getLabelClauses(marker));
 
-        query = buildQuery(tmpCmd);
-
-        nav = this.sqlDM.executeQuery(query);
-        while(nav.next()) {
-            rr = (RowReference) nav.getCurrent();
-            results.put(rr.getInt(1),rr.getString(2));
-        }
-        return results;
+        this.sqlDM.execute(buildQuery(tmpCmd));
     }
+
+    //----------------------------------
+    protected ListHash getBasicFlank(String resultTable,String mrkKeyTable) {
+
+		ListHash result = new ListHash();
+
+		result.put(INSERT_CLAUSE, resultTable+"(_SNP_key)\n");
+		result.put(SELECT_CLAUSE, "snp._SNP_key");
+		result.put(FROM_CLAUSE, mrkKeyTable+" mrkKeys");
+		result.put(FROM_CLAUSE, "MRK_Location_Cache mlc");
+		result.put(FROM_CLAUSE, LOCATION_TABLE+" loc");
+		result.put(FROM_CLAUSE, SNP_TABLE+" snp");
+		result.put(WHERE_CLAUSE, "mrkKeys._Marker_key = mlc._Marker_key");
+		result.put(WHERE_CLAUSE, "snp._Location_key = loc._Location_key");
+		result.put(WHERE_CLAUSE, "loc.chromosome = mlc.chromosome");
+System.out.println("===========");
+System.out.println(result.get(INSERT_CLAUSE));
+System.out.println(buildQuery(result));
+		return result;
+	}
+
+    //----------------------------------------------------
+	protected String getForwardCommand(String mrkKeyTable,
+									   String resultTable,
+									   Integer flankVal,
+									   String operator) {
+		ListHash result = new ListHash();
+
+		result.merge(getBasicFlank(mrkKeyTable,resultTable));
+		result.put(WHERE_CLAUSE, "mrkKeys.strand='+'");
+		if(!operator.equals("downstream"))
+			result.put(WHERE_CLAUSE, "loc.coordinate >= mlc.startCoordinate-"+flankVal);
+		else result.put(WHERE_CLAUSE, "loc.coordinate >= mlc.startCoordinate");
+		if(!operator.equals("upstream"))
+			result.put(WHERE_CLAUSE, "loc.coordinate <= mlc.endCoordinate+"+flankVal);
+		else result.put(WHERE_CLAUSE, "loc.coordinate <= mlc.endCoordinate");
+
+		return buildQuery(result);
+	}
+
+    //----------------------------------------------------------------------
+	protected String getReverseCommand(String mrkKeyTable,
+									   String resultTable,
+									   Integer flankVal,
+									   String operator) {
+		ListHash result = new ListHash();
+
+		result.merge(getBasicFlank(mrkKeyTable,resultTable));
+		result.put(WHERE_CLAUSE, "mrkKeys.strand='-'");
+		if(!operator.equals("downstream"))
+			result.put(WHERE_CLAUSE, "loc.coordinate <= mlc.endCoordinate+"+flankVal);
+		else result.put(WHERE_CLAUSE, "loc.coordinate <= mlc.endCoordinate");
+		if(!operator.equals("upstream"))
+			result.put(WHERE_CLAUSE, "loc.coordinate >= mlc.startCoordinate-"+flankVal);
+		else result.put(WHERE_CLAUSE, "loc.coordinate >= mlc.startCoordinate");
+
+		return buildQuery(result);
+	}
 
     //--------------------------------------------------------------
     private static ListHash getLabelClauses(ResolvedWebArg marker) {
@@ -712,9 +738,12 @@ System.out.println(markerCommand);
         }
         if(wa.hasArg("asmbl") && !(wa.hasArg("symname")))
             throw new IOException("You must enter a marker symbol if you enter a value for flanking distance.");
-
+        if( (wa.argCount()<=4) && (wa.hasArg("snpType") || wa.hasArg("fxn") || wa.hasArg("cmpStrains"))) {
+			throw new IOException("Your query will return too many results, please add additional query parameters.");
+		}
     }
 
+	private static final String INSERT_CLAUSE = "insertClause";
     private static final String SELECT_CLAUSE = "selectClause";
     private static final String INTO_CLAUSE = "intoClause";
     private static final String FROM_CLAUSE = "fromClause";
@@ -727,11 +756,11 @@ System.out.println(markerCommand);
     private static final String ALLELE_RESULTS_TABLE = "#alleles";
     private static final String MARKER_RESULTS_TABLE = "#markers";
 
-    private static final String LOCATION_TABLE = "radar_dbm..SNP_Location";
-    private static final String SNP_TABLE = "radar_dbm..SNP_SNP";
-    private static final String STRAIN_TABLE = "radar_dbm..SNP_Strain";
-    private static final String ALLELE_TABLE = "radar_dbm..SNP_Strain_SNP_Assoc";
-    private static final String MARKER_ASSOC_TABLE = "radar_dbm..SNP_Location_Marker_Assoc";
+    private static final String LOCATION_TABLE = "radar..SNP_Location";
+    private static final String SNP_TABLE = "radar..SNP_SNP";
+    private static final String STRAIN_TABLE = "radar..SNP_Strain";
+    private static final String ALLELE_TABLE = "radar..SNP_Strain_SNP_Assoc";
+    private static final String MARKER_ASSOC_TABLE = "radar..SNP_Location_Marker_Assoc";
 
     private static final String CREATE_RESULTS_TABLE =
     "create table %s (\n"+
