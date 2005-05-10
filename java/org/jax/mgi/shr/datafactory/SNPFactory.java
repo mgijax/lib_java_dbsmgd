@@ -213,48 +213,48 @@ System.out.println(markerCommand);
 
         if(wa.hasArg("accID")) {
             sqlClauses.merge(getSNPIDSQL(wa.getArg("accID")));
-        }
+        } else {
 
-        if(wa.hasArg("snpType")) {
-            sqlClauses.merge(getPolymorphismClassSQL(wa.getArg("snpType")));
-        }
+			if(wa.hasArg("snpType")) {
+				sqlClauses.merge(getPolymorphismClassSQL(wa.getArg("snpType")));
+			}
 
-        if(wa.hasArg("cmpStrains")){
-            sqlClauses.merge(getStrainSQL(wa.getArg("cmpStrains")));
-        }
+			if(wa.hasArg("cmpStrains")){
+				sqlClauses.merge(getStrainSQL(wa.getArg("cmpStrains")));
+			}
 
-        if(wa.hasArg("refStrain")){
-            sqlClauses.merge(getReferenceStrainSQL(wa.getArg("refStrain"),
-                                                   wa.getArg("cmpStrains")));
-        }
+			if(wa.hasArg("refStrain")){
+				sqlClauses.merge(getReferenceStrainSQL(wa.getArg("refStrain"),
+													   wa.getArg("cmpStrains")));
+			}
 
-        if(wa.hasArg("chromosome")) {
-            sqlClauses.merge(getChromosomeSQL(wa.getArg("chromosome")));
-        }
+			if(wa.hasArg("chromosome")) {
+				sqlClauses.merge(getChromosomeSQL(wa.getArg("chromosome")));
+			}
 
-        if( (wa.hasArg("coordStart")) && (wa.hasArg("coordEnd"))) {
-            sqlClauses.merge(getGenomeCoordinateSQL(wa.getArg("coordStart"),
-                                                    wa.getArg("coordEnd")));
-        }
+			if( (wa.hasArg("coordStart")) && (wa.hasArg("coordEnd"))) {
+				sqlClauses.merge(getGenomeCoordinateSQL(wa.getArg("coordStart"),
+														wa.getArg("coordEnd")));
+			}
 
-        if(wa.hasArg("symname")) {
-            if(wa.hasArg("asmbl")) {
-                sqlClauses.merge(getMarkerNomenWithFlankSQL(wa.getArg("symname"),
-                                                            wa.getArg("asmbl")));
-            } else {
-                sqlClauses.merge(getMarkerNomenclatureSQL(wa.getArg("symname")));
-            }
-        }
+			if(wa.hasArg("symname")) {
+				if(wa.hasArg("asmbl")) {
+					sqlClauses.merge(getMarkerNomenWithFlankSQL(wa.getArg("symname"),
+																wa.getArg("asmbl")));
+				} else {
+					sqlClauses.merge(getMarkerNomenclatureSQL(wa.getArg("symname")));
+				}
+			}
 
-        if((wa.hasArg("startMarker")) && (wa.hasArg("endMarker"))) {
-            sqlClauses.merge(getBoundryMarkersSQL(wa.getArg("startMarker"),
-                                                  wa.getArg("endMarker")));
-        }
+			if((wa.hasArg("startMarker")) && (wa.hasArg("endMarker"))) {
+				sqlClauses.merge(getBoundryMarkersSQL(wa.getArg("startMarker"),
+													  wa.getArg("endMarker")));
+			}
 
-        if(wa.hasArg("fxn")) {
-            sqlClauses.merge(getFunctionalLocationSQL(wa.getArg("fxn")));
-        }
-
+			if(wa.hasArg("fxn")) {
+				sqlClauses.merge(getFunctionalLocationSQL(wa.getArg("fxn")));
+			}
+		}
         return sqlClauses;
 
 
@@ -268,13 +268,15 @@ System.out.println(markerCommand);
     private static ListHash getSNPIDSQL(ResolvedWebArg rwa) {
 
         ListHash results = new ListHash();
-        String value = rwa.getValues()[0];
+        String[] value = rwa.getValues();
         ArrayList clauses = new ArrayList();
 
         results.put(FROM_CLAUSE, SNP_TABLE + " snp");
-        clauses.add("snp.pID like '"+value+"'");
-        clauses.add("snp.rsID like '"+value+"'");
-        clauses.add("snp.ssID like '"+value+"'");
+        for(int i=0;i<value.length;i++) {
+    	    clauses.add("snp.pID like '"+value[i]+"'");
+    	    clauses.add("snp.rsID like '"+value[i]+"'");
+    	    clauses.add("snp.ssID like '"+value[i]+"'");
+		}
         results.put(WHERE_CLAUSE, "("+StringLib.join(clauses, "\nor ")+")");
         return results;
     }
@@ -393,10 +395,16 @@ System.out.println(markerCommand);
                                                    ResolvedWebArg stop) {
 
         ListHash results = new ListHash();
-        String startCoord = start.getValues()[0];
-        String stopCoord = stop.getValues()[0];
+        int multiplier = 1;
+        List mods = Arrays.asList(start.getModifiers());
+        if(mods.contains("Mbp")) {
+			multiplier = 1000000;
+		}
+		Double startCoord = new Double(Double.parseDouble(start.getValues()[0])*multiplier);
+        Double stopCoord = new Double(Double.parseDouble(stop.getValues()[0])*multiplier);
 
-        results.merge(getCoordClauses(startCoord,stopCoord));
+        results.merge(getCoordClauses(Integer.toString(startCoord.intValue()),
+        							  Integer.toString(stopCoord.intValue())));
         return results;
     }
 
@@ -740,6 +748,9 @@ System.out.println(buildQuery(result));
             throw new IOException("You must enter a marker symbol if you enter a value for flanking distance.");
         if( (wa.argCount()<=4) && (wa.hasArg("snpType") || wa.hasArg("fxn") || wa.hasArg("cmpStrains"))) {
 			throw new IOException("Your query will return too many results, please add additional query parameters.");
+		}
+        if((wa.argCount()>4) && (wa.hasArg("accID"))) {
+			throw new IOException("You cannot query by accession ids and other fields.");
 		}
     }
 
