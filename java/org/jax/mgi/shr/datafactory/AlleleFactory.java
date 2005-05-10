@@ -708,7 +708,7 @@ public class AlleleFactory
                 notes += rr.getString(4);
             }
             else {
-		notes = refPart + superscript(notes);
+		notes = refPart + escape(notes);
                 expts.add(notes);
 
                 exptKey = rr.getInt(1);
@@ -721,7 +721,7 @@ public class AlleleFactory
         }
 
         if (notes != null) {
-	    notes = refPart + superscript(notes);
+	    notes = refPart + escape(notes);
             expts.add(notes);
         }
 
@@ -1058,6 +1058,16 @@ public class AlleleFactory
         // otherwise, 's' and 't' are both non-null, so we use both
 
         return s + t;
+    }
+
+    /* -------------------------------------------------------------------- */
+
+    public String escape (String s) 
+    {
+        String ret;
+        ret = s.replaceAll("<","&lt;");
+        ret = ret.replaceAll(">","&gt;");
+        return ret;
     }
 
     /* -------------------------------------------------------------------- */
