@@ -46,7 +46,7 @@ public class SNP {
 			typeDefs = new HashMap();
 			typeDefs.put("Cn","Coding-Nonsynonymous");
 			typeDefs.put("Cs,Cx","Coding-Synonymous");
-            typeDefs.put("M","Mrna-utr");
+            typeDefs.put("M","mRNA-UTR");
             typeDefs.put("I","In intron, except first 2 and last 2 bases");
             typeDefs.put("S","Splice-site");
             typeDefs.put("L","not assigned to a gene");
