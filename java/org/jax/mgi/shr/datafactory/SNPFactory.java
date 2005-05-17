@@ -157,7 +157,6 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
             curSnp.polymorphismClass = rr.getString(6);
             curSnp.chromosome = rr.getString(7);
             curSnp.coordinate= rr.getInt(8);
-System.out.println(curSnp.coordinate);
             curSnp.orientation = rr.getString(9);
             _SNP_key = rr.getInt(10);
             snpOrder.add(_SNP_key);
@@ -683,7 +682,6 @@ System.out.println(curSnp.coordinate);
 
         results.put(FROM_CLAUSE, "MRK_Label mrkl");
 
-        System.out.println(mods);
         if (mods.contains("current symbols/names")) {
             results.put(WHERE_CLAUSE,"mrkl.labelType not in (mrkl.labelType not in ('OS','ON','AS','AN','MY')");
             results.put(WHERE_CLAUSE, current);
