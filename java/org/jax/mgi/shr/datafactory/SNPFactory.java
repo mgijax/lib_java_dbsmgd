@@ -86,7 +86,8 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
                 rowCount = rr.getInt(1).intValue();
             }
         } catch(DBException dbe) {
-            throw new IOException("Your query will return too many results, please add additional query parameters.");
+            dbe.printStackTrace();
+           // throw new IOException("Your query will return too many results, please add additional query parameters.");
         } finally {
             if(nav!=null)
                 nav.close();
@@ -155,7 +156,8 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
             curSnp.functionalLocation = rr.getString(5);
             curSnp.polymorphismClass = rr.getString(6);
             curSnp.chromosome = rr.getString(7);
-            curSnp.coordinate = rr.getDouble(8).intValue();
+            curSnp.coordinate= rr.getInt(8);
+System.out.println(curSnp.coordinate);
             curSnp.orientation = rr.getString(9);
             _SNP_key = rr.getInt(10);
             snpOrder.add(_SNP_key);
@@ -681,17 +683,17 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
 
         results.put(FROM_CLAUSE, "MRK_Label mrkl");
 
-
+        System.out.println(mods);
         if (mods.contains("current symbols/names")) {
-            results.put(WHERE_CLAUSE,"mrkl.labelType not in ('AS','AN','MY')");
+            results.put(WHERE_CLAUSE,"mrkl.labelType not in (mrkl.labelType not in ('OS','ON','AS','AN','MY')");
             results.put(WHERE_CLAUSE, current);
 
         } else if(mods.contains("current symbols")) {
-            results.put(WHERE_CLAUSE,"mrkl.labelType in ('MS','OS')");
+            results.put(WHERE_CLAUSE,"mrkl.labelType = 'MS'");
             results.put(WHERE_CLAUSE,current);
 
         } else {
-            results.put(WHERE_CLAUSE,"mrkl.labelType not in ('AS','AN')");
+            results.put(WHERE_CLAUSE,"mrkl.labelType not in ('AS','AN','OS','ON')");
             results.put(WHERE_CLAUSE,current);
         }
 
@@ -784,7 +786,7 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         "rsID                varchar(12) NULL,\n"+
         "pID                 varchar(30) NULL,\n"+
         "chromosome          varchar(2)  not null,\n"+
-        "coordinate          float(8)    not null,\n"+
+        "coordinate          int         not null,\n"+
         "orientation         char(1)     NULL)\n";
 
     private static final String CREATE_ALLELE_RESULTS_TABLE =

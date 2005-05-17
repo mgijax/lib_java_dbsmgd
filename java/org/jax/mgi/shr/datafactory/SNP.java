@@ -12,7 +12,7 @@ public class SNP {
 	public String functionalLocation = null;
 	public String polymorphismClass = null;
 	public String chromosome = null;
-	public int coordinate = -1;
+	public Integer coordinate = null;
 	public String orientation = null;
 
 	protected static HashMap classDefs = null;
