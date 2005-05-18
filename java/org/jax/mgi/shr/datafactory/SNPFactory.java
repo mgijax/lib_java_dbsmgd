@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,7 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         String markerSymbol;
         String strainName;
         String snpKeys;
+        Strains cmp = new Strains();
         WebArgs wa = new WebArgs(QueryParameters);
         int rowCount =0;
 
@@ -111,11 +113,13 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
 
         // load our temp tables with the adorned results
         commands.add("set rowcount "+lim);
-        commands.add(Sprintf.sprintf("insert into %s (_SNP_key, chromosome, coordinate)\n"+
-                        "select snp._SNP_key, loc.chromosome, loc.coordinate\n"+
-                        "from %s snp, %s loc, %s keys\n"+
+        commands.add(Sprintf.sprintf("insert into %s (_SNP_key, chromosome, coordinate, seqNum)\n"+
+                        "select distinct snp._SNP_key, loc.chromosome, loc.coordinate, mc.sequenceNum\n"+
+                        "from %s snp, %s loc, %s keys, MRK_Chromosome mc\n"+
                         "where snp._Location_key = loc._Location_key\n"+
-                        "and snp._SNP_key = keys._SNP_key\n",
+                        "and snp._SNP_key = keys._SNP_key\n"+
+                        "and loc.chromosome = mc.chromosome\n"+
+                        "and mc._Organism_key = 1",
                         RESULTS_TABLE,
                         SNP_TABLE,
                         LOCATION_TABLE,
@@ -161,6 +165,9 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
             _SNP_key = rr.getInt(10);
             snpOrder.add(_SNP_key);
             snpHash.put(_SNP_key,curSnp);
+System.out.println(curSnp.chromosome);
+System.out.println(curSnp.coordinate);
+
         }
         nav.close();
 
@@ -199,6 +206,11 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         snps.set("mrks",snpMarker);
         snps.set("snps",snpHash);
         snps.set("ordering",snpOrder);
+System.out.println(returnedStrains);
+        Collections.sort(returnedStrains,cmp);
+System.out.println("===================");
+System.out.println(returnedStrains);
+
         if(wa.hasArg("refStrain") && returnedStrains.contains(wa.getArg("refStrain").getValues()[0])) {
             returnedStrains.remove(wa.getArg("refStrain").getValues()[0]);
             returnedStrains.add(0,wa.getArg("refStrain").getValues()[0]);
@@ -534,14 +546,15 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         }
 
         commands.add(Sprintf.sprintf("insert into %s (strainName, allele, _SNP_key)\n"+
-                        "select distinct st.name, ssa.allele, keys._SNP_key\n"+
-                        "from %s st, %s ssa, %s keys\n"+
-                        "where keys._SNP_key = ssa._SNP_key\n"+
-                        "and st._Strain_key = ssa._Strain_key\n"+allowed,
-                        ALLELE_RESULTS_TABLE,
-                        STRAIN_TABLE,
-                        ALLELE_TABLE,
-                        keyTable));
+                            "select distinct st.name, ssa.allele, keys._SNP_key\n"+
+                            "from %s st, %s ssa, %s keys\n"+
+                            "where keys._SNP_key = ssa._SNP_key\n"+
+                            "and st._Strain_key = ssa._Strain_key\n"+
+                            allowed,
+                                     ALLELE_RESULTS_TABLE,
+                                     STRAIN_TABLE,
+                                     ALLELE_TABLE,
+                                     keyTable));
 
         return commands;
     }
@@ -785,13 +798,14 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         "pID                 varchar(30) NULL,\n"+
         "chromosome          varchar(2)  not null,\n"+
         "coordinate          int         not null,\n"+
-        "orientation         char(1)     NULL)\n";
+        "orientation         char(1)     NULL,\n"+
+        "seqNum              int         not null)\n";
 
     private static final String CREATE_ALLELE_RESULTS_TABLE =
     "create table %s (\n"+
         "_SNP_key            int         not null,\n"+
         "strainName          varchar(40) not null,\n"+
-        "allele              varchar(80) not null)\n";
+        "allele              varchar(80) not null,)\n";
 
     private static final String CREATE_MARKER_RESULTS_TABLE =
     "create table %s (\n"+
@@ -801,8 +815,9 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
     private static final String RESULTS_COMMAND =
     "select distinct rt.rsID, rt.ssID, rt.pID, rt.providerName, rt.functionalLocation,\n"+
     "rt.polymorphismClass, rt.chromosome, rt.coordinate, rt.orientation, rt._SNP_key\n"+
-    "from %s rt\n"+
-    "order by rt.chromosome, rt.coordinate";
+    "from %s rt, MRK_Chromosome mc\n"+
+    "where mc.chromosome = rt.chromosome\n"+
+    "order by rt.seqNum, rt.coordinate\n";
 
     private static final String ALLELE_COMMAND =
     "select distinct al.strainName, al.allele, al._SNP_key\n"+

@@ -1,4 +1,5 @@
 package org.jax.mgi.shr.datafactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.jax.mgi.shr.stringutil.Sprintf;
