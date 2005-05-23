@@ -138,7 +138,7 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         resultsCommand = Sprintf.sprintf(RESULTS_COMMAND, RESULTS_TABLE);
         alleleCommand = Sprintf.sprintf(ALLELE_COMMAND, ALLELE_RESULTS_TABLE);
         markerCommand = Sprintf.sprintf(MARKER_COMMAND, MARKER_RESULTS_TABLE);
-
+        this.logger.logInfo("Starting SQL");
         for(int i=0;i<commands.size();i++) {
             String curCmd = (String)commands.get(i);
             this.logger.logInfo(curCmd);
@@ -150,6 +150,7 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
         }
 
         nav = this.sqlDM.executeQuery(resultsCommand);
+        this.logger.logInfo(resultsCommand);
         while(nav.next()) {
             SNP curSnp = new SNP();
             rr = (RowReference) nav.getCurrent();
@@ -165,13 +166,12 @@ public class SNPFactory extends Factory implements SummaryReportFactory{
             _SNP_key = rr.getInt(10);
             snpOrder.add(_SNP_key);
             snpHash.put(_SNP_key,curSnp);
-System.out.println(curSnp.chromosome);
-System.out.println(curSnp.coordinate);
 
         }
         nav.close();
 
         nav = this.sqlDM.executeQuery(alleleCommand);
+        this.logger.logInfo(alleleCommand);
         while(nav.next()) {
             Map strainAlleleMap;
             rr = (RowReference) nav.getCurrent();
@@ -192,6 +192,7 @@ System.out.println(curSnp.coordinate);
         nav.close();
 
         nav = this.sqlDM.executeQuery(markerCommand);
+        this.logger.logInfo(markerCommand);
         while(nav.next()) {
             rr = (RowReference) nav.getCurrent();
             _SNP_key = rr.getInt(1);
@@ -200,16 +201,13 @@ System.out.println(curSnp.coordinate);
         }
 
         nav.close();
-
+        this.logger.logInfo("SQL Complete");
 
 
         snps.set("mrks",snpMarker);
         snps.set("snps",snpHash);
         snps.set("ordering",snpOrder);
-System.out.println(returnedStrains);
         Collections.sort(returnedStrains,cmp);
-System.out.println("===================");
-System.out.println(returnedStrains);
 
         if(wa.hasArg("refStrain") && returnedStrains.contains(wa.getArg("refStrain").getValues()[0])) {
             returnedStrains.remove(wa.getArg("refStrain").getValues()[0]);
@@ -545,16 +543,19 @@ System.out.println(returnedStrains);
             allowed = Sprintf.sprintf("and st.name in ('%s')",StringLib.join(allowedStrains,"','"));
         }
 
+        commands.add("SET FORCEPLAN ON");
         commands.add(Sprintf.sprintf("insert into %s (strainName, allele, _SNP_key)\n"+
                             "select distinct st.name, ssa.allele, keys._SNP_key\n"+
-                            "from %s st, %s ssa, %s keys\n"+
+                            "from %s st, %s keys, %s ssa (index idx_Strain_SNP_Allele)\n"+
                             "where keys._SNP_key = ssa._SNP_key\n"+
                             "and st._Strain_key = ssa._Strain_key\n"+
                             allowed,
                                      ALLELE_RESULTS_TABLE,
                                      STRAIN_TABLE,
-                                     ALLELE_TABLE,
-                                     keyTable));
+                                     keyTable,
+                                     ALLELE_TABLE
+                                     ));
+        commands.add("SET FORCEPLAN OFF");
 
         return commands;
     }
