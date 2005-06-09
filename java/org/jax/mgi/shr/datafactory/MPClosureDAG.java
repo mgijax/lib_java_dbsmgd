@@ -81,13 +81,11 @@ public class MPClosureDAG {
     // find the genotypes, their allelic compositions and background strains.
     // fill in: allele key (int)
     private static final String GET_CLOSURE =
-		"select dn1._Object_key as ancestor, "
-        + " dn2._Object_key as descendent "
-        + " from VOC_Term vt, DAG_Node dn1, DAG_Closure dc, DAG_Node dn2 "
+		"select dc._AncestorObject_key as ancestor, "
+        + " dc._DescendentObject_key as descendent "
+        + " from VOC_Term vt, DAG_Closure dc "
         + " where vt._Vocab_key = 5  "
-        + " and vt._Term_key = dn1._Object_key "
-        + " and dn1._Node_key = dc._Ancestor_key "
-        + " and dc._Descendent_key = dn2._Node_key "
-        + " order by dn1._Object_key";
+        + " and vt._Term_key = dc._AncestorObject_key "
+        + " order by dc._AncestorObject_key";
 
 }
