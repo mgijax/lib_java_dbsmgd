@@ -1349,10 +1349,14 @@ public class AlleleFactory
         + "  br.title, br.title2, "
         + "  citation = br.journal + ' ' + br.date + ';' + br.vol "
 		+ "+ '(' + br.issue + '):' + br.pgs "
-        + " FROM BIB_Refs br, ACC_Accession aa, MGI_Reference_Assoc mr "
+        + " FROM BIB_Refs br, ACC_Accession aa, MGI_Reference_Assoc mr, "
+        + "   MGI_RefAssocType mrat  "
         + " WHERE mr._Object_key = %d "
         + "  AND mr._MGIType_key = " + DBConstants.MGIType_Allele
         + "  AND mr._Refs_key = br._Refs_key "
+        + "  AND mr._RefAssocType_key = mrat._RefAssocType_key "
+        + "  AND mrat._MGIType_key =  " + DBConstants.MGIType_Allele
+        + "  AND mrat.assocType = 'Original' "
         + "  AND br._Refs_key = aa._Object_key "
         + "  AND aa._MGIType_key = 1 "
         + "  AND aa._LogicalDB_key = 1 "
