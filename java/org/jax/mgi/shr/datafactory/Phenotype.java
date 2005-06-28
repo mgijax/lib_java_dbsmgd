@@ -526,7 +526,7 @@ public class Phenotype implements Comparable {
     private Map parseAllelePair(String ap) {
         HashMap hm = new HashMap();
         //  An allele pair is seperated by a forward slash character.
-        String[] pair = ap.split("\\)/");
+        String[] pair = ap.split("\\/");
         hm.put("allele1", parseAllele(pair[0]) );
         if (pair.length > 1) {
             hm.put("allele2", parseAllele(pair[1]) );
