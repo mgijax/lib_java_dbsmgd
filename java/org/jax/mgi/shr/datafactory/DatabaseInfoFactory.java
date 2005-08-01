@@ -52,6 +52,7 @@ public class DatabaseInfoFactory extends AbstractDataFactory
 	    data.set (DTOConstants.DatabaseVersion, rr.getString(2));
 	}
 	cache.put (cacheKey, (DTO) data.clone(), 5 * 60);
+	nav.close();
 
 	this.timeStamp ("Retrieved database date and version from db");
 
