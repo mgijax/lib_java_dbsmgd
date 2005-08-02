@@ -1,5 +1,10 @@
 package org.jax.mgi.shr.datafactory;
 
+/*
+* $Header$
+* $Name$
+*/
+
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,14 +19,43 @@ import org.jax.mgi.shr.stringutil.Sprintf;
 import org.jax.mgi.shr.stringutil.StringLib;
 import org.jax.mgi.shr.cache.ExpiringObjectCache;
 
+/**
+* @module ImageFactory.java
+* @author jsb
+*/
+
+/** The ImageFactory class contains methods which encapsulate knowledge of
+*    the image-related portions of the schema.  These  allow for easy
+*    retrieval of an image's attributes and related database objects.
+* @is a factory for retrieving information related to images
+* @has all data available for images, retrieved from a database
+* @does queries a database to retrieve subsets of information about images.
+*    Retrieval methods will always return a new <tt>DTO</tt>.  These DTO
+*    objects may then be merged if needed.
+*/
 public class ImageFactory extends AbstractDataFactory
 {
+    /////////////////////
+    // instance variables
+    /////////////////////
+
+    // provides parameters needed to configure an ImageFactory
     private DataFactoryCfg config = null;
+
+    // provides access to the database
     private SQLDataManager sqlDM = null;
 
-    // -----------------------------------------------------------------------
+    ///////////////
+    // Constructors
+    ///////////////
 
-    /** constructor
+    /** constructor; instantiates and initializes a new ImageFactory.
+    * @param config provides parameters needed to configure an ImageFactory
+    * @param sqlDM provides access to a database
+    * @param logger provides logging capability
+    * @assumes nothing
+    * @effects nothing
+    * @throws nothing
     */
     public ImageFactory (DataFactoryCfg config, SQLDataManager sqlDM,
                 Logger logger)
@@ -32,8 +66,23 @@ public class ImageFactory extends AbstractDataFactory
 	return;
     }
 
-    // -----------------------------------------------------------------------
+    //////////////////////////
+    // public instance methods
+    //////////////////////////
 
+    /** find a unique key identifying the image specified by the given 'parms'
+    * @param parms set of parameters specifying which image we are seeking.
+    *    Two keys in 'parms' are checked, in order of preference: "key" (image
+    *    key as a String) and "id" (image accession ID).  Each key refers to
+    *    an array of String values, with the desired value as the first String
+    *    in the array.
+    * @return int the unique _Image_key for the image identified in 'parms',
+    *    or -1 if one cannot be found
+    * @assumes nothing
+    * @effects queries the database using 'sqlDM'
+    * @throws DBException if there is a problem while attempting to query the
+    *    database using 'sqlDM'
+    */
     public int getKey (Map parms) throws DBException
     {
 	int imageKey = -1;
@@ -62,15 +111,22 @@ public class ImageFactory extends AbstractDataFactory
     // -----------------------------------------------------------------------
 
     /** get the image key corresponding to the given image ID, or -1 if one
-    **    does not exist.
+    *    does not exist.
+    * @param accID the accession ID for the desired image
+    * @return int the unique _Image_key for the image identified by 'accID',
+    *    or -1 if one cannot be found
+    * @assumes nothing
+    * @effects queries the database using 'sqlDM'
+    * @throws DBException if there is a problem while attempting to query the
+    *    database using 'sqlDM'
     */
     public int getKeyByID (String accID) throws DBException
     {
-       int key = -1;
+       int key = -1;			// image key to be returned to caller
 
-	Integer imageKey = null;
-	ResultsNavigator nav = null;
-	RowReference rr = null;
+	Integer imageKey = null;		// image key found in database
+	ResultsNavigator nav = null;		// result set from db query
+	RowReference rr = null;			// single row in 'nav'
 
 	nav = this.sqlDM.executeQuery (
 	    Sprintf.sprintf (IMAGE_KEY_FOR_ID, accID));
@@ -96,13 +152,14 @@ public class ImageFactory extends AbstractDataFactory
     /** retrieve the full set of data about one image; that is, everything
     *    needed to display an image detail page
     * @param parms set of parameters specifying which image we are seeking.
-    *    One key in 'parms' is checked:  'key' which identifies the database
-    *    key (_Image_key) of the image to be displayed.
-    * @return DTO which defines all image data fields, or null if we cannot
-    *    retrieve data
+    *    See <tt>getKey()</tt> method for description.
+    * @return DTO which defines all image data fields, or an empty DTO if we
+    *    cannot find the specified image in the database
     * @assumes nothing
     * @effects retrieves all image data by querying a database
     * @throws DBException if there is a problem querying the database
+    * @notes defines in the DTO all fields defined by the getBasicInfo(),
+    *    getNotes(), getAlleles(), and getGenotypes() methods.
     */
     public DTO getFullInfo (Map parms) throws DBException
     {
@@ -111,31 +168,50 @@ public class ImageFactory extends AbstractDataFactory
 
     // -----------------------------------------------------------------------
 
+    /** retrieve the full set of data about one image; that is, everything
+    *    needed to display an image detail page
+    * @param imageKey unique _Image_key to find image in the database
+    * @return DTO which defines all image data fields, or an empty DTO if we
+    *    cannot find the specified image in the database
+    * @assumes nothing
+    * @effects retrieves all image data by querying a database
+    * @throws DBException if there is a problem querying the database
+    * @notes defines in the DTO all fields defined by the getBasicInfo(),
+    *    getNotes(), getAlleles(), and getGenotypes() methods.
+    */
     public DTO getFullInfo (int imageKey) throws DBException
     {
 	DTO data = this.getBasicInfo (imageKey);
-	if (data.isEmpty())	// if found no basic info, can just bail out
+
+	// if we found no basic information for the specified key, then we
+	// can just bail out without adding the other image data later
+
+	if (data.isEmpty())
 	{
 	    return data;
 	}
+
+	// get the notes for this image, including caption and copyright info
 
 	DTO notes = this.getNotes (imageKey);
 	data.merge (notes);
 	DTO.putDTO (notes);
 
-	// if this is a thumbnail image, then it will have a non-null key for
-	// an associated full-size image
+	// if this is a thumbnail image, then it will have a non-null key to
+	// an associated full-size image.  We would then need to get the
+	// genotype and allele associations for that full-size image (as only
+	// full-size images are included in associations).
 
 	Integer fullsizeKey =
 	    (Integer) data.get (DTOConstants.FullSizeImageKey);
 
 	if (fullsizeKey != null)
 	{
-	    // this is a thumbnail image and we need to retrieve the allele
-	    // and genotype associations for its associated full-size image
-
 	    imageKey = fullsizeKey.intValue();
 	}
+
+	// get allele and genotype associations for this image (or for its
+	// associated full-size version, if this is a thumbnail)...
 
 	DTO alleles = this.getAlleles (imageKey);
 	data.merge (alleles);
@@ -150,12 +226,26 @@ public class ImageFactory extends AbstractDataFactory
 
     // -----------------------------------------------------------------------
 
+    /** retrieve the set of basic data about one image
+    * @param imageKey unique _Image_key to find image in the database
+    * @return DTO which defines basic image data fields, or an empty DTO if we
+    *    cannot find the specified image in the database
+    * @assumes nothing
+    * @effects retrieves basic image data by querying a database
+    * @throws DBException if there is a problem querying the database
+    * @notes defines in the returned DTO fields for the following items from
+    *    DTOConstants:  FullSizeImageKey, ImageKey, Width, Height,
+    *    FigureLabel, ThumbnailImageKey, AccID, LogicalDbKey, NumericPart.
+    */
     public DTO getBasicInfo (int imageKey) throws DBException
     {
-        DTO data = DTO.getDTO();	// data for the specified image
-	ResultsNavigator nav = null;
-	RowReference rr = null;
-	Integer thumbnailKey = null;
+        DTO data = DTO.getDTO();	// data collected to be returned
+	ResultsNavigator nav = null;	// result set for a query
+	RowReference rr = null;		// one row in 'nav'
+	Integer thumbnailKey = null;	// field _ThumbnailImage_key in 'rr'
+
+	// key of full-size image associated with this image if it is a 
+	// thumbnail image
 	int fullsize = -1;
 
 	nav = this.sqlDM.executeQuery (
@@ -166,6 +256,11 @@ public class ImageFactory extends AbstractDataFactory
 	    rr = (RowReference) nav.getCurrent();
 
 	    thumbnailKey = rr.getInt(5);
+
+	    // if this is a thumbnail image, then it will have a null value
+	    // in the _ThumbnailImage_key field in the database.  If that is
+	    // the case, then we also need to look up its corresponding
+	    // full size image's _Image_key.
 
 	    if (thumbnailKey == null)		// this is a thumbnail image
 	    {
@@ -187,10 +282,6 @@ public class ImageFactory extends AbstractDataFactory
 	    data.set (DTOConstants.LogicalDbKey, rr.getInt(7));
 	    data.set (DTOConstants.NumericPart, rr.getInt(8));
 	}
-	else
-	{
-	    data = null;	// failed to find an image, revert to null
-	}
 
 	nav.close();
 	this.timeStamp (Sprintf.sprintf (
@@ -200,16 +291,26 @@ public class ImageFactory extends AbstractDataFactory
 
     // -----------------------------------------------------------------------
 
+    /** retrieve the set of notes for one image
+    * @param imageKey unique _Image_key to find image in the database
+    * @return DTO which defines note fields for the identified image, or an
+    *    empty DTO if we cannot find the specified image in the database (or
+    *    if the image has no notes)
+    * @assumes nothing
+    * @effects retrieves an image's notes by querying a database
+    * @throws DBException if there is a problem querying the database
+    * @notes defines in the returned DTO fields named according to the note
+    *    types identified in the database.
+    */
     public DTO getNotes (int imageKey) throws DBException
     {
-	DTO image = DTO.getDTO();
+	DTO image = DTO.getDTO();	// data to be returned
 
-	ResultsNavigator nav = null;
-	RowReference rr = null;
-	int notetypeKey = 0;
-	String notetype = null;
-	String chunk = null;
-	String noteSoFar = null;
+	ResultsNavigator nav = null;	// result set of query
+	RowReference rr = null;		// one row in 'nav'
+	String notetype = null;		// type of note in 'rr'
+	String chunk = null;		// piece of note in 'rr'
+	String noteSoFar = null;	// all chunks for current note type
 
 	nav = this.sqlDM.executeQuery(Sprintf.sprintf(IMAGE_NOTES, imageKey));
 
@@ -218,6 +319,9 @@ public class ImageFactory extends AbstractDataFactory
 	    rr = (RowReference) nav.getCurrent();
 	    notetype = rr.getString(3);
 	    chunk = rr.getString(4);
+
+	    // add this 'chunk' to any others already retrieved for this
+	    // 'notetype'
 
 	    noteSoFar = (String) image.get (notetype);
 	    if (noteSoFar == null)
@@ -229,7 +333,7 @@ public class ImageFactory extends AbstractDataFactory
 	        noteSoFar = noteSoFar + chunk;
 	    }
 
-	    image.set (notetype, noteSoFar.trim());
+	    image.set (notetype, noteSoFar);
 	}
 	nav.close();
 
@@ -240,14 +344,26 @@ public class ImageFactory extends AbstractDataFactory
 
     // -----------------------------------------------------------------------
 
+    /** retrieve the associated alleles for one image
+    * @param imageKey unique _Image_key to find image in the database
+    * @return DTO which defines associated alleles, or an empty DTO if we
+    *    cannot find the specified image in the database
+    * @assumes nothing
+    * @effects retrieves associated alleles by querying a database
+    * @throws DBException if there is a problem querying the database
+    * @notes defines in the returned DTO fields for the following item from
+    *    DTOConstants:  Alleles.  Its associated value is a List of DTO
+    *    objects, each of which defines one allele with four fields from
+    *    DTOConstants:  AlleleKey, AlleleSymbol, AlleleName, MarkerName.  The
+    *    List will be empty if there are no associated alleles.
+    */
     public DTO getAlleles (int imageKey) throws DBException
     {
-	ResultsNavigator nav = null;
-	RowReference rr = null;
-
-	DTO image = DTO.getDTO();
-	DTO allele = null;
-	ArrayList alleles = new ArrayList();
+	ResultsNavigator nav = null;		// result set for query
+	RowReference rr = null;			// one row in 'nav' 
+	DTO image = DTO.getDTO();		// data to be returned
+	DTO allele = null;			// data for one allele
+	ArrayList alleles = new ArrayList();	// list of associated alleles
 
 	nav = this.sqlDM.executeQuery (
 	    Sprintf.sprintf (ALLELES_FOR_IMAGE, imageKey));
@@ -275,17 +391,33 @@ public class ImageFactory extends AbstractDataFactory
 
     // -----------------------------------------------------------------------
 
+    /** retrieve the associated genotypes for one image
+    * @param imageKey unique _Image_key to find image in the database
+    * @return DTO which defines associated genotypes, or an empty DTO if we
+    *    cannot find the specified image in the database
+    * @assumes nothing
+    * @effects retrieves associated genotypes by querying a database
+    * @throws DBException if there is a problem querying the database
+    * @notes defines in the returned DTO fields for the following item from
+    *    DTOConstants:  Genotypes.  Its associated value is a List of DTO
+    *    objects, each of which defines one genotype with three fields from
+    *    DTOConstants:  GenotypeKey, AlleleCombinations, and Strain.  The
+    *    List will be empty if there are no associated genotypes.
+    */
     public DTO getGenotypes (int imageKey) throws DBException
     {
-	DTO image = DTO.getDTO();
+	DTO image = DTO.getDTO();	// data to be returned 
+	ResultsNavigator nav = null;	// result set for a query
+	RowReference rr = null;		// one row in 'nav'
+	String chunk = null;		// one piece of an allele combination
+	String noteSoFar = null;	// all 'chunk's for an allele combo
+	Integer genotypeKey = null;	// value of _Genotype_key
 
-	ResultsNavigator nav = null;
-	RowReference rr = null;
-	String chunk = null;
-	String noteSoFar = null;
-	Integer genotypeKey = null;
-
+	// maps from a _Genotype_key to its allele combination String
 	HashMap combinations = new HashMap();
+
+	// our first query is to collect the allele combinations for each
+	// genotype from the MGI_Note tables
 
 	nav = this.sqlDM.executeQuery (
 	    Sprintf.sprintf (GENOTYPE_ALLELE_COMBINATIONS, imageKey));
@@ -296,6 +428,9 @@ public class ImageFactory extends AbstractDataFactory
 
 	    genotypeKey = rr.getInt(1);
 	    chunk = rr.getString(2);
+
+	    // if we've already collected a chunk for this genotype, then
+	    // append this one to it
 
 	    if (combinations.containsKey (genotypeKey))
 	    {
@@ -309,9 +444,13 @@ public class ImageFactory extends AbstractDataFactory
 	}
 	nav.close();
 
-	String strain = null;
-	ArrayList genotypes = new ArrayList();
-	DTO genotype = null;
+	// now, our second query is to find all the genotype and strain
+	// records.  This is where we collect the list of genotypes and
+	// merge in the data from the 'combinations' retrieved above.
+
+	String strain = null;			// strain for this genotype
+	ArrayList genotypes = new ArrayList();	// list of genotypes
+	DTO genotype = null;			// data for one genotype
 
 	nav = this.sqlDM.executeQuery (
 	    Sprintf.sprintf (GENOTYPE_STRAINS, imageKey));
@@ -337,7 +476,7 @@ public class ImageFactory extends AbstractDataFactory
 	        genotype.set (DTOConstants.AlleleCombinations, null);
 	    }
 
-	    genotypes.add (genotype);
+	    genotypes.add (genotype);	// add to list of collected genotypes
 	}
 	nav.close();
 
@@ -349,12 +488,27 @@ public class ImageFactory extends AbstractDataFactory
 
     // -----------------------------------------------------------------------
 
+    /** retrieve the set of basic data about an allele's primary image's
+    *    thumbnail version
+    * @param alleleKey unique _Allele_key to identify the allele in the
+    *    database
+    * @return DTO which defines all image data fields, or an empty DTO if the
+    *    allele has no primary image
+    * @assumes nothing
+    * @effects retrieves image data by querying a database
+    * @throws DBException if there is a problem querying the database
+    * @notes defines in the returned DTO all fields from the getFullInfo()
+    *    method
+    */
     public DTO getPrimaryThumbnailForAllele (int alleleKey) throws DBException
     {
-        ResultsNavigator nav = null;
-	RowReference rr = null;
-	Integer imageKey = null;
-	DTO image = null;
+        ResultsNavigator nav = null;	// result set for a query
+	RowReference rr = null;		// one row in 'nav'
+	Integer imageKey = null;	// key of the primary image
+	DTO image = null;		// data to be returned
+
+	// look for the associated primary image's thumbnail key.  If we find
+	// it, then go ahead and look up all the data for that image.
 
 	nav = this.sqlDM.executeQuery (
 	    Sprintf.sprintf (PRIMARY_THUMBNAIL_ALLELE, alleleKey) );
@@ -377,6 +531,7 @@ public class ImageFactory extends AbstractDataFactory
 	if (imageKey == null)
 	{
 	    this.timeStamp ("Failed to find thumbnail image for allele");
+	    image = DTO.getDTO();
 	}
 
 	return image;
@@ -384,13 +539,28 @@ public class ImageFactory extends AbstractDataFactory
     
     // -----------------------------------------------------------------------
 
+    /** retrieve the set of basic data about an genotype's primary image's
+    *    thumbnail version
+    * @param genotypeKey unique _Genotype_key to identify the genotype in the
+    *    database
+    * @return DTO which defines all image data fields, or an empty DTO if the
+    *    genotype has no primary image
+    * @assumes nothing
+    * @effects retrieves image data by querying a database
+    * @throws DBException if there is a problem querying the database
+    * @notes defines in the returned DTO all fields from the getFullInfo()
+    *    method
+    */
     public DTO getPrimaryThumbnailForGenotype (int genotypeKey)
         throws DBException
     {
-        ResultsNavigator nav = null;
-	RowReference rr = null;
-	Integer imageKey = null;
-	DTO image = null;
+        ResultsNavigator nav = null;	// set of results for query
+	RowReference rr = null;		// one row in 'nav'
+	Integer imageKey = null;	// key of associated image's thumbnail
+	DTO image = null;		// data to be returned
+
+	// look for the associated primary image's thumbnail key.  If we find
+	// it, then go ahead and look up all the data for that image.
 
 	nav = this.sqlDM.executeQuery (
 	    Sprintf.sprintf (PRIMARY_THUMBNAIL_GENOTYPE, genotypeKey) );
@@ -413,6 +583,7 @@ public class ImageFactory extends AbstractDataFactory
 	if (imageKey == null)
 	{
 	    this.timeStamp ("Failed to find thumbnail image for genotype");
+	    image = DTO.getDTO();
 	}
 
 	return image;
@@ -420,26 +591,65 @@ public class ImageFactory extends AbstractDataFactory
     
     // -----------------------------------------------------------------------
 
-    /** returns data about all images associated with an allele or with
-    *    genotypes involving that allele
+    /** retrieve all thumbnail image data for the allele specified in 'parms',
+    *    and for genotypes involving that allele.
+    * @param parms set of parameters specifying which image we are seeking.
+    *    Three keys in 'parms' are checked: "key" (allele key as a String),
+    *    "id" (allele accession ID), and "symbol" (allele symbol).  Each key
+    *    refers to an array of String values, with the desired value as the
+    *    first String in the array.
+    * @return DTO with information about the allele and its associated images,
+    *    or an empty DTO if we cannot find the allele in the database
+    * @assumes nothing
+    * @effects queries the database using 'sqlDM'
+    * @throws DBException if there is a problem while attempting to query the
+    *    database using 'sqlDM'
+    * @notes The DTO defines the fields set up by the AlleleFactory's
+    *    getBasicInfo() and getGeneInformation() methods, as well as the
+    *    Images field from DTOConstants.  The Images field points to a List
+    *    of DTO objects, where each DTO describes a thumbnail image by
+    *    defining all the fields noted for the getFullInfo() method.  The List
+    *    will be empty if the allele has no associated images.
     */
     public DTO getImagesForAllele (Map parms) throws DBException
     {
+	// use an allele factory to find the allele key for the given 'parms'
+
 	AlleleFactory alleleFactory = new AlleleFactory (this.config,
 	    this.sqlDM, this.logger);
 	String keyString = alleleFactory.getKey (parms);
 
+	// if we couldn't find an allele for those parameters, return an
+	// empty DTO object
+
 	if (keyString == null)
 	{
-	    return null;
+	    return DTO.getDTO();
 	}
-	int alleleKey = Integer.parseInt (keyString);
+	
+	// otherwise, go ahead and return the images for this allele
 
-        return this.getImagesForAllele (alleleKey);
+        return this.getImagesForAllele (Integer.parseInt (keyString));
     }
 
     // -----------------------------------------------------------------------
 
+    /** retrieve all thumbnail image data for the allele specified by
+    *    'alleleKey', and for genotypes involving that allele.
+    * @param alleleKey the _Allele_key uniquely identifying the desired allele
+    * @return DTO with information about the allele and its associated images,
+    *    or an empty DTO if we cannot find the allele in the database
+    * @assumes nothing
+    * @effects queries the database using 'sqlDM'
+    * @throws DBException if there is a problem while attempting to query the
+    *    database using 'sqlDM'
+    * @notes The DTO defines the fields set up by the AlleleFactory's
+    *    getBasicInfo() and getGeneInformation() methods, as well as the
+    *    Images field from DTOConstants.  The Images field points to a List
+    *    of DTO objects, where each DTO describes a thumbnail image by
+    *    defining all the fields noted for the getFullInfo() method.  The List
+    *    will be empty if the allele has no associated images.
+    */
     public DTO getImagesForAllele (int alleleKey) throws DBException
     {
 	// start with the allele's basic information...
@@ -464,15 +674,21 @@ public class ImageFactory extends AbstractDataFactory
 
 	this.timeStamp ("Got gene data for allele");
 
-	ResultsNavigator nav = null;
-	RowReference rr = null;
-	Integer thumbnailKey = null;
-	Integer fullsizeKey = null;
-	DTO image = null;
-	ArrayList images = new ArrayList();
+	// now, we can go ahead and query for images associated with that
+	// allele or with genotypes involving that allele
+
+	ResultsNavigator nav = null;	// result set for a query
+	RowReference rr = null;		// one row in 'nav'
+	Integer thumbnailKey = null;	// _ThumbnailImage_key in 'rr'
+	Integer fullsizeKey = null;	// _Image_key in 'rr'
+	DTO image = null;		// data for one associated image
+
+	ArrayList images = new ArrayList();	// List of 'image' objects
+
+	// due to limitations in Sprintf, we need to convert this 'alleleKey'
+	// int to a String so we can insert it in two places in the SQL query
 
 	String keyString = Integer.toString(alleleKey);
-
 	nav = this.sqlDM.executeQuery (
 	    Sprintf.sprintf (IMAGES_FOR_ALLELE, keyString, keyString) );
 
@@ -484,11 +700,13 @@ public class ImageFactory extends AbstractDataFactory
 	    fullsizeKey = rr.getInt(1);
 	    thumbnailKey = rr.getInt(2);
 
+	    // if this associated (full-size) image has a corresponding
+	    // thumbnail, then retrieve data for that thumbnail and add it
+	    // to the list of associated images
+
 	    if (thumbnailKey != null)
 	    {
 	        image = (DTO) this.getFullInfo (thumbnailKey.intValue());
-
-	        // only add images we were able to retrieve
 
 	        if ((image != null) && (!image.isEmpty()))
 	        {
@@ -505,8 +723,14 @@ public class ImageFactory extends AbstractDataFactory
     // -----------------------------------------------------------------------
 
     /** returns the key of the full-size image which corresponds to the given
-    *    thumbnail key (simply returns the given one if it is for the
+    *    thumbnail key (simply returns the given one if it already is for the
     *    full-size)
+    * @param thumbnailKey the _Image_key for a thumbnail image
+    * @return int the _Image_key for the full-size image corresponding to the
+    *    given 'thumbnailKey'
+    * @assumes nothing
+    * @effects queries the database using 'sqlDM'
+    * @throws DBException if there are problems retrieving the data
     */
     public int getFullSizeKey (int thumbnailKey) throws DBException
     {
@@ -516,24 +740,40 @@ public class ImageFactory extends AbstractDataFactory
     // -----------------------------------------------------------------------
 
     /** returns the key of the thumbnail image which corresponds to the given
-    *    full-size key (simply returns the given one if it is for the
+    *    full-size key (simply returns the given one if it already is for the
     *    thumbnail)
+    * @param fullsizeKey the _Image_key for a full-size image
+    * @return int the _Image_key for the thumbnail image corresponding to the
+    *    given 'fullsizeKey'
+    * @assumes nothing
+    * @effects queries the database using 'sqlDM'
+    * @throws DBException if there are problems retrieving the data
     */
     public int getThumbnailKey (int fullsizeKey) throws DBException
     {
         return this.getSingleKey (THUMBNAIL_KEY, fullsizeKey);
     }
 
-    // -----------------------------------------------------------------------
+    ///////////////////////////
+    // private instance methods
+    ///////////////////////////
 
-    /** returns the key of the image found by 'query' which corresponding to
-    *    the given one (simply returns 'imageKey' if no matches)
+    /** returns the key of the image found by 'query' which corresponds to
+    *    the given 'imageKey' (simply returns 'imageKey' if no matches)
+    * @param query the SQL statement needed to find the corresponding key
+    * @param imageKey the _Image_key for which we want to find its
+    *    corresponding one
+    * @return int the _Image_key for the image corresponding to the given
+    *    'imageKey'
+    * @assumes nothing
+    * @effects queries the database using 'sqlDM'
+    * @throws DBException if there are problems retrieving the data
     */
     private int getSingleKey (String query, int imageKey) throws DBException
     {
-	Integer key = null;
-	ResultsNavigator nav = null;
-	RowReference rr = null;
+	Integer key = null;		// key found by query
+	ResultsNavigator nav = null;	// result set for query
+	RowReference rr = null;		// one row in 'nav'
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (query, imageKey));
 
@@ -553,7 +793,9 @@ public class ImageFactory extends AbstractDataFactory
 	return key.intValue();
     }
 
-    // -----------------------------------------------------------------------
+    //////////////////////////
+    // private class variables
+    //////////////////////////
 
     /* ----------------------------------------------------------------------
     ** class variables -- used to hold standard SQL statements, so we don't
@@ -740,3 +982,8 @@ public class ImageFactory extends AbstractDataFactory
     private static String THUMBNAIL_KEY =
         "SELECT _ThumbnailImage_key FROM IMG_Image WHERE _Image_key = %d";
 }
+
+/*
+* $Log$
+* $Copyright$
+*/
