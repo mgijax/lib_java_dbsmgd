@@ -67,7 +67,7 @@ public class GeneFamilyMap
 
     /** retrieve the URL for the gene family page associated with the given
     *    MGI accession 'id'.
-    * @param String a mouse gene's MGI accession ID
+    * @param string a mouse gene's MGI accession ID
     * @return String the URL for the gene family page, or null if there is
     *    none for that 'id'
     * @assumes nothing
@@ -169,6 +169,9 @@ public class GeneFamilyMap
 
 /*
 * $Log$
+* Revision 1.2  2004/02/25 21:01:44  mbw
+* fixed to eliminate compiler warnings
+*
 * Revision 1.1  2003/12/30 16:38:49  mbw
 * initial import into this product
 *

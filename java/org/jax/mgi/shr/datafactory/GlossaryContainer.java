@@ -61,7 +61,7 @@ public class GlossaryContainer
 
     //////////////////////////////////////////////////////////////////////////
     /** retrieve a reference to the glossaryContainer singleton instance
-    * @param path to glossary rcd file
+    * @param cfgFilePath path to glossary rcd file
     * @return a reference to the glossaryContainer object
     * @assumes nothing
     * @effects may modify class variable "reloadNeeded"
