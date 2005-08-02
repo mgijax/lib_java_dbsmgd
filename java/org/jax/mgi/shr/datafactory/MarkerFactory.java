@@ -331,39 +331,35 @@ public class MarkerFactory
         this.timeStamp ("Retrieved basic marker info");
 
         section = this.getMapPosition (key);
-        marker.merge (section);
-        DTO.putDTO (section);
-        this.timeStamp ("Retrieved map position");
 
-        section = this.getSynonyms (key);
-        marker.merge (section);
-        DTO.putDTO (section);
-        this.timeStamp ("Retrieved synonyms");
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved map position");
 
-        section = this.getNotes (key);
-        marker.merge (section);
-        DTO.putDTO (section);
-        this.timeStamp ("Retrieved marker notes");
+	section = this.getSynonyms (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved synonyms");
 
-        section = this.getMLCIndicator (key);
-        marker.merge (section);
-        DTO.putDTO (section);
-        this.timeStamp ("Determined whether an MLC record exists");
+	section = this.getNotes (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved marker notes");
 
-        section = this.getMappingCount (key);
-        marker.merge (section);
-        DTO.putDTO (section);
-        this.timeStamp ("Retrieved count of mapping experiments");
+	section = this.getMLCIndicator (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Determined whether an MLC record exists");
 
-        section = this.getGXDIndexCount (key);
-        marker.merge (section);
-        DTO.putDTO (section);
-        this.timeStamp ("Retrieved count of GXD Index entries");
+	section = this.getMappingCount (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved count of mapping experiments");
 
-        section = this.getPhenoCount (key);
-        marker.merge (section);
-        DTO.putDTO (section);
-        this.timeStamp ("Retrieved count of phenotype classifications");
+	section = this.getGXDIndexCount (key);
+	marker.merge (section);
+	DTO.putDTO (section);
+	this.timeStamp ("Retrieved count of GXD Index entries");
 
         section = this.getGOAnnotations (key);
         marker.merge (section);
@@ -1015,41 +1011,6 @@ public class MarkerFactory
 
     /* -------------------------------------------------------------------- */
 
-    /** get a count of phenotype classifications for the given marker.
-    * @param key the marker key of the marker whose data we seek
-    * @return DTO which maps DTOConstants.PhenoCount to an Integer count.  If
-    *    there are no phenotype classifications for the marker with
-    *    the given 'key', returns 'marker' as-is.
-    * @assumes nothing
-    * @effects queries the database
-    * @throws DBException if there are problems querying the database or
-    *    stepping through the results
-    */
-    public DTO getPhenoCount (int key) throws DBException
-    {
-        ResultsNavigator nav = null;    // set of query results
-        int count = 0;                  // pheno classifications seen so far
-        DTO marker = DTO.getDTO();      // start with a new DTO
-
-        // for this query, we simply count the rows returned
-
-        nav = this.sqlDM.executeQuery (
-                Sprintf.sprintf (PHENO_CLASS_COUNT, key));
-        while (nav.next())
-        {
-            count++;
-        }
-        nav.close();
-
-        if (count > 0)
-        {
-            marker.set (DTOConstants.PhenoCount, new Integer(count));
-        }
-        return marker;
-    }
-
-    /* -------------------------------------------------------------------- */
-
     /** get a minimal set of reference data for the given marker.
     * @param key the marker key of the marker whose data we seek
     * @return DTO see the getReferenceCount(), getFirstReference(), and
@@ -1666,14 +1627,28 @@ public class MarkerFactory
             typeData.set (DTOConstants.AlleleTypeKey, rr.getInt(2));
             typeData.set (DTOConstants.AlleleTypeCount, rr.getInt(3));
 
-            alleleCounts.add (typeData);
-        }
-        nav.close();
+	    alleleCounts.add (typeData);
+	}
+	nav.close();
 
-        // always define this field, even if no allele counts
+	// always define this field, even if no allele counts
 
-        marker.set (DTOConstants.AlleleCounts, alleleCounts);
-        return marker;
+	marker.set (DTOConstants.AlleleCounts, alleleCounts);
+
+	nav = this.sqlDM.executeQuery (
+		Sprintf.sprintf (ALL_ALLELE_COUNT, key));
+	if (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+	    marker.set ("All_Allele_Count", rr.getInt(1));
+	}
+	else
+	{
+	    marker.set ("All_Allele_Count", new Integer(0));
+	}
+	nav.close();
+
+	return marker;
     }
 
     /* -------------------------------------------------------------------- */
@@ -2731,9 +2706,19 @@ public class MarkerFactory
             throws MalformedURLException, IOException
     {
         URL minimapURL = new URL (url + key);
-        BufferedReader minimapReader = new BufferedReader (
-                                           new InputStreamReader (
-                                               minimapURL.openStream() ));
+	BufferedReader minimapReader = null;
+
+	try
+	{
+	    minimapReader = new BufferedReader (
+	                                   new InputStreamReader (
+					       minimapURL.openStream() ));
+	}
+	catch (Exception e)
+	{
+	    // just let the minimap reader be returned as a null
+	    ;
+	}
         return minimapReader;
     }
 
@@ -2755,11 +2740,26 @@ public class MarkerFactory
     {
         DTO marker = DTO.getDTO();                // start with a new DTO
 
-        String result = reader.readLine();
-        reader.close();
+	// if we were not able to get a connection to the minimap CGI, then
+	// the reader will be null
 
-        // if a marker has no map location, then the minimap CGI should
-        // return "None".
+	if (reader == null)
+	{
+	    return marker;
+	}
+
+	String result = null;
+
+	try
+	{
+            result = reader.readLine();
+	    reader.close();
+	}
+	catch (Exception e)
+	{
+	    // if an exception occurred, just bail out with no minimap URL
+	    return marker;
+	}
 
         if ("None".equals(result))
         {
@@ -3017,18 +3017,29 @@ public class MarkerFactory
     //        wild types
     // fill in: marker key (int)
     private static final String ALLELE_COUNTS =
-                "SELECT ms.name, ms._Set_key, count(1) "
-                + "FROM MGI_Set ms, MGI_SetMember msm, ALL_Allele aa, "
-                +        "ACC_MGIType amt "
-                + "WHERE ms._Set_key = msm._Set_key "
-                +        "AND msm._Object_key = aa._Allele_Type_key "
-                +        "AND aa.name != 'wild type' "
-                +        "AND aa._Marker_key = %d "
-                +        "AND ms._MGIType_key = amt._MGIType_key "
-                +        "AND amt.name = 'Allele Type' "
-                + "GROUP BY ms.name, ms._Set_key "
-                + "ORDER BY ms.sequenceNum";
+	    "SELECT vt.term, vt._Term_key, count(1) "
+	    + "FROM MGI_VocAssociationType mvat, MGI_VocAssociation mva, "
+	    + "    VOC_Term vt, ALL_Allele aal "
+	    + "WHERE mvat.associationType = 'Marker Detail Allele Category' "
+	    + "    AND mvat._AssociationType_key = mva._AssociationType_key "
+	    + "    AND mva._Term_key_1 = vt._Term_key "
+	    + "    AND mva._Term_key_2 = aal._Allele_Type_key " 
+	    + "    AND aal._Marker_key = %d "
+	    + "    AND aal.isWildType = 0 "
+	    + "GROUP BY vt.term, vt._Term_key "
+	    + "ORDER BY vt.sequenceNum";
 
+    // get a count of all the marker's alleles, excluding wild types.  This is
+    // less than or equal to the sum of the counts generated by the
+    // 'ALLELE_COUNTS' query above, as one allele can be included in multiple
+    // categories in that one.
+    // fill in: marker key (int)
+    private static final String ALL_ALLELE_COUNT =
+    	    "SELECT COUNT(DISTINCT _Allele_key) "
+	    + "FROM ALL_Allele "
+	    + "WHERE _Marker_key = %d "
+	    + "    AND isWildType = 0";
+    
     // get a count of the antibodies associated with the marker
     // fill in: marker key (int)
     private static final String ANTIBODY_COUNT =
@@ -3371,17 +3382,6 @@ public class MarkerFactory
                 + "    and mm._Organism_key = mo._Organism_key"
                 + "    and mo._Organism_key != " + DBConstants.Species_Mouse;
 
-    // count phenotypic classifications (phenoslim annotations)
-    // fill in: marker key (int)
-    private static final String PHENO_CLASS_COUNT =
-                "select distinct va._Term_key, geno._Genotype_key "
-                + "from GXD_AllelePair gap, GXD_Genotype geno, "
-                +    "VOC_Annot va, VOC_PSGenotype_AnnotType_View atv "
-                + "where atv._AnnotType_key = va._AnnotType_key "
-                +    "and va._Object_key = geno._Genotype_key "
-                +    "and geno._Genotype_key = gap._Genotype_key "
-                +    "and gap._Marker_key = %d";
-
     // get counts of polymorphisms by type
     // fill in: marker key (int)
     private static final String POLYMORPHISM_COUNTS =
@@ -3500,6 +3500,22 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.18  2005/04/15 10:32:58  jsb
+* fixed code missing after merge, regarding allele counts
+*
+* Revision 1.17  2005/04/12 17:42:10  dow
+* lib_java_dbsmgd-3-2-0-0
+*
+*
+* Revision 1.16  2005/04/02 19:57:55  pf
+* 3.12 maint6496 release
+*
+* Revision 1.15.2.2  2005/04/11 16:13:06  jsb
+* fixed minimap bug if can't retrieve minimap
+*
+* Revision 1.15.2.1  2005/04/07 16:54:30  jsb
+* removed code for counting phenoslim annotations; added count for 'all' alleles
+*
 * Revision 1.15  2005/01/26 15:10:53  pf
 * lib_java_dbsmgd-3-1-1-1
 *
