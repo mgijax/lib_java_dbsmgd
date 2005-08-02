@@ -108,11 +108,9 @@ public class GlossaryContainer
 
     //////////////////////////////////////////////////////////////////////////
     /** returns the glossary mapping
-    * @param nothing
     * @returns TreeMap representing
     * @assumes nothing
     * @effects nothing
-    * @throws nothing
     */
      public static TreeMap getGlossaryMapping()
     {
