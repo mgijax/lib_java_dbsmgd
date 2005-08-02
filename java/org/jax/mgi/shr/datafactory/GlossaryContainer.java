@@ -94,7 +94,6 @@ public class GlossaryContainer
 
     //////////////////////////////////////////////////////////////////////////
     /** force reloading of the glossary rcd file
-    * @param nothing
     * @returns nothing
     * @assumes nothing
     * @effects nothing
