@@ -157,8 +157,8 @@ public class PhenotypeFactory {
     //////////////////////////////////////////////////////
 
     /** retrieve the all of the phenotype data for a given allele.
-     * @param parms alleleKey is the database of the key for which we want to
-     *        load phenotype date.
+     * @param alleleKey is the database of the key for which we want to
+     * load phenotype date.
      * @return DTO which defines all an alleles phenotype data
      * @assumes nothing
      * @effects retrieves all phenotype data by quering a database 

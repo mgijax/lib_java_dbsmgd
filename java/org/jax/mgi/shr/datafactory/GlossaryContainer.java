@@ -94,10 +94,8 @@ public class GlossaryContainer
 
     //////////////////////////////////////////////////////////////////////////
     /** force reloading of the glossary rcd file
-    * @returns nothing
     * @assumes nothing
     * @effects nothing
-    * @throws nothing
     */
     public static void setReloadNeeded()
     {
@@ -108,7 +106,7 @@ public class GlossaryContainer
 
     //////////////////////////////////////////////////////////////////////////
     /** returns the glossary mapping
-    * @returns TreeMap representing
+    * @return TreeMap representing
     * @assumes nothing
     * @effects nothing
     */

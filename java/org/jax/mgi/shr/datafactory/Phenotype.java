@@ -255,7 +255,6 @@ public class Phenotype implements Comparable {
      * @assumes nothing
      * @effects nothing
      * @return nothing.
-     * @throws nothing
      */
     public void addAnnotTerm(Integer termKey, String id, String annotTerm,
                              Integer orderVal) {
