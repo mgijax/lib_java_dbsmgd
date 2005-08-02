@@ -250,7 +250,7 @@ public class Phenotype implements Comparable {
     /** add a MP annotation term value to this phenotype.
      * @param termKey is the database key for this mp term.
      * @param id is the MGI Accession ID for this mp term.
-     * @param headerTerm the actual term value
+     * @param annotTerm the actual term value
      * @param orderVal Used for sorting mp annotation terms.
      * @assumes nothing
      * @effects nothing
