@@ -70,7 +70,7 @@ public class Phenotype implements Comparable {
     /** returns the database key for this genotype.
      * @assumes nothing
      * @effects nothing
-     * @returns Integer representation of database key
+     * @return Integer representation of database key
      * @throws nothing
      */
     public Integer getGenotypeKey() {
@@ -81,7 +81,7 @@ public class Phenotype implements Comparable {
      *  database.
      * @assumes nothing
      * @effects nothing
-     * @returns String  value of the allelic composition
+     * @return String  value of the allelic composition
      * @throws nothing
      */
     public String getCompound() {
@@ -92,7 +92,7 @@ public class Phenotype implements Comparable {
      *  the allele detail page in the WI..
      * @assumes nothing
      * @effects nothing
-     * @returns String  value of the allelic composition
+     * @return String  value of the allelic composition
      * @throws nothing
      */
     public String getHTMLCompound(String javaWI) {
@@ -191,7 +191,7 @@ public class Phenotype implements Comparable {
     /** return the strain background.
      * @assumes nothing
      * @effects nothing
-     * @returns String  value of the strain background
+     * @return String  value of the strain background
      * @throws nothing
      */
     public String getBackground() {
@@ -202,7 +202,7 @@ public class Phenotype implements Comparable {
      *  allele.
      * @assumes nothing
      * @effects nothing
-     * @returns Integer value for sorting.
+     * @return Integer value for sorting.
      * @throws nothing
      */
     public Integer getOrderVal() {
@@ -213,7 +213,7 @@ public class Phenotype implements Comparable {
      *  allelic composition.
      * @assumes nothing
      * @effects nothing
-     * @returns List of the allele pairs.
+     * @return List of the allele pairs.
      * @throws nothing
      */
     public List getParsedCompound() {
@@ -237,7 +237,7 @@ public class Phenotype implements Comparable {
      * @param orderVal Used for sorting header terms.
      * @assumes nothing
      * @effects nothing
-     * @returns nothing.
+     * @return nothing.
      * @throws nothing
      */
     public void addHeaderTerm(Integer termKey, String id, String headerTerm, 
@@ -250,12 +250,11 @@ public class Phenotype implements Comparable {
     /** add a MP annotation term value to this phenotype.
      * @param termKey is the database key for this mp term.
      * @param id is the MGI Accession ID for this mp term.
-     * @param headerTerm the actual term value
+     * @param annotTerm the actual term value
      * @param orderVal Used for sorting mp annotation terms.
      * @assumes nothing
      * @effects nothing
-     * @returns nothing.
-     * @throws nothing
+     * @return nothing.
      */
     public void addAnnotTerm(Integer termKey, String id, String annotTerm,
                              Integer orderVal) {
@@ -273,7 +272,7 @@ public class Phenotype implements Comparable {
      * @param note if there is written evidence, it will be in this note..
      * @assumes nothing
      * @effects nothing
-     * @returns nothing.
+     * @return nothing.
      * @throws nothing
      */
     public void addAnnotEvidence(Integer termKey, Integer evidenceKey,
@@ -287,7 +286,7 @@ public class Phenotype implements Comparable {
     /** if true, then there are headers associated with this phenotype.
      * @assumes nothing
      * @effects nothing
-     * @returns true has headers, false does not.
+     * @return true has headers, false does not.
      * @throws nothing
      */
     public boolean hasHeaders() {
@@ -303,7 +302,7 @@ public class Phenotype implements Comparable {
     /** if true, then there are annotationss associated with this phenotype.
      * @assumes nothing
      * @effects nothing
-     * @returns true has annotations, false does not.
+     * @return true has annotations, false does not.
      * @throws nothing
      */
     public boolean hasAnnotations() {
@@ -338,7 +337,7 @@ public class Phenotype implements Comparable {
      *    method, they will not be organized with the rest.
      * @effects alters the structure of the header and annotations internal
      *    structures for this object.
-     * @returns nothing.
+     * @return nothing.
      * @throws nothing
      */
     public void organizeAnnotations() {
@@ -400,7 +399,7 @@ public class Phenotype implements Comparable {
     /** Returns the list of all headers for this phenotype.
      * @assumes nothing
      * @effects nothing
-     * @returns List of header terms as HeaderAnnotation objects.
+     * @return List of header terms as HeaderAnnotation objects.
      * @throws nothing
      */
     public List getHeaders() {
@@ -414,7 +413,7 @@ public class Phenotype implements Comparable {
     /** Returns the list of all annotations for this phenotype.
      * @assumes nothing
      * @effects nothing
-     * @returns List of Mp Annotation terms as SubAnnotation objects.
+     * @return List of Mp Annotation terms as SubAnnotation objects.
      * @throws nothing
      */
     public List getAnnotations() {
@@ -429,7 +428,7 @@ public class Phenotype implements Comparable {
      *  This method orders by the "order value" passed into the constructor.
      * @assumes nothing
      * @effects nothing
-     * @returns List of Mp Annotation terms as SubAnnotation objects.
+     * @return List of Mp Annotation terms as SubAnnotation objects.
      * @throws nothing
      */
     public int compareTo(Object o) {

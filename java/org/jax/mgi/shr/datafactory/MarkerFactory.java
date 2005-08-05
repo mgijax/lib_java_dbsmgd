@@ -3500,9 +3500,15 @@ public class MarkerFactory
 
 /*
 * $Log$
+*
+* Revision 1.16.2.1  2005/08/02 21:33:24  mbw
+* merged tag lib_java_dbsmgd-tr1560-BP onto branch
+*
+* Revision 1.18  2005/04/15 10:32:58  jsb
+* fixed code missing after merge, regarding allele counts
+*
 * Revision 1.17  2005/04/12 17:42:10  dow
 * lib_java_dbsmgd-3-2-0-0
-*
 *
 * Revision 1.16  2005/04/02 19:57:55  pf
 * 3.12 maint6496 release

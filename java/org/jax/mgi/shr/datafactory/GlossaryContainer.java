@@ -61,7 +61,7 @@ public class GlossaryContainer
 
     //////////////////////////////////////////////////////////////////////////
     /** retrieve a reference to the glossaryContainer singleton instance
-    * @param path to glossary rcd file
+    * @param cfgFilePath path to glossary rcd file
     * @return a reference to the glossaryContainer object
     * @assumes nothing
     * @effects may modify class variable "reloadNeeded"
@@ -94,11 +94,8 @@ public class GlossaryContainer
 
     //////////////////////////////////////////////////////////////////////////
     /** force reloading of the glossary rcd file
-    * @param nothing
-    * @returns nothing
     * @assumes nothing
     * @effects nothing
-    * @throws nothing
     */
     public static void setReloadNeeded()
     {
@@ -109,11 +106,9 @@ public class GlossaryContainer
 
     //////////////////////////////////////////////////////////////////////////
     /** returns the glossary mapping
-    * @param nothing
-    * @returns TreeMap representing
+    * @return TreeMap representing
     * @assumes nothing
     * @effects nothing
-    * @throws nothing
     */
      public static TreeMap getGlossaryMapping()
     {

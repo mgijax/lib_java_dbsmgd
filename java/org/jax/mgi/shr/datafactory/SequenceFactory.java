@@ -169,7 +169,7 @@ public class SequenceFactory extends Factory {
 
     /** retrieves the full suite of data available for the sequence specified in
     *    'parms'.
-    * @param int key The sequence_key for the sequence you wish to retrieve
+    * @param key The sequence_key for the sequence you wish to retrieve
     * @return DTO which defines all sequence data fields
     * @assumes nothing
     * @effects retrieves all sequence data by quering a database and retrieving
@@ -217,7 +217,7 @@ public class SequenceFactory extends Factory {
 
     /** retrieves the basic info avaliable for the sequence specified in
     *    'parms'.
-    * @param parms set of parameters specifying which sequence we are seeking.
+    * @param key parms set of parameters specifying which sequence we are seeking.
     *    Two keys in 'parms' are checked, first, "key" (sequeunce key as a
     *    String), then "id" (sequence accession ID).
     * @return DTO which defines all sequence attributes and source.
@@ -517,10 +517,11 @@ public class SequenceFactory extends Factory {
         return sequence;
     }
 
-    /** retrieves the source, either raw or resolved, of this sequence.
-    *if any of the resolved source values return a "Not Resolved"
+    /** 
+    * retrieves the source, either raw or resolved, of this sequence.
+    * if any of the resolved source values return a "Not Resolved"
     * they will be overwritten with the raw value.  If there is no
-    * raw value to be found, they will be replaced with a "Not Specified"
+    * raw value to be found, they will be replaced with a "Not Specified".
     * @param key the sequence key of the sequence whose data we seek
     * @return DTO where
     *   DTOConstants.Age is associated with a string containing the age of

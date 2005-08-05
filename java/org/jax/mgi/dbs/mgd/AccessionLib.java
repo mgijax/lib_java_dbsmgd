@@ -13,6 +13,15 @@ import org.jax.mgi.shr.dbutils.ResultsNavigator;
 import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManager;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
+import org.jax.mgi.shr.dbutils.dao.SQLStream;
+import org.jax.mgi.dbs.mgd.dao.ACC_AccessionDAO;
+import org.jax.mgi.dbs.mgd.dao.ACC_AccessionState;
+import org.jax.mgi.dbs.mgd.dao.ACC_AccessionKey;
+import org.jax.mgi.dbs.mgd.dao.ACC_AccessionReferenceDAO;
+import org.jax.mgi.dbs.mgd.dao.ACC_AccessionReferenceState;
+import org.jax.mgi.dbs.mgd.MGITypeConstants;
+import org.jax.mgi.dbs.mgd.LogicalDBConstants;
+
 
 /**
  * @is An object that knows how to perform various function pertaining to
@@ -41,6 +50,11 @@ public class AccessionLib
     // constants for preferred bit
     public static final int PREFERRED = 1;
     public static final int NO_PREFERRED = 0;
+
+    private static ACC_AccessionState accessionState =
+        new ACC_AccessionState();
+    private static ACC_AccessionReferenceState refState =
+            new ACC_AccessionReferenceState();
 
     /**
      * Get the next available MGI ID.
@@ -202,10 +216,65 @@ public class AccessionLib
         v.add(numericPart);
         return v;
     }
+
+    /**
+     * Puts the required DAO objects onto the given SQLStream
+     * for creating a new association in the ACC_Accession between
+     * a marker and the given accid and logicaldb and includes a 
+     * a new ACC_ACCessionReference record for the given refs key
+     * @assumes private attribute in ACC_ACCession will be false
+     * and preferred attribute will be true
+     * @effects DAO instances will be placed onto the SQLStream for
+     * ACC_Accession and ACC_AccessionReference
+     * @param logicalDB the logicaldb of the new association
+     * @param accid the accession id of the new association
+     * @param markerKey the marker key to associate to
+     * @param refskey the refs key for ACC_AccessionReference
+     * @param sqlStream the given SQLStream to place DAO objects onto
+     */
+    public static void createMarkerAssociation(Integer logicalDB, String accid,
+                                         Integer markerKey, Integer refskey,
+                                         SQLStream sqlStream)
+    throws DBException, ConfigException
+    {
+        //ACC_AccessionState accessionState = new ACC_AccessionState();
+        accessionState.clear();
+        accessionState.setAccID(accid);
+        accessionState.setLogicalDBKey(logicalDB);
+        accessionState.setMGITypeKey(new Integer(MGITypeConstants.MARKER));
+        Vector v = AccessionLib.splitAccID(accid);
+        accessionState.setPrefixPart((String)v.get(0));
+        accessionState.setNumericPart((Integer)v.get(1));
+        accessionState.setObjectKey(markerKey);
+        accessionState.setPrivateVal(new Boolean(false));
+        accessionState.setPreferred(new Boolean(true));
+        ACC_AccessionKey accessionKey = new ACC_AccessionKey();
+        ACC_AccessionDAO accessionDAO =
+            new ACC_AccessionDAO(accessionKey, accessionState);
+
+        //ACC_AccessionReferenceState refState =
+            //new ACC_AccessionReferenceState();
+        refState.clear();
+        refState.setAccessionKey(accessionKey.getKey());
+        refState.setRefsKey(refskey);
+        ACC_AccessionReferenceDAO refDAO =
+            new ACC_AccessionReferenceDAO(refState);
+
+        sqlStream.insert(refDAO);
+        sqlStream.insert(accessionDAO);
+    }
+
 }
 
 
 //  $Log$
+//  Revision 1.3.14.1  2005/08/02 17:48:24  mbw
+//  added new method for creating new accession associations to markers in the
+//  ACC_Accession table
+//
+//  Revision 1.3  2004/07/28 18:43:23  mbw
+//  javadocs only
+//
 //  Revision 1.2  2004/02/04 19:41:27  mbw
 //  merged jsam branch to the trunk
 //

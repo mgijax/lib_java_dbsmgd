@@ -89,6 +89,12 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.5.10.1  2005/08/02 21:33:23  mbw
+* merged tag lib_java_dbsmgd-tr1560-BP onto branch
+*
+* Revision 1.8  2005/04/19 19:27:20  dow
+* Added constant for MGI_RefAssocType
+*
 * Revision 1.5.6.1  2005/04/10 16:27:45  dow
 * Additions for mpr release.
 *
