@@ -2995,6 +2995,8 @@ public class MarkerFactory
                             DBConstants.LogicalDB_SwissProt + ", " +
                             DBConstants.LogicalDB_Interpro + ", " +
                             DBConstants.LogicalDB_TrEMBL + ", " +
+                            DBConstants.LogicalDB_NCBI + ", " +
+                            DBConstants.LogicalDB_Ensembl + ", " +
                             DBConstants.LogicalDB_SequenceDB + ") "
                 + " order by ldb.name, a.accID";
 
@@ -3500,6 +3502,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.18  2005/04/15 10:32:58  jsb
+* fixed code missing after merge, regarding allele counts
+*
 * Revision 1.17  2005/04/12 17:42:10  dow
 * lib_java_dbsmgd-3-2-0-0
 *
