@@ -58,6 +58,7 @@ public class DiseaseFactory {
         this.config = config;
         this.sqlDM = sqlDM;
         this.logger = logger;
+        return;
 
     }
 
@@ -113,7 +114,6 @@ public class DiseaseFactory {
         // all disease info for term key submitted
         DTO disease = DTO.getDTO();
 
-
         // data for a particular section, to merge with 'disease'
         DTO section = null;
 
@@ -133,17 +133,17 @@ public class DiseaseFactory {
         // get data for individual sections.  For the sake of efficiency, we
         // make sure to always return the 'section' to the pool of available
         // DTOs once we are done with it.
-
+        
         section = this.getBasicInfo (key);
         disease.merge (section);
         DTO.putDTO (section);
         this.timeStamp ("Retrieved basic term info");
-
+        
         section = this.getSynonyms (key);
         disease.merge (section);
         DTO.putDTO (section);
         this.timeStamp ("Retrieved synonyms");
-
+        
         section = 
             this.getGeneDetails(key);
         disease.merge (section);
@@ -161,7 +161,7 @@ public class DiseaseFactory {
         disease.merge (section);
         DTO.putDTO (section);
         this.timeStamp ("Retrieved mouse models");
-
+                    
         return disease;
     }
     /* ------------------------------------------------------------------- */
@@ -203,6 +203,9 @@ public class DiseaseFactory {
             executeQuery ( cmd );
 
         if (!nav.next()) {
+            nav.close();
+            nav = null;
+            rr = null;
             return disease;
         }
 
@@ -217,6 +220,8 @@ public class DiseaseFactory {
 
 
         nav.close();
+        nav = null;
+        rr = null;
         
         return disease;
     }
@@ -262,6 +267,8 @@ public class DiseaseFactory {
             disease.set (DTOConstants.Synonyms, synonyms);
         }
         nav.close();
+        nav = null;
+        rr = null;
             
         return disease;
     }
@@ -312,6 +319,9 @@ public class DiseaseFactory {
             both.add(genes);
         }
         nav.close();
+        nav = null;
+        rr = null;
+
         if (both.size() > 0) {
             disease.set("both", both);
         }
@@ -338,6 +348,9 @@ public class DiseaseFactory {
             mouse.add(genes);
         }
         nav.close();
+        nav = null;
+        rr = null;
+
         if (mouse.size() > 0) {
             disease.set("mouse", mouse);
         }
@@ -364,6 +377,9 @@ public class DiseaseFactory {
             human.add(genes);
         }
         nav.close();
+        nav = null;
+        rr = null;
+
         if (human.size() > 0) {
             disease.set("human", human);
         }
@@ -406,6 +422,9 @@ public class DiseaseFactory {
             trans.add(gene);
         }
         nav.close();
+        nav = null;
+        rr = null;
+
         if (trans.size() > 0) {
             disease.set("transgenes", trans);
         }
@@ -421,10 +440,15 @@ public class DiseaseFactory {
     * @param term is the term value for this disease
     * @return DTO with several attributes added to support five concepts:
     *    <ul>
-    *    <li> category1 = Models with phenotypic similarity to human disease and etiologies involving orthologs.
-    *    <li> category2 = Models with phenotypic similarity to human disease but distinct etiologies
-    *    <li> category3 = Models with phenotypic similarity to human disease with unknown etiology or involving genes where ortholog is unknown
-    *    <li> category4 = No similarity to expected human disease phenotype was found
+    *    <li> category1 = Models with phenotypic similarity to human disease 
+    *                     and etiologies involving orthologs.
+    *    <li> category2 = Models with phenotypic similarity to human disease 
+    *                     but distinct etiologies
+    *    <li> category3 = Models with phenotypic similarity to human disease 
+    *                     with unknown etiology or involving genes where 
+    *                     ortholog is unknown
+    *    <li> category4 = No similarity to expected human disease phenotype 
+    *                     was found
     *    <li> category5 = Models involving transgenes or other mutation types
     *    </ul>
     * @assumes nothing
@@ -559,6 +583,8 @@ public class DiseaseFactory {
             }
         }
         nav.close();
+        nav = null;
+        rr = null;
 
         //  Populate the dto with all of our categories
         ArrayList values = new ArrayList(cat1.values());
