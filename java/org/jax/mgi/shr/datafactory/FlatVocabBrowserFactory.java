@@ -475,7 +475,10 @@ public class FlatVocabBrowserFactory {
     //  fill in: term key (int)
     private static final String ANNOTATIONS = 
         "select count(distinct va._Object_key) "
-        + "from VOC_Annot va "
+        + "from VOC_Annot va, MRK_OMIM_Cache o "
         + "where va._Term_key = %d "
-        + "and _AnnotType_key = " + DBConstants.VOCAnnotType_OMIM;
+        + "and _AnnotType_key = " + DBConstants.VOCAnnotType_OMIM
+        + " and va._Object_key = o._Genotype_key "
+        + " and va._Term_key = o._Term_key "
+        + " and o.isNot = 0";
 }
