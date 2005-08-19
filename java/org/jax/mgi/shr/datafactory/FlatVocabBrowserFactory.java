@@ -92,7 +92,7 @@ public class FlatVocabBrowserFactory {
         subsets = Arrays.asList(l);
         subsetHS = new HashSet(subsets);
 
-        searchScript = "/home/jsb/omim/wi/admin/TextSearchWrapper.py";
+        searchScript = this.config.get ("TEXT_SEARCH_WRAPPER");
 
     }
 
