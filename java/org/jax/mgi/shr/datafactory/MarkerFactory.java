@@ -3637,6 +3637,7 @@ public class MarkerFactory
         + " where a._Marker_key = %d"
         + " and a._Allele_key = gag._Allele_key"
         + " and gag._Genotype_key = o._Genotype_key"
+        + " and isNot = 0 "
         + " order by o.term";
 
     // find how many Human diseases this marker is associated with
@@ -3646,7 +3647,8 @@ public class MarkerFactory
 	    + "FROM ALL_Allele a, GXD_AlleleGenotype gag, MRK_OMIM_Cache o"
         + " where a._Marker_key = %d"
         + " and a._Allele_key = gag._Allele_key"
-        + " and gag._Genotype_key = o._Genotype_key";
+        + " and gag._Genotype_key = o._Genotype_key"
+        + " and isNot = 0 ";
 
     // find how alleles for this marker are also annotated to a Human diseases
     // fill in: marker key (int)
@@ -3662,6 +3664,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.18.4.2  2005/08/18 17:23:26  dow
+* Updates and additions for OMIM/Images release
+*
 * Revision 1.18.4.1  2005/08/11 12:18:37  jsb
 * updated exclusions for Other DB links, per TR6603
 *
