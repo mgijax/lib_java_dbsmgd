@@ -718,7 +718,7 @@ public class DiseaseFactory {
     // get mouse transgenes associated with human disease
     // fill in: term key (int)
     private static final String GENE_TRANSGENE =
-        "select o._Marker_key, o.markerSymbol "
+        "select distinct o._Marker_key, o.markerSymbol "
         + " from MRK_OMIM_Cache o "
         + " where _Term_key = %d "
         + " and _Organism_key = " + DBConstants.Species_Mouse
@@ -729,8 +729,8 @@ public class DiseaseFactory {
     // Order is relevant for building phenotype structure.
     // fill in: term key (int)
     private static final String MOUSE_MODEL =
-        "select o._Genotype_key, o.genotypeDisplay, o.strain, o._Refs_key, "
-        + " o.jnumID, o.omimCategory3, o.isNot "
+        "select distinct o._Genotype_key, o.genotypeDisplay, o.strain, "
+        + " o._Refs_key, o.jnumID, o.omimCategory3, o.isNot "
         + " from MRK_OMIM_Cache o " 
         + " where o._Term_key = %d " 
         + " order by o._Genotype_key, o.omimCategory3, o._Refs_key";
