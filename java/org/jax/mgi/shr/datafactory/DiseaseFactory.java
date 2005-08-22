@@ -418,7 +418,6 @@ public class DiseaseFactory {
             gene = new HashMap();
             gene.put("mouseKey", rr.getInt(1));
             gene.put("mouseSymbol", rr.getString(2));
-            System.out.println(rr.getInt(1) + " " + rr.getString(2));
             trans.add(gene);
         }
         nav.close();
@@ -511,7 +510,7 @@ public class DiseaseFactory {
                                    jnum, new String(""), new String(""));
             }
             //  In this case we should only be adding a reference
-            else if (genoKey == tmpGeno && category == tmpCat) {
+            else if (genoKey.equals(tmpGeno) && category == tmpCat) {
                 ref = rr.getInt(4);
                 jnum = rr.getString(5);
                 p.addAnnotEvidence(new Integer(key), new Integer(0), ref,  
