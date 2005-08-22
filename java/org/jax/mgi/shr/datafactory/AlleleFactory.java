@@ -1138,22 +1138,27 @@ public class AlleleFactory
 
         // set of de-emphasized references (not to be highlighted on the
         // allele detail page)
-        PrivateRefSet refSet = getPrivateRefSet ();
+        //PrivateRefSet refSet = getPrivateRefSet ();
 
         this.sqlDM.setScrollable(true);
-        nav = this.sqlDM.executeQuery (Sprintf.sprintf(REFERENCE_FIRST, key));
+        String cmd = Sprintf.sprintf(REFERENCE_FIRST, key);
+        logger.logDebug("#####" + cmd);
+        nav = this.sqlDM.executeQuery (cmd);
         
         if (nav.next()) {
             rowExists = true;	// assume this row is acceptable
+            System.out.println("Processing original ref...");
 
             // if the set of internal-only references contains the one from
             // this row, then we need to move on to check the next row --
             // until we find an acceptable one or we run out of rows.
 
             rr = (RowReference) nav.getCurrent();
-            while (rowExists && refSet.contains (rr.getString(2))) {
-                rowExists = nav.next();
-            }
+            //while (rowExists && refSet.contains (rr.getString(2))) {
+            //    System.out.println(rr.getString(2));
+            //    rowExists = nav.next();
+            //    System.out.println("rowExists = " + rowExists);
+            //}
 
             // if we found an acceptable row, then we build a DTO for it as
             // the first reference.  We also know that there's at least one
@@ -1284,6 +1289,7 @@ public class AlleleFactory
         throws DBException
     {
         DTO ref = DTO.getDTO();
+        System.out.println("Setting original reference to => " + rr.getInt(1) + " " + rr.getString(2) + " " + rr.getString(7));
         ref.set (DTOConstants.RefsKey, rr.getInt(1));
         ref.set (DTOConstants.Jnum, rr.getString(2));
         ref.set (DTOConstants.Citation, rr.getString(7));
