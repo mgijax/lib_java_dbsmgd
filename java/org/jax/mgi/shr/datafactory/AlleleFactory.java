@@ -1113,9 +1113,11 @@ public class AlleleFactory
         // finally, do the actual query to get the count of references,
         // excluding those as-needed
 
+        //String cmd = Sprintf.sprintf (REFERENCE_COUNT, 
+        //                                   Integer.toString(key),
+        //                              excludedKeys);
         String cmd = Sprintf.sprintf (REFERENCE_COUNT, 
-                                           Integer.toString(key),
-                                      excludedKeys);
+                                           Integer.toString(key));
         logger.logDebug(cmd);
         nav = this.sqlDM.
             executeQuery ( cmd );
@@ -1147,8 +1149,6 @@ public class AlleleFactory
         
         if (nav.next()) {
             rowExists = true;	// assume this row is acceptable
-            System.out.println("Processing original ref...");
-
             // if the set of internal-only references contains the one from
             // this row, then we need to move on to check the next row --
             // until we find an acceptable one or we run out of rows.
@@ -1289,7 +1289,6 @@ public class AlleleFactory
         throws DBException
     {
         DTO ref = DTO.getDTO();
-        System.out.println("Setting original reference to => " + rr.getInt(1) + " " + rr.getString(2) + " " + rr.getString(7));
         ref.set (DTOConstants.RefsKey, rr.getInt(1));
         ref.set (DTOConstants.Jnum, rr.getString(2));
         ref.set (DTOConstants.Citation, rr.getString(7));
@@ -1681,15 +1680,20 @@ public class AlleleFactory
 
     // get a count of references for the marker
     // fill in: allele key (int)
+    //private static final String REFERENCE_COUNT =
+	//	"select count (distinct _Refs_key) "
+	//	+ " from MGI_Reference_Assoc "
+	//	+ " where _Object_key = %s "
+    //    +    " AND _MGIType_key = " + DBConstants.MGIType_Allele
+	//	+    " AND _Refs_key NOT IN "
+	//	+	" (SELECT _Object_key "
+	//	+	" FROM MGI_SetMember "
+	//	+	" WHERE _Set_key IN (%s) )";
     private static final String REFERENCE_COUNT =
 		"select count (distinct _Refs_key) "
 		+ " from MGI_Reference_Assoc "
 		+ " where _Object_key = %s "
-        +    " AND _MGIType_key = " + DBConstants.MGIType_Allele
-		+    " AND _Refs_key NOT IN "
-		+	" (SELECT _Object_key "
-		+	" FROM MGI_SetMember "
-		+	" WHERE _Set_key IN (%s) )";
+        +    " AND _MGIType_key = " + DBConstants.MGIType_Allele;
 
 
     // for qtl alleles, get the TEXT-QTL experiment notes for the associated
