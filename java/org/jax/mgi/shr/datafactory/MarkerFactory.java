@@ -3659,11 +3659,16 @@ public class MarkerFactory
         + " and a._Allele_key = gag._Allele_key"
         + " and gag._Genotype_key = va._Object_key"
         + " and va._AnnotType_key = " + DBConstants.VOCAnnotType_OMIM
-        + " and a.isWildType = 0";
+        + " and a.isWildType = 0"
+        + " and va.isNot = 0";
 }
 
 /*
 * $Log$
+* Revision 1.18.4.3  2005/08/19 16:04:57  dow
+* Changes to keep the human disease count, and the human disease summary
+* from bringing back disease terms that only have associations to the gene in a "not" case.
+*
 * Revision 1.18.4.2  2005/08/18 17:23:26  dow
 * Updates and additions for OMIM/Images release
 *
