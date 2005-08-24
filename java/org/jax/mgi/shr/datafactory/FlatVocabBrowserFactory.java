@@ -290,7 +290,13 @@ public class FlatVocabBrowserFactory {
             while (nav.next()) {
                 rr = (RowReference)nav.getCurrent();
             
-                terms.add(processTerm(rr));
+                //  If process term returns null, don't add the value
+                //  in the case of omim, this means an obsolete term with
+                //  no mouse models
+                HashMap term = processTerm(rr);
+                if (term != null) {
+                    terms.add(term);
+                }
             }
         }
 
@@ -350,7 +356,13 @@ public class FlatVocabBrowserFactory {
         while (nav.next()) {
             rr = (RowReference)nav.getCurrent();
                 
-            terms.add(processTerm(rr));
+            //  If process term returns null, don't add the value
+            //  in the case of omim, this means an obsolete term with
+            //  no mouse models
+            HashMap term = processTerm(rr);
+            if (term != null) {
+                terms.add(term);
+            }
         }
           
         nav.close();
@@ -368,12 +380,24 @@ public class FlatVocabBrowserFactory {
 
     /* -------------------------------------------------------------------- */
 
+    /**  processes the term resulting from the query.  
+     *   This is a method that should be specific to the vocabulary.  This
+     *   method is specific to omim, as with omim there is the concept of 
+     *   obsoleted terms that we may want to ignore and mouse model counts.
+     */
     private HashMap processTerm ( RowReference rr ) 
         throws DBException
     {
         Integer termKey = rr.getInt(1);
         String term = rr.getString(2);
         String omimId = rr.getString(3);
+        int obsoleteInt = rr.getInt(4).intValue();
+
+        //  used to determine if we should include this term.  
+        boolean obsolete = false;
+        if (obsoleteInt == 1) {
+            obsolete = true;
+        } 
 
         HashMap hm = new HashMap();
         hm.put("term", term);
@@ -394,7 +418,15 @@ public class FlatVocabBrowserFactory {
             hm.put("models", rr2.getInt(1));
         }
         nav2.close();
-        return hm;
+
+        //  If the term is obsolete, and there are no mouse models for it
+        //  we skip the term (return null).
+        if (obsolete && ((Integer)hm.get("models")).intValue() == 0) {
+            return null;
+        }
+        else {
+            return hm;
+        }
     }
 
     /* -------------------------------------------------------------------- */
@@ -448,7 +480,7 @@ public class FlatVocabBrowserFactory {
      // find the all OMIM Terms that begin with given subset character.
     // fill in: beginning character of term (String)
     private static final String SUBSET =
-		"select vt._Term_key, vt.term, ac.accID  "
+		"select vt._Term_key, vt.term, ac.accID, vt.isObsolete  "
         + "from VOC_Term vt, ACC_Accession ac "
 		+ "where vt.term like '%s%' "
         + "and vt._Term_key = ac._Object_key "
@@ -462,7 +494,7 @@ public class FlatVocabBrowserFactory {
     // fill in: portion of from clause (String) 
     //          portion of where clause (String)
     private static final String OMIM_TERMS =
-		"select vt._Term_key, vt.term, ac.accID "
+		"select vt._Term_key, vt.term, ac.accID, vt.isObsolete "
         + "from VOC_Term vt, ACC_Accession ac %s "
         + "where %s "
         + "and vt._Term_key = ac._Object_key "
