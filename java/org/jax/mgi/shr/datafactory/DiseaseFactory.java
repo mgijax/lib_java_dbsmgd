@@ -106,7 +106,7 @@ public class DiseaseFactory {
      * @throws IOException if there are problems reading from URLs via HTTP
      */
     public DTO getDiseaseInfo (Map parms)
-        throws DBException, MalformedURLException, IOException
+        throws DBException, MalformedURLException, IOException, MGIException
     {
         
         logger.logDebug("Getting Disease Info");
@@ -123,8 +123,9 @@ public class DiseaseFactory {
         // if we could not find a term key based on 'parms', then bail out
         // before bothering with anything else
         if (keyStr == null) {
-            this.logInfo ("Could not find term");
-            return disease;
+            
+            logger.logError ("No valid 'key' parameter was passed!");
+            throw new MGIException("No valid 'key' parameter was provided!");
         }
 
         // term key as an integer
