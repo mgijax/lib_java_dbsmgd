@@ -719,6 +719,10 @@ public class AlleleFactory
         MouseModelCategory cat4 = null; // No similarity
         MouseModelCategory cat5 = null; // transgenes and other mutations
 
+        //  Track the number of distinct diseases, not including those in the 
+        //  "not" category.
+        int diseaseCount = 0;
+
         //  Keeping a list of distinct diseases and a list of distinct
         //  annotated genotypes to provide counts
         ArrayList diseaseList = new ArrayList();
@@ -812,6 +816,9 @@ public class AlleleFactory
                 lastTerm = termKey;
                 if (! diseaseList.contains(termKey)){
                     diseaseList.add(termKey);
+                    if(category.intValue() != 5) {
+                        diseaseCount += 1;
+                    }
                 }
                 phenoHash = new HashMap();
                 disease = new Disease(termKey, term, termID, phenoHash);
@@ -848,6 +855,9 @@ public class AlleleFactory
                 lastTerm = termKey;
                 if (! diseaseList.contains(termKey)){
                     diseaseList.add(termKey);
+                    if(category.intValue() != 5) {
+                        diseaseCount += 1;
+                    }
                 }
                 phenoHash = new HashMap();
                 disease = new Disease(termKey, term, termID, phenoHash);
@@ -923,9 +933,8 @@ public class AlleleFactory
         allele.set("category5", cat5);
 
         //  Add counts to our DTO as well
-        if (diseaseList.size() > 0) {
-            allele.set(DTOConstants.DiseaseCount, 
-                       new Integer(diseaseList.size()));
+        if (diseaseCount > 0) {
+            allele.set(DTOConstants.DiseaseCount, new Integer(diseaseCount));
         }
         if (genotypeList.size() > 0) {
             allele.set(DTOConstants.GenotypeCount, 
