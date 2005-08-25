@@ -188,11 +188,15 @@ public class PhenotypeFactory {
         nav = this.sqlDM.executeQuery ( cmd );
 
         Phenotype p = null;
+        ImageFactory imgFac = 
+            new ImageFactory(this.config, this.sqlDM, this.logger);
         while (nav.next()) {
             rr = (RowReference)nav.getCurrent();
             p = (Phenotype)phenoHash.get(rr.getInt(1));
             p.addHeaderTerm(rr.getInt(2), rr.getString(3), rr.getString(4), 
                             rr.getInt(5));
+            //  loads the primary image for the phenotype for later display
+            p.loadPrimaryImage(imgFac);
         }
         nav.close();
 

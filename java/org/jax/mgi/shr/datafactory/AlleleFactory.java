@@ -64,6 +64,10 @@ public class AlleleFactory
     // used to log profiling information (timings for sections of code)
     private TimeStamper timer = null;
 
+    // the image factory class provides access to images associated with the
+    // allele
+    private ImageFactory imgFac = null;
+
     ///////////////
     // Constructors
     ///////////////
@@ -264,6 +268,14 @@ public class AlleleFactory
         DTO.putDTO (section);
         this.timeStamp ("Retrieved basic allele info");
 
+        if (imgFac == null) {
+            imgFac = new ImageFactory(this.config, this.sqlDM, this.logger);
+        }
+        
+        DTO imgSection = imgFac.getPrimaryThumbnailForAllele (key);
+        allele.set(DTOConstants.AllelePrimaryImage, imgSection);
+        this.timeStamp ("Retrieved Primary Image for Allele");
+
         section = this.getSynonyms (key);
         allele.merge (section);
         DTO.putDTO (section);
@@ -284,6 +296,8 @@ public class AlleleFactory
         DTO.putDTO (section);
         this.timeStamp ("Retrieved gene information");
 
+        Integer mkey = (Integer)allele.get(DTOConstants.MarkerKey);          
+
         section = this.getPhenotypes (key);
         allele.merge (section);
         DTO.putDTO (section);
@@ -303,6 +317,11 @@ public class AlleleFactory
         allele.merge (section);
         DTO.putDTO (section);
         this.timeStamp ("Retrieved reference data");
+
+        section = this.getMouseModels (key);
+        allele.merge (section);
+        DTO.putDTO (section);
+        this.timeStamp ("Retrieved mouse model data");
 
         return allele;
     }
@@ -409,7 +428,6 @@ public class AlleleFactory
         }
         nav.close();
 
-        
         return allele;
     }
     /* -------------------------------------------------------------------- */
@@ -633,6 +651,17 @@ public class AlleleFactory
                 } while (nav.next());
             }
             nav.close();
+
+            nav = this.sqlDM.
+                executeQuery(Sprintf.sprintf(HUMAN_ORTHOLOG, 
+                                             markerKey.intValue()));
+
+            if (nav.next()) {
+                rr = (RowReference) nav.getCurrent();
+                allele.set (DTOConstants.OrthologKey, rr.getInt(1));
+                allele.set (DTOConstants.OrthologSymbol, rr.getString(2));
+            }
+            nav.close();
         }
         
         return allele;
@@ -651,6 +680,270 @@ public class AlleleFactory
         }
         return allele;
     }
+
+    /* -------------------------------------------------------------------- */
+
+    /** retrieve the mouse models for the allele with the given 'key'.
+    * @param key the allele key associated with the allele who's disease model 
+    *        info we seek
+    * @return DTO with several attributes added to support five concepts.  
+    *         Each of these attributes are MouseModelCategory Objects:
+    *    <ul>
+    *    <li> category1 = Models with phenotypic similarity to human disease 
+    *                     associated with this gene.
+    *    <li> category2 = Models with phenotypic similarity to human disease 
+    *                     not associated with this gene
+    *    <li> category3 = Models with phenotypic similarity to human disease 
+    *                     with unknown etiology or involving genes where 
+    *                     etiology is unknown
+    *    <li> category4 = No similarity to expected human disease phenotype 
+    *                     was found
+    *    <li> category5 = Models involving transgenes or other mutation types
+    *    </ul>
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
+    public DTO getMouseModels (int key) 
+        throws DBException
+    {
+        ResultsNavigator nav = null;	// set of query results
+        RowReference rr = null;		    // one row in 'nav'
+        DTO allele = DTO.getDTO();
+
+        //  The sets of phenotypes for this term, by category
+        MouseModelCategory cat1 = null; // involving orthologs
+        MouseModelCategory cat2 = null; // distinct etiologies
+        MouseModelCategory cat3 = null; // unknown etiology or ortholog
+        MouseModelCategory cat4 = null; // No similarity
+        MouseModelCategory cat5 = null; // transgenes and other mutations
+
+        //  Track the number of distinct diseases, not including those in the 
+        //  "not" category.
+        int diseaseCount = 0;
+
+        //  Keeping a list of distinct diseases and a list of distinct
+        //  annotated genotypes to provide counts
+        ArrayList diseaseList = new ArrayList();
+        ArrayList genotypeList = new ArrayList();
+        
+        //  The order value in all phenotype related calls is zero for this,
+        //  as there is no other meaningful ordervalue.  I create "genoOrder"
+        //  so that I don't have to do a new Integer(0) over and over again.
+        Integer genoOrder = new Integer(0);
+
+        //  variables  that will change with each iterations.
+
+        Phenotype p = null;
+        Integer termKey = null;
+        String term = null;
+        String termID = null;
+        Integer genoKey = null;
+        String allelicComp = null;
+        String background = null;
+        Integer ref = null;
+        String jnum = null;
+        Integer markerType = null;
+        Integer category = null;
+        MouseModelCategory mmCat = null;
+        HashMap phenoHash = null;
+        Disease disease = null;
+        String header = null;
+        String footNote = null;
+        String genoFoot = null;
+        //  Iterate through the rows and add the genotypes to
+        //  the set of phenotypes.
+        //  There is an assumption that certain rules have been dealt with
+        //  at the database level.  such as, if a genotype is "category 4"
+        //  no similarity, it can't be part of another category, or a genotype
+        //  can belong to no more that 2 categories.
+        String cmd = Sprintf.sprintf (MOUSE_MODEL, key);
+        logger.logDebug(cmd);
+        nav = this.sqlDM.executeQuery ( cmd );
+        Integer lastCat  = null;
+        Integer lastTerm = null;
+        Integer lastGeno = null;
+        Integer lastRef  = null;
+        while (nav.next()) {
+            rr = (RowReference)nav.getCurrent();
+                
+            termKey = rr.getInt(1);
+            term = rr.getString(2);
+            termID = rr.getString(3);
+            genoKey = rr.getInt(4);
+            allelicComp = rr.getString(5);
+            background = rr.getString(6);
+            markerType = rr.getInt(7);
+            ref = rr.getInt(8);
+            jnum = rr.getString(9);
+            category = rr.getInt(10);
+            header = rr.getString(12);
+            footNote = rr.getString(13);
+            genoFoot = rr.getString(14);
+
+            //  No category, or category not equal to last means set up
+            //  a new category.  This assumes everything must be refreshed.
+            if ( lastCat == null || ! category.equals(lastCat)) {
+
+                //  Set new category info
+                lastCat = category;
+                //  Put the phenotype object in the propery category hashset
+                mmCat = new MouseModelCategory(header, footNote);
+                //  Put the phenotype object in the propery category hashset
+                switch (category.intValue())  {
+                case 1:
+                    cat1 = mmCat;
+                    break;
+                case 2:
+                    cat2 = mmCat;
+                    break;
+                case 3:
+                    cat3 = mmCat;
+                    break;
+                case 4:
+                    cat4 = mmCat;
+                    break;
+                case 5:
+                    cat5 = mmCat;
+                    break;
+                default:
+                    // not a valid option
+                    break;
+                }
+                
+                //  Set new disease term info
+                lastTerm = termKey;
+                if (! diseaseList.contains(termKey)){
+                    diseaseList.add(termKey);
+                    if(category.intValue() != 5) {
+                        diseaseCount += 1;
+                    }
+                }
+                phenoHash = new HashMap();
+                disease = new Disease(termKey, term, termID, phenoHash);
+                mmCat.addDisease(disease);
+
+                // Set new phenotype info
+                lastGeno = genoKey;
+                if (! genotypeList.contains(genoKey)){
+                    genotypeList.add(genoKey);
+                }
+                if (genoFoot != null) {
+                    p = new DiseasePhenotype(genoKey, genoOrder, allelicComp, 
+                                             background, genoFoot);
+                }
+                else {
+                    p = new DiseasePhenotype(genoKey, genoOrder, allelicComp,
+                                             background);
+                }
+                p.addAnnotTerm(termKey, termID, term, genoOrder);
+                
+                phenoHash.put(genoKey, p);
+
+                //  Set reference in genotype
+                lastRef = ref;
+                p.addAnnotEvidence(termKey, genoOrder, ref,  
+                                   jnum, new String(""), new String(""));
+            }                
+                
+            //  A change in term key means we have a new term/disease under
+            //  the category.  Assumes we are starting over with genotypes,
+            //  etc...
+            else if (! termKey.equals(lastTerm)) {
+                //  Set new disease term info
+                lastTerm = termKey;
+                if (! diseaseList.contains(termKey)){
+                    diseaseList.add(termKey);
+                    if(category.intValue() != 5) {
+                        diseaseCount += 1;
+                    }
+                }
+                phenoHash = new HashMap();
+                disease = new Disease(termKey, term, termID, phenoHash);
+                mmCat.addDisease(disease);
+
+                // Set new phenotype info
+                lastGeno = genoKey;
+                if (! genotypeList.contains(genoKey)){
+                    genotypeList.add(genoKey);
+                }
+                if (genoFoot != null) {
+                    p = new DiseasePhenotype(genoKey, genoOrder, allelicComp, 
+                                             background, genoFoot);
+                }
+                else {
+                    p = new DiseasePhenotype(genoKey, genoOrder, allelicComp,
+                                             background);
+                }
+                p.addAnnotTerm(termKey, termID, term, genoOrder);
+                
+                phenoHash.put(genoKey, p);
+
+                //  Set reference in genotype
+                lastRef = ref;
+                p.addAnnotEvidence(termKey, genoOrder, ref,  
+                                   jnum, new String(""), new String(""));
+                
+            }
+
+            //  A change in genotype means that under a given disease we
+            //  are adding a genotype, and it's associated references.
+            else if (! genoKey.equals(lastGeno)) {
+                // Set new phenotype info
+                lastGeno = genoKey;
+                if (! genotypeList.contains(genoKey)){
+                    genotypeList.add(genoKey);
+                }
+                if (genoFoot != null) {
+                    p = new DiseasePhenotype(genoKey, genoOrder, allelicComp, 
+                                             background, genoFoot);
+                }
+                else {
+                    p = new DiseasePhenotype(genoKey, genoOrder, allelicComp,
+                                             background);
+                }
+                p.addAnnotTerm(termKey, termID, term, genoOrder);
+                
+                //  Puts phenotype in a hash for the associated term/disease
+                phenoHash.put(genoKey, p);
+
+                //  Set reference in genotype
+                lastRef = ref;
+                p.addAnnotEvidence(termKey, genoOrder, ref,  
+                                   jnum, new String(""), new String(""));
+                
+            }
+
+            //  If all that's changed is the reference, add it to the phenotype
+            else if (! ref.equals(lastRef)) {
+                //  Set reference in genotype
+                lastRef = ref;
+                p.addAnnotEvidence(termKey, genoOrder, ref,  
+                                   jnum, new String(""), new String(""));
+            }
+        }
+        nav.close();
+
+        //  Populate the dto with all of our categories
+        allele.set("category1", cat1);
+        allele.set("category2", cat2);
+        allele.set("category3", cat3);
+        allele.set("category4", cat4);
+        allele.set("category5", cat5);
+
+        //  Add counts to our DTO as well
+        if (diseaseCount > 0) {
+            allele.set(DTOConstants.DiseaseCount, new Integer(diseaseCount));
+        }
+        if (genotypeList.size() > 0) {
+            allele.set(DTOConstants.GenotypeCount, 
+                       new Integer(genotypeList.size()));
+        }
+        return allele;
+    }
+
+    /* -------------------------------------------------------------------- */
 
     public DTO getNotes (int key) throws DBException
     {
@@ -732,6 +1025,8 @@ public class AlleleFactory
         
         return allele;
     }
+
+
     public DTO getReferenceInfo (int key) throws DBException
     {
 
@@ -827,9 +1122,11 @@ public class AlleleFactory
         // finally, do the actual query to get the count of references,
         // excluding those as-needed
 
+        //String cmd = Sprintf.sprintf (REFERENCE_COUNT, 
+        //                                   Integer.toString(key),
+        //                              excludedKeys);
         String cmd = Sprintf.sprintf (REFERENCE_COUNT, 
-                                           Integer.toString(key),
-                                      excludedKeys);
+                                           Integer.toString(key));
         logger.logDebug(cmd);
         nav = this.sqlDM.
             executeQuery ( cmd );
@@ -852,22 +1149,25 @@ public class AlleleFactory
 
         // set of de-emphasized references (not to be highlighted on the
         // allele detail page)
-        PrivateRefSet refSet = getPrivateRefSet ();
+        //PrivateRefSet refSet = getPrivateRefSet ();
 
         this.sqlDM.setScrollable(true);
-        nav = this.sqlDM.executeQuery (Sprintf.sprintf(REFERENCE_FIRST, key));
+        String cmd = Sprintf.sprintf(REFERENCE_FIRST, key);
+        logger.logDebug("#####" + cmd);
+        nav = this.sqlDM.executeQuery (cmd);
         
         if (nav.next()) {
             rowExists = true;	// assume this row is acceptable
-
             // if the set of internal-only references contains the one from
             // this row, then we need to move on to check the next row --
             // until we find an acceptable one or we run out of rows.
 
             rr = (RowReference) nav.getCurrent();
-            while (rowExists && refSet.contains (rr.getString(2))) {
-                rowExists = nav.next();
-            }
+            //while (rowExists && refSet.contains (rr.getString(2))) {
+            //    System.out.println(rr.getString(2));
+            //    rowExists = nav.next();
+            //    System.out.println("rowExists = " + rowExists);
+            //}
 
             // if we found an acceptable row, then we build a DTO for it as
             // the first reference.  We also know that there's at least one
@@ -1326,6 +1626,22 @@ public class AlleleFactory
 		+	" AND vt._Term_key = smc._Qualifier_key"
 		+	" AND vt.term != 'Not Specified'";
 
+    // get human orthologous gene if one exists
+    // fill in: marker key (int)
+    private static final String HUMAN_ORTHOLOG =
+        "select m._Marker_key, m.symbol "
+		+ " from HMD_Homology_Marker hm1, "
+        + "      HMD_Homology h1, "
+        + "      HMD_Homology h2, "
+        + "      HMD_Homology_Marker hm2, "
+        + "      MRK_Marker m "
+		+ " where hm1._Marker_key = %d "
+		+ " and hm1._Homology_key = h1._Homology_key "
+        + " and h1._Class_key = h2._Class_key "
+        + " and h2._Homology_key = hm2._Homology_key "
+        + " and hm2._Marker_key = m._Marker_key "
+        + " and m._Organism_key = " + DBConstants.Species_Human;
+
     // determines if marker associated with allele is in IMSR.
     // fill in: Allele key (int)
     private static final String IMSR =
@@ -1373,15 +1689,20 @@ public class AlleleFactory
 
     // get a count of references for the marker
     // fill in: allele key (int)
+    //private static final String REFERENCE_COUNT =
+	//	"select count (distinct _Refs_key) "
+	//	+ " from MGI_Reference_Assoc "
+	//	+ " where _Object_key = %s "
+    //    +    " AND _MGIType_key = " + DBConstants.MGIType_Allele
+	//	+    " AND _Refs_key NOT IN "
+	//	+	" (SELECT _Object_key "
+	//	+	" FROM MGI_SetMember "
+	//	+	" WHERE _Set_key IN (%s) )";
     private static final String REFERENCE_COUNT =
 		"select count (distinct _Refs_key) "
 		+ " from MGI_Reference_Assoc "
 		+ " where _Object_key = %s "
-        +    " AND _MGIType_key = " + DBConstants.MGIType_Allele
-		+    " AND _Refs_key NOT IN "
-		+	" (SELECT _Object_key "
-		+	" FROM MGI_SetMember "
-		+	" WHERE _Set_key IN (%s) )";
+        +    " AND _MGIType_key = " + DBConstants.MGIType_Allele;
 
 
     // for qtl alleles, get the TEXT-QTL experiment notes for the associated
@@ -1403,6 +1724,24 @@ public class AlleleFactory
         + " and ac._MGIType_key = " + DBConstants.MGIType_Reference
         + " and ac.prefixPart = 'J:'  "
         + " and ac.preferred = 1  "
+
         + " order by mem.sequenceNum, me._Expt_key, men.sequenceNum ";
+
+    // get all mouse model data for a given allele
+    // Order is relevant for building phenotype structure.
+    // fill in: allele key (int)
+    private static final String MOUSE_MODEL =
+        "select distinct o._Term_key, o.term, o.termID, o._Genotype_key, "
+        + " o.genotypeDisplay, o.strain, o._Marker_Type_key, o._Refs_key, "
+        + " o.jnumID, o.omimCategory1, o.isNot, o.header, o.headerFootnote, "
+        + " o.genotypeFootnote "
+        + " from MRK_OMIM_Cache o, GXD_AlleleGenotype gag, ALL_Allele a " 
+        + " where a._Allele_key = %d " 
+        + " and a._Allele_key = gag._Allele_key "
+        + " and gag._Genotype_key = o._Genotype_key "
+        + " and a._Marker_key = o._Marker_key "
+        + " and o._Organism_key = " + DBConstants.Species_Mouse
+        + " and o.omimCategory1 > -1 "
+        + " order by o.omimCategory1, o.term, o._Genotype_key, o.jnumID";
 
 }

@@ -471,6 +471,64 @@ public class MarkerFactory
 
     /* -------------------------------------------------------------------- */
 
+    /** retrieve the Associated Human Disease info for the marker specified in
+    *    'parms'.
+    * @param parms set of parameters specifying which marker we are seeking.
+    *    Three keys in 'parms' are checked, in order of preference:  "key"
+    *    (marker key as a String), "id" (marker accession ID), and "symbol"
+    *    (marker symbol).
+    * @return DTO which defines all human disease related marker data fields
+    * @assumes nothing
+    * @effects retrieves human disease related marker data by quering a 
+    *    database.
+    * @throws DBException if there is a problem querying the database or
+    *    processing the results
+    */
+    public DTO getDiseaseInfo (Map parms)
+            throws DBException
+    {
+
+        // all data for the marker with the given 'key'
+        DTO marker = DTO.getDTO();
+
+        // data for a particular section, to merge with 'marker'
+        DTO section = null;
+
+        // marker key as a String
+        String keyStr = getKey (parms);
+
+        // if we could not find a marker key based on 'parms', then bail out
+        // before bothering with anything else
+        if (keyStr == null)
+        {
+            this.logInfo ("Could not find marker");
+            return marker;
+        }
+
+        // marker key as an integer
+        int key = Integer.parseInt (keyStr);
+
+        // get data for individual sections.  For the sake of efficiency, we
+        // make sure to always return the 'section' to the pool of available
+        // DTOs once we are done with it.
+
+        section = this.getBasicInfo (key);
+        marker.merge (section);
+        DTO.putDTO (section);
+        this.timeStamp ("Retrieved basic marker info");
+
+        section = this.getDiseaseList (key);
+        marker.merge (section);
+        DTO.putDTO (section);
+        this.timeStamp ("Retrieved human disease info for marker");
+
+
+        return marker;
+    }
+
+    /* -------------------------------------------------------------------- */
+
+
     /** retrieve the the basic info avaliable for the marker specified in
     *    'parms', as well as its Gene Ontology (GO) data.
     * @param parms set of parameters specifying which marker we are seeking.
@@ -1648,6 +1706,37 @@ public class MarkerFactory
 	}
 	nav.close();
 
+	// As these are phenotypic as well, get the human disease counts here
+
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (DISEASE_COUNT, key));
+	if (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+        Integer dc = rr.getInt(1);
+	    marker.set ("Disease_Count", dc);
+	}
+	else
+	{
+	    marker.set ("Disease_Count", new Integer(0));
+	}
+	nav.close();
+
+	// also get the count of alleles with associations to disease annotations
+
+	nav = 
+        this.sqlDM.executeQuery (Sprintf.sprintf (DISEASE_ALLELE_COUNT, key));
+	if (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+        Integer dc = rr.getInt(1);
+	    marker.set ("Disease_Allele_Count", dc);
+	}
+	else
+	{
+	    marker.set ("Disease_Allele_Count", new Integer(0));
+	}
+	nav.close();
+
 	return marker;
     }
 
@@ -2463,6 +2552,47 @@ public class MarkerFactory
 
     /* -------------------------------------------------------------------- */
 
+    /** retrieve the human diseases for the given marker.
+    * @param key the marker key of the marker whose data we seek
+    * @return DTO where the DTOConstants.Diseases field is associated with
+    *    a List value.  If no human diseases are associated with the given
+    *     marker, then an empty DTO is returned.
+    * @assumes nothing
+    * @effects queries the database
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
+    public DTO getDiseaseList (int key) throws DBException
+    {
+        ResultsNavigator nav = null;    // set of query results
+        RowReference rr = null;         // one row in 'nav'
+        DTO marker = DTO.getDTO();      // start with an empty DTO
+
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (HUMAN_DISEASES, key));
+
+        // List of all diseases associated with this marker
+        ArrayList diseases = new ArrayList();
+        Disease disease = null;
+
+        while (nav.next()){
+            rr = (RowReference) nav.getCurrent();
+
+            disease = new Disease(rr.getInt(1),
+                                  rr.getString(2), 
+                                  rr.getString(3));
+            diseases.add (disease);
+        }
+        nav.close();
+
+        // if we found any diseases add them to 'marker'.
+
+        if (diseases.size() > 0)  {
+            marker.set (DTOConstants.Diseases, diseases);
+        }        
+
+        return marker;
+    }
+
     ///////////////////////////
     // private instance methods
     ///////////////////////////
@@ -2995,6 +3125,8 @@ public class MarkerFactory
                             DBConstants.LogicalDB_SwissProt + ", " +
                             DBConstants.LogicalDB_Interpro + ", " +
                             DBConstants.LogicalDB_TrEMBL + ", " +
+                            DBConstants.LogicalDB_NCBI + ", " +
+                            DBConstants.LogicalDB_Ensembl + ", " +
                             DBConstants.LogicalDB_SequenceDB + ") "
                 + " order by ldb.name, a.accID";
 
@@ -3496,19 +3628,67 @@ public class MarkerFactory
                 + " where mc._Marker_key = %d"
                 +    " and mc._Current_key = mm._Marker_key"
                 + " order by mm.symbol";
+
+    // get human diseases associated with marker
+    // fill in: marker key (int)
+    private static final String HUMAN_DISEASES =
+        "select distinct o._Term_key, o.term, o.termID"
+        + " from ALL_Allele a, GXD_AlleleGenotype gag, MRK_OMIM_Cache o"
+        + " where a._Marker_key = %d"
+        + " and a._Allele_key = gag._Allele_key"
+        + " and gag._Genotype_key = o._Genotype_key"
+        + " and isNot = 0 "
+        + " order by o.term";
+
+    // find how many Human diseases this marker is associated with
+    // fill in: marker key (int)
+    private static final String DISEASE_COUNT =
+        "SELECT COUNT(DISTINCT o._Term_key) "
+	    + "FROM ALL_Allele a, GXD_AlleleGenotype gag, MRK_OMIM_Cache o"
+        + " where a._Marker_key = %d"
+        + " and a._Allele_key = gag._Allele_key"
+        + " and gag._Genotype_key = o._Genotype_key"
+        + " and isNot = 0 ";
+
+    // find how alleles for this marker are also annotated to a Human diseases
+    // fill in: marker key (int)
+    private static final String DISEASE_ALLELE_COUNT =
+        "select count(distinct a._Allele_key) "
+	    + "from ALL_Allele a, GXD_AlleleGenotype gag, VOC_Annot va"
+        + " where a._Marker_key = %d"
+        + " and a._Allele_key = gag._Allele_key"
+        + " and gag._Genotype_key = va._Object_key"
+        + " and va._AnnotType_key = " + DBConstants.VOCAnnotType_OMIM
+        + " and a.isWildType = 0"
+        + " and va.isNot = 0";
 }
 
 /*
 * $Log$
+* Revision 1.19  2005/08/05 17:49:14  mbw
+* merged code from branch lib_java_dbsmgd-tr6046-1
 *
-* Revision 1.16.2.1  2005/08/02 21:33:24  mbw
-* merged tag lib_java_dbsmgd-tr1560-BP onto branch
+* Revision 1.18.4.4  2005/08/23 11:24:40  dow
+* Removed nots from count of "disease alleles".
+*
+* Revision 1.18.4.3  2005/08/19 16:04:57  dow
+* Changes to keep the human disease count, and the human disease summary
+* from bringing back disease terms that only have associations to the gene in a "not" case.
+*
+* Revision 1.18.4.2  2005/08/18 17:23:26  dow
+* Updates and additions for OMIM/Images release
+*
+* Revision 1.18.4.1  2005/08/11 12:18:37  jsb
+* updated exclusions for Other DB links, per TR6603
 *
 * Revision 1.18  2005/04/15 10:32:58  jsb
 * fixed code missing after merge, regarding allele counts
 *
 * Revision 1.17  2005/04/12 17:42:10  dow
 * lib_java_dbsmgd-3-2-0-0
+*
+* Revision 1.16.2.1  2005/08/02 21:33:24  mbw
+* merged tag lib_java_dbsmgd-tr1560-BP onto branch
 *
 * Revision 1.16  2005/04/02 19:57:55  pf
 * 3.12 maint6496 release

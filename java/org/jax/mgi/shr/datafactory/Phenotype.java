@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import org.jax.mgi.shr.cache.ExpiringObjectCache;
+import org.jax.mgi.shr.dto.DTO;
+import org.jax.mgi.shr.dto.DTOConstants;
+import org.jax.mgi.shr.dbutils.DBException;
 
 /**
  * @module Phenotype.java
@@ -36,6 +39,7 @@ public class Phenotype implements Comparable {
     private HashMap headers;
     private HashMap annots;
     private String htmlCompound = null;
+    private DTO primaryImage = null;
 
     ///////////////
     // Constructors
@@ -86,6 +90,19 @@ public class Phenotype implements Comparable {
      */
     public String getCompound() {
         return allelicComposition;
+    }
+
+    public void loadPrimaryImage(ImageFactory imgFac) 
+        throws DBException
+    {
+        
+        this.primaryImage = 
+            imgFac.getPrimaryThumbnailForGenotype (getGenotypeKey().intValue());
+    
+    }
+
+    public DTO getPrimaryImage() {
+        return this.primaryImage;
     }
 
     /** returns the allelic compositions in an HTML based format, intended for
