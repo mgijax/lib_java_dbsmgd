@@ -242,6 +242,7 @@ public class DiseaseFactory {
     */
     public DTO getSynonyms (int key) throws DBException
     {
+        logger.logDebug("Getting Synonyms");
         ResultsNavigator nav = null;	// set of query results
         RowReference rr = null;		// one row in 'nav'
         Vector synonyms = null;		// has one String per synonym
@@ -297,6 +298,7 @@ public class DiseaseFactory {
     public DTO getGeneDetails (int key) 
         throws DBException
     {
+        logger.logDebug("Getting Gene Info");
         ResultsNavigator nav = null;	// set of query results
         RowReference rr = null;		// one row in 'nav'
         DTO disease = DTO.getDTO();
@@ -312,11 +314,21 @@ public class DiseaseFactory {
         while (nav.next()) {
             rr = (RowReference)nav.getCurrent();
 
+            int species = (rr.getInt(5)).intValue();
+
             genes = new HashMap();
-            genes.put("mouseKey", rr.getInt(1));
-            genes.put("mouseSymbol", rr.getString(2));
-            genes.put("humanKey", rr.getInt(3));
-            genes.put("humanSymbol", rr.getString(4));
+            if (species == DBConstants.Species_Mouse) {
+                genes.put("mouseKey", rr.getInt(1));
+                genes.put("mouseSymbol", rr.getString(2));
+                genes.put("humanKey", rr.getInt(3));
+                genes.put("humanSymbol", rr.getString(4));
+            }
+            else {
+                genes.put("mouseKey", rr.getInt(3));
+                genes.put("mouseSymbol", rr.getString(4));
+                genes.put("humanKey", rr.getInt(1));
+                genes.put("humanSymbol", rr.getString(2));
+            }      
             both.add(genes);
         }
         nav.close();
@@ -402,6 +414,7 @@ public class DiseaseFactory {
     public DTO getTransgeneDetails (int key) 
         throws DBException
     {
+        logger.logDebug("Getting transgene Info");
         ResultsNavigator nav = null;	// set of query results
         RowReference rr = null;		// one row in 'nav'
         DTO disease = DTO.getDTO();
@@ -459,6 +472,7 @@ public class DiseaseFactory {
     public DTO getMouseModels (int key, String ID, String term) 
         throws DBException
     {
+        logger.logDebug("Getting Mouse Models Info");
         ResultsNavigator nav = null;	// set of query results
         RowReference rr = null;		// one row in 'nav'
         DTO disease = DTO.getDTO();
@@ -685,10 +699,9 @@ public class DiseaseFactory {
     // fill in: term key (int)
     private static final String GENE_BOTH =
 		  "select distinct o._Marker_key, o.markerSymbol, "
-        + " o._OrthologMarker_key, o.orthologSymbol "
+        + " o._OrthologMarker_key, o.orthologSymbol, o._Organism_key "
 		+ " from MRK_OMIM_Cache o "
 		+ " where _Term_key = %d "
-		+ " and _Organism_key = " + DBConstants.Species_Mouse
         + " and omimCategory2 = 1 "
         + " and o._Marker_Type_key = 1"; // only genes
 
