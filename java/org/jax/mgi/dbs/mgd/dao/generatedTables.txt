@@ -11,3 +11,12 @@ MAP_Coord_Collection
 MAP_Coordinate
 MAP_Coord_Feature
 MRK_Chromosome
+SNP_ConsensusSnp
+SNP_ConsensusSnp_Marker
+SNP_Coord_Cache
+SNP_ConsensusSnp_StrainAllele
+SNP_Strain_Cache
+SNP_SubSnp
+SNP_SubSnp_StrainAllele
+SNP_Flank
+SNP_Population
