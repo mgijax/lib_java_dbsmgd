@@ -29,6 +29,11 @@ public class LogicalDBConstants
     public static final int DOTS = 36;
     public static final int NCBI_GENE = 59;
     public static final int ENSEMBL_GENE = 60;
+    public static final int JAXREGISTRY = 22;
+    public static final int REFSNP = 73;
+    public static final int SUBSNP = 74;
+    public static final int SUBMITTERSNP = 75;
+    public static final int SNPPOPULATION = 76;
 
     public static final int RIKEN = 51;
     public static final int NIA15K = 46;
@@ -40,6 +45,9 @@ public class LogicalDBConstants
 
 
 //  $Log$
+//  Revision 1.4  2004/12/17 17:58:29  sc
+//  tr6365
+//
 //  Revision 1.2.6.1  2004/12/16 15:44:57  sc
 //  added NIA15K, NIA7_4K, RIKEN
 //
