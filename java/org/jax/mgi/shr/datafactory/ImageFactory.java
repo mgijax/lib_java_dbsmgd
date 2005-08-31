@@ -377,6 +377,7 @@ public class ImageFactory extends AbstractDataFactory
 	    allele.set (DTOConstants.AlleleSymbol, rr.getString(2));
 	    allele.set (DTOConstants.AlleleName, rr.getString(3));
 	    allele.set (DTOConstants.MarkerName, rr.getString(4));
+	    allele.set (DTOConstants.IsWildType, rr.getInt(5));
 
 	    alleles.add (allele);
         }
@@ -811,7 +812,8 @@ public class ImageFactory extends AbstractDataFactory
         "SELECT DISTINCT a._Allele_key, "
 	+ "    a.symbol, "
 	+ "    a.name, "
-	+ "    m.name "
+	+ "    m.name, "
+	+ "    a.isWildType "
 	+ "FROM IMG_ImagePane pane, "
 	+ "    IMG_ImagePane_Assoc assoc, "
 	+ "    ALL_Allele a, "
@@ -985,6 +987,9 @@ public class ImageFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.2  2005/08/25 15:28:01  dow
+* lib_java_dbsmgd-3-3-0-0
+*
 * Revision 1.1.2.2  2005/08/02 18:56:04  jsb
 * documentation and cleanup
 *
