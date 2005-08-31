@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -307,6 +308,8 @@ public class DiseaseFactory {
         //                 transgenes and other mutations). 
         HashMap genes = null;        // the pair of mouse and human genes
         ArrayList both = new ArrayList(); // has a hashmap per pair of genes
+        HashSet bothUsed = new HashSet();  // only want the mouse/human pair
+                                           // once.
         String cmd = Sprintf.sprintf (GENE_BOTH, key);
         logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
@@ -317,19 +320,33 @@ public class DiseaseFactory {
             int species = (rr.getInt(5)).intValue();
 
             genes = new HashMap();
+            Integer mouseKey = null;
+            Integer humanKey = null;
             if (species == DBConstants.Species_Mouse) {
-                genes.put("mouseKey", rr.getInt(1));
+                mouseKey = rr.getInt(1);
+                humanKey = rr.getInt(3);
+                genes.put("mouseKey", mouseKey);
                 genes.put("mouseSymbol", rr.getString(2));
-                genes.put("humanKey", rr.getInt(3));
+                genes.put("humanKey", humanKey);
                 genes.put("humanSymbol", rr.getString(4));
             }
             else {
-                genes.put("mouseKey", rr.getInt(3));
+                mouseKey = rr.getInt(3);
+                humanKey = rr.getInt(1);
+                genes.put("mouseKey", mouseKey);
                 genes.put("mouseSymbol", rr.getString(4));
-                genes.put("humanKey", rr.getInt(1));
+                genes.put("humanKey", humanKey);
                 genes.put("humanSymbol", rr.getString(2));
-            }      
-            both.add(genes);
+            }    
+            String lookup = "" + mouseKey + ":" + humanKey;
+            System.out.println("Both => " + lookup);
+            if ( ! bothUsed.contains(lookup) ) {
+                bothUsed.add(lookup);
+                both.add(genes);
+            }
+            else {
+                System.out.println("Already added => " + lookup);
+            }
         }
         nav.close();
         nav = null;
