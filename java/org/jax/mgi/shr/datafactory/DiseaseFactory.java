@@ -522,7 +522,7 @@ public class DiseaseFactory {
             rr = (RowReference)nav.getCurrent();
             
             Integer tmpGeno = rr.getInt(1);
-            int tmpCat = rr.getInt(6).intValue();
+            int tmpCat = rr.getInt(7).intValue();
             // Null genotypes and category -1 are irrelevant
             if (tmpGeno == null || tmpCat == -1) {
                 continue;
