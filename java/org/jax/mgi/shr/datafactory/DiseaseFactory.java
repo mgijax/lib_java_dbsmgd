@@ -532,9 +532,13 @@ public class DiseaseFactory {
             if (genoKey == null) {
                 genoKey = tmpGeno;
                 allelicComp = rr.getString(2);
-                background = rr.getString(3);
-                ref = rr.getInt(4);
-                jnum = rr.getString(5);
+                String ac2 = rr.getString(3);
+                if (ac2 != null) {
+                    allelicComp += ac2;
+                }
+                background = rr.getString(4);
+                ref = rr.getInt(5);
+                jnum = rr.getString(6);
                 category = tmpCat;
                 p = new Phenotype(genoKey, genoOrder, allelicComp, background);
                 p.addAnnotTerm(new Integer(key), ID, term, new Integer(0));
@@ -543,8 +547,8 @@ public class DiseaseFactory {
             }
             //  In this case we should only be adding a reference
             else if (genoKey.equals(tmpGeno) && category == tmpCat) {
-                ref = rr.getInt(4);
-                jnum = rr.getString(5);
+                ref = rr.getInt(5);
+                jnum = rr.getString(6);
                 p.addAnnotEvidence(new Integer(key), new Integer(0), ref,  
                                    jnum, new String(""), new String(""));
             }
@@ -576,9 +580,13 @@ public class DiseaseFactory {
                 //  Now reset all of the variables
                 genoKey = tmpGeno;
                 allelicComp = rr.getString(2);
-                background = rr.getString(3);
-                ref = rr.getInt(4);
-                jnum = rr.getString(5);
+                String ac2 = rr.getString(3);
+                if (ac2 != null) {
+                    allelicComp += ac2;
+                }
+                background = rr.getString(4);
+                ref = rr.getInt(5);
+                jnum = rr.getString(6);
                 category = tmpCat;
                 p = new Phenotype(genoKey, genoOrder, allelicComp, background);
                 p.addAnnotTerm(new Integer(key), ID, term, new Integer(0));
@@ -759,7 +767,8 @@ public class DiseaseFactory {
     // Order is relevant for building phenotype structure.
     // fill in: term key (int)
     private static final String MOUSE_MODEL =
-        "select distinct o._Genotype_key, o.genotypeDisplay, o.strain, "
+        "select distinct o._Genotype_key, o.genotypeDisplay1, "
+        + " o.genotypeDisplay2,o.strain, "
         + " o._Refs_key, o.jnumID, o.omimCategory3, o.isNot "
         + " from MRK_OMIM_Cache o " 
         + " where o._Term_key = %d " 

@@ -758,7 +758,7 @@ public class AlleleFactory
         //  at the database level.  such as, if a genotype is "category 4"
         //  no similarity, it can't be part of another category, or a genotype
         //  can belong to no more that 2 categories.
-        String cmd = Sprintf.sprintf (MOUSE_MODEL, key);
+        String cmd = Sprintf.sprintf (MOUSE_MODEL, new Integer(key), new Integer(key));
         logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         Integer lastCat  = null;
@@ -773,14 +773,18 @@ public class AlleleFactory
             termID = rr.getString(3);
             genoKey = rr.getInt(4);
             allelicComp = rr.getString(5);
-            background = rr.getString(6);
-            markerType = rr.getInt(7);
-            ref = rr.getInt(8);
-            jnum = rr.getString(9);
-            category = rr.getInt(10);
-            header = rr.getString(12);
-            footNote = rr.getString(13);
-            genoFoot = rr.getString(14);
+            String ac2 = rr.getString(6);
+            if (ac2 != null) {
+                allelicComp += ac2;
+            }
+            background = rr.getString(7);
+            markerType = rr.getInt(8);
+            ref = rr.getInt(9);
+            jnum = rr.getString(10);
+            category = rr.getInt(11);
+            header = rr.getString(13);
+            footNote = rr.getString(14);
+            genoFoot = rr.getString(15);
 
             //  No category, or category not equal to last means set up
             //  a new category.  This assumes everything must be refreshed.
@@ -1732,16 +1736,28 @@ public class AlleleFactory
     // fill in: allele key (int)
     private static final String MOUSE_MODEL =
         "select distinct o._Term_key, o.term, o.termID, o._Genotype_key, "
-        + " o.genotypeDisplay, o.strain, o._Marker_Type_key, o._Refs_key, "
+        + " o.genotypeDisplay1, o.genotypeDisplay2, o.strain, "
+        + " o._Marker_Type_key, o._Refs_key, "
         + " o.jnumID, o.omimCategory1, o.isNot, o.header, o.headerFootnote, "
         + " o.genotypeFootnote "
         + " from MRK_OMIM_Cache o, GXD_AlleleGenotype gag, ALL_Allele a " 
-        + " where a._Allele_key = %d " 
+        + " where a._Allele_key = %s " 
         + " and a._Allele_key = gag._Allele_key "
         + " and gag._Genotype_key = o._Genotype_key "
         + " and a._Marker_key = o._Marker_key "
         + " and o._Organism_key = " + DBConstants.Species_Mouse
         + " and o.omimCategory1 > -1 "
+        + "union "
+        + "select distinct o._Term_key, o.term, o.termID, o._Genotype_key, "
+        + " o.genotypeDisplay1, o.genotypeDisplay2, o.strain, "
+        + " o._Marker_Type_key, o._Refs_key, "
+        + " o.jnumID, o.omimCategory1, o.isNot, o.header, o.headerFootnote, "
+        + " o.genotypeFootnote "
+        + " from MRK_OMIM_Cache o, GXD_AlleleGenotype gag, ALL_Allele a " 
+        + " where a._Allele_key = %s " 
+        + " and a._Allele_key = gag._Allele_key "
+        + " and gag._Genotype_key = o._Genotype_key "
+        + " and o.omimCategory1 = 4 "
         + " order by o.omimCategory1, o.term, o._Genotype_key, o.jnumID";
 
 }
