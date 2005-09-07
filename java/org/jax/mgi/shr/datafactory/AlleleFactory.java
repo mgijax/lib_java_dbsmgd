@@ -276,6 +276,10 @@ public class AlleleFactory
         allele.set(DTOConstants.AllelePrimaryImage, imgSection);
         this.timeStamp ("Retrieved Primary Image for Allele");
 
+        //  We also need to get the count of images, done seperately.
+        Integer imgCount = new Integer(imgFac.getImageCountForAllele(key));
+        allele.set("imageCount", imgCount);
+
         section = this.getSynonyms (key);
         allele.merge (section);
         DTO.putDTO (section);
