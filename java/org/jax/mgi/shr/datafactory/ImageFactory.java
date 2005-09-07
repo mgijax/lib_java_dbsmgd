@@ -723,6 +723,44 @@ public class ImageFactory extends AbstractDataFactory
 
     // -----------------------------------------------------------------------
 
+    /** count all images associated with the given 'alleleKey' and with any
+    *	 genotypes involving that allele
+    * @param alleleKey the _Allele_key uniquely identifying the desired allele
+    * @return int count of images
+    * @assumes nothing
+    * @effects queries the database using 'sqlDM'
+    * @throws DBException if there is a problem while attempting to query the
+    *    database using 'sqlDM'
+    */
+    public int getImageCountForAllele (int alleleKey) throws DBException
+    {
+	ResultsNavigator nav = null;	// result set for a query
+	int count = 0;			// count of images for 'alleleKey'
+
+	// We could write a new query that computes the count directly in the
+	// database, but it shouldn't be much slower to just re-use the
+	// IMAGES_FOR_ALLELE query and compute the count in java.  We expect
+	// the number of images -- in general -- to be fairly small.
+
+	// due to limitations in Sprintf, we need to convert this 'alleleKey'
+	// int to a String so we can insert it in two places in the SQL query
+
+	String keyString = Integer.toString(alleleKey);
+	nav = this.sqlDM.executeQuery (
+	    Sprintf.sprintf (IMAGES_FOR_ALLELE, keyString, keyString) );
+
+	while (nav.next())
+	{
+	    count++;
+	}
+	nav.close();
+
+	this.timeStamp ("counted images for allele (" + count + ")");
+	return count;
+    }
+
+    // -----------------------------------------------------------------------
+
     /** returns the key of the full-size image which corresponds to the given
     *    thumbnail key (simply returns the given one if it already is for the
     *    full-size)
@@ -987,6 +1025,9 @@ public class ImageFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.3  2005/08/31 17:30:20  jsb
+* added retrieval of isWildType for alleles
+*
 * Revision 1.2  2005/08/25 15:28:01  dow
 * lib_java_dbsmgd-3-3-0-0
 *
