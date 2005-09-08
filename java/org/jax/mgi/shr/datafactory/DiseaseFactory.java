@@ -339,13 +339,9 @@ public class DiseaseFactory {
                 genes.put("humanSymbol", rr.getString(2));
             }    
             String lookup = "" + mouseKey + ":" + humanKey;
-            System.out.println("Both => " + lookup);
             if ( ! bothUsed.contains(lookup) ) {
                 bothUsed.add(lookup);
                 both.add(genes);
-            }
-            else {
-                System.out.println("Already added => " + lookup);
             }
         }
         nav.close();
