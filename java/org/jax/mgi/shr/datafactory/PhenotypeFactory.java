@@ -176,8 +176,9 @@ public class PhenotypeFactory {
         DTO phenotypes = DTO.getDTO();
 
         //  This holds the set of Phenotype objects we are building keyed on 
-        //  on the genotype key.
-        HashMap phenoHash = getBasicPhenotypes(BASIC_GENOTYPE_DATA, alleleKey);
+        //  on the genotype key. (we also want to load images)
+        HashMap phenoHash = getBasicPhenotypes(BASIC_GENOTYPE_DATA, 
+                                               alleleKey, true);
 
         ResultsNavigator nav = null;	// set of query results
         RowReference rr = null;		// one row in 'nav'
@@ -195,8 +196,6 @@ public class PhenotypeFactory {
             p = (Phenotype)phenoHash.get(rr.getInt(1));
             p.addHeaderTerm(rr.getInt(2), rr.getString(3), rr.getString(4), 
                             rr.getInt(5));
-            //  loads the primary image for the phenotype for later display
-            p.loadPrimaryImage(imgFac);
         }
         nav.close();
 
@@ -384,7 +383,9 @@ public class PhenotypeFactory {
         nav = this.sqlDM.executeQuery( cmd );
 
         //  The set of Phenotype classes, keyed by genotype key
-        HashMap phenoHash = getBasicPhenotypes(GENOTYPE_DATA_FROM_TMP, 0);
+        //  Not interested in loading images here.
+        HashMap phenoHash = getBasicPhenotypes(GENOTYPE_DATA_FROM_TMP, 0,
+                                               false);
 
         //  Get phenotype annotations and add them to hash
         cmd = GENOTYPE_ANNOT_TERMS_FROM_TMP;
@@ -443,7 +444,8 @@ public class PhenotypeFactory {
     // private instance methods
     ///////////////////////////
 
-    public HashMap getBasicPhenotypes ( String dbCmd, int alleleKey)
+    public HashMap getBasicPhenotypes ( String dbCmd, int alleleKey, 
+                                        boolean loadImages)
             throws DBException, MalformedURLException, IOException
     {
         logger.logDebug("Getting Basic Phenotype Info");
@@ -472,6 +474,12 @@ public class PhenotypeFactory {
         Integer genoOrder = null;
         String allelicComp = null;
         String background = null;
+        
+        // Factory for loading images.
+        ImageFactory imgFac = null;
+        if (loadImages) {
+            imgFac = new ImageFactory(this.config, this.sqlDM, this.logger);
+        }
         while (nav.next()) {
             rr = (RowReference)nav.getCurrent();
            
@@ -492,6 +500,11 @@ public class PhenotypeFactory {
             else {
                 p = new Phenotype(genoKey, genoOrder, 
                                   allelicComp, background);
+                //  loads the primary image for the phenotype for later display
+                if (loadImages) {
+                    p.loadPrimaryImage(imgFac);
+                }
+
                 phenoHash.put(genoKey, p);
                 genoKey = rr.getInt(1);
                 genoOrder = rr.getInt(2);
@@ -504,6 +517,11 @@ public class PhenotypeFactory {
             //  Add the last genotype
             p = new Phenotype(genoKey, genoOrder, allelicComp, background);
             phenoHash.put(genoKey, p);
+
+            //  loads the primary image for the phenotype for later display
+            if (loadImages) {
+                p.loadPrimaryImage(imgFac);
+            }
         }
 
         return phenoHash;
