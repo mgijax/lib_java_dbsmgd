@@ -230,7 +230,7 @@ public class TextSearchHandler {
             //  single quotes will be stripped off in python.
 
             String pyCmd = this.searchScript + " " +  methodName + " " + 
-                keyName + " '" + terms + "'";
+                keyName + " '" + terms.replaceAll("'","''") + "'";
 
 
             //  The command we will exec
