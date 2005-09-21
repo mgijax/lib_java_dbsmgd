@@ -6,6 +6,7 @@ ACC_AccessionReference
 SEQ_Sequence
 MGI_Reference_Assoc
 MGI_AttributeHistory
+MGI_SetMember
 SEQ_Source_Assoc
 MAP_Coord_Collection
 MAP_Coordinate
