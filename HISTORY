@@ -1,3 +1,10 @@
+TAG: lib_java_dbsmgd-tr1560-2
+DATE: 08/30/2005
+STAFF: sc
+CHANGES:
+1) MGISetConstants - added
+2) generatedTables - added MGI_Set
+
 TAG: lib_java_dbsmgd-tr1560-1
 DATE: 08/30/2005
 STAFF: sc
