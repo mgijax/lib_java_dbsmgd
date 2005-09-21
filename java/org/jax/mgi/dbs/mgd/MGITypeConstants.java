@@ -29,13 +29,16 @@ public class MGITypeConstants
     public static final int TISSUE = 24;
     public static final int SEQUENCE = 19;
     public static final int CHROMOSOME = 27;
-    public static final int CONSENSUSSNP = 29;
-    public static final int SUBSNP = 30;
-    public static final int SNPPOPULATION = 32;
+    public static final int CONSENSUSSNP = 30;
+    public static final int SUBSNP = 31;
+    public static final int SNPPOPULATION = 33;
 }
 
 
 //  $Log$
+//  Revision 1.5.20.1  2005/08/30 15:26:15  sc
+//  TR1560 SNP
+//
 //  Revision 1.5  2004/10/12 12:42:38  sc
 //  TR5395 added CHROMOSOME. VOCABULARY key changed
 //
