@@ -29,6 +29,7 @@ public class DBConstants
     public static final int LogicalDB_NIA = 53;
     public static final int LogicalDB_NCBI = 59;
     public static final int LogicalDB_Ensembl = 60;
+    public static final int LogicalDB_PIRSF = 78;
 
     // from ACC_ActualDB
 
@@ -84,6 +85,7 @@ public class DBConstants
     // from VOC_AnnotType
     public static final int VOCAnnotType_MP = 1002;
     public static final int VOCAnnotType_OMIM = 1005;
+    public static final int VOCAnnotType_PIRSF = 1007;
 
     // from MGI_RefAssocType
     public static final int MGIRefAssocType_ALLOriginal = 1011;
@@ -91,6 +93,9 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.10  2005/08/25 15:28:00  dow
+* lib_java_dbsmgd-3-3-0-0
+*
 * Revision 1.9  2005/08/05 17:49:14  mbw
 * merged code from branch lib_java_dbsmgd-tr6046-1
 *
