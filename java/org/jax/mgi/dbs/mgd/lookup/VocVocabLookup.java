@@ -3,16 +3,6 @@ package org.jax.mgi.dbs.mgd.lookup;
 import org.jax.mgi.shr.cache.*;
 import org.jax.mgi.shr.dbutils.*;
 
-
-/**
- * <p>@is </p>
- * <p>@has </p>
- * <p>@does </p>
- * <p>@company The Jackson Laboratory</p>
- * @author not attributable
- *
- */
-
 public class VocVocabLookup extends LazyCachedLookup
 {
     public VocVocabLookup(SQLDataManager sqlMgr)
