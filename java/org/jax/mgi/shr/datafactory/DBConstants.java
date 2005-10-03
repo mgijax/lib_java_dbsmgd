@@ -60,6 +60,8 @@ public class DBConstants
     public static final int MGIType_Genotype = 12;
     public static final int MGIType_VocTerm = 13;
     public static final int MGIType_Sequence = 19;
+    public static final int MGIType_ConsensusSnp = 30;
+    public static final int MGIType_SubSnp = 31;
 
     // from MRK_Status
 
@@ -93,6 +95,9 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.10.6.1  2005/09/28 16:46:53  dow
+* Changes for PRISF Vocab Browser capability.
+*
 * Revision 1.10  2005/08/25 15:28:00  dow
 * lib_java_dbsmgd-3-3-0-0
 *
