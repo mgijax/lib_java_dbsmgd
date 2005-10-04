@@ -45,6 +45,7 @@ public class DBConstants
 
     public static final int Species_Mouse = 1;
     public static final int Species_Human = 2;
+    public static final int Species_Rat = 40;
 
     // from ACC_MGIType
 
@@ -91,10 +92,16 @@ public class DBConstants
 
     // from MGI_RefAssocType
     public static final int MGIRefAssocType_ALLOriginal = 1011;
+
+    // from SEQ_Marker_Cache - Qualifier
+    public static final int SEQMarker_Polypeptide = 615421;
 }
 
 /*
 * $Log$
+* Revision 1.10.6.2  2005/10/03 20:10:09  jsb
+* added SNPs
+*
 * Revision 1.10.6.1  2005/09/28 16:46:53  dow
 * Changes for PRISF Vocab Browser capability.
 *
