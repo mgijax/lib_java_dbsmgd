@@ -191,7 +191,7 @@ public class FlatVocabBrowserFactory {
         //  Not done at this time.
         vocabulary.set("pageTitle", 
                        vocConfig.getProperty("pageTitle", this.pageTitle));
-        vocabulary.set("subsets", this.subsets);
+        vocabulary.set("subsets", subsets);
         vocabulary.set("titleSupportText",
                        vocConfig.getProperty("titleSupportText",
                                              this.titleSupportText));
@@ -323,10 +323,7 @@ public class FlatVocabBrowserFactory {
         }
         else if (vocab.equals("pirsfVocab")) {
             SUBSET = PIRSF_SUBSET;
-            logger.logDebug("in pirsfVocab query: \n" + PIRSF_SUBSET);
         }
-
-        logger.logDebug("Subset query: \n" + SUBSET);
 
         //  The object to return.  Represents the subsection of vocabulary.
         DTO vocabulary =  DTO.getDTO();
@@ -568,15 +565,11 @@ public class FlatVocabBrowserFactory {
         throws IOException
     {
         String propFileName = vocab + ".properties";
-        logger.logDebug("Properties file -> " + propFileName);
 
         InputStream istream = 
             this.getClass().getClassLoader().getResourceAsStream(propFileName);
 	
-        logger.logDebug("InputStream -> " + istream);
-
         Properties p = new Properties();
-        logger.logDebug("calling p.load(istream)");
         p.load(istream);
 
 		return p;
@@ -653,7 +646,11 @@ public class FlatVocabBrowserFactory {
     private static final String PIRSF_SUBSET =
 		"select vt._Term_key, vt.term, ac.accID, vt.isObsolete  "
         + "from VOC_Term vt, ACC_Accession ac "
-		+ "where vt.term like '%s%' "
+		+ "where case "
+        + " when charindex('[', vt.term) = 1 then stuff(vt.term, 1, 1, null) "
+        + " when charindex('(', vt.term) = 1 then stuff(vt.term, 1, 1, null) "
+        + " else vt.term "
+        + " end like '%s%' "
         + "and vt._Term_key = ac._Object_key "
         + "and ac._MGIType_key =  " + DBConstants.MGIType_VocTerm
         + " and ac._LogicalDB_key = " + DBConstants.LogicalDB_PIRSF
