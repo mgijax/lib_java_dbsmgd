@@ -8,6 +8,7 @@ package org.jax.mgi.shr.datafactory;
 // imports
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import org.jax.mgi.shr.dto.DTO;
 import org.jax.mgi.shr.dto.DTOConstants;
@@ -269,11 +270,26 @@ public class SnpFactory extends AbstractDataFactory
 	ResultsNavigator nav = null;
 	RowReference rr = null;
 
+	Integer subSnpKey = null;
+	HashMap submitterIDs = new HashMap();
+
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUBSNP_SUBMITTER_IDS,
+	    snpKey));
+
+	while (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+	    subSnpKey = rr.getInt(1);
+
+	    submitterIDs.put (subSnpKey, rr.getString(2));
+	}
+	nav.close();
+
 	DTO item = null;
 
 	DTO subSnps = DTO.getDTO();
-	Integer subSnpKey = null;
 	ArrayList subSnpOrder = new ArrayList();
+	DTO populations = null;
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUBSNPS, snpKey));
 
@@ -291,7 +307,13 @@ public class SnpFactory extends AbstractDataFactory
 	    item.set (DTOConstants.LogicalDbKey, rr.getInt(5));
 	    item.set (DTOConstants.Orientation, rr.getString(6));
 	    item.set (DTOConstants.IsExemplar, rr.getInt(7));
-	    item.set (DTOConstants.Alleles, DTO.getDTO());
+	    item.set (DTOConstants.Populations, DTO.getDTO());
+
+	    if (submitterIDs.containsKey (subSnpKey))
+	    {
+	        item.set (DTOConstants.SubmitterID,
+		    submitterIDs.get(subSnpKey));
+	    }
 
 	    subSnps.set (subSnpKey.toString(), item);
 	    subSnpOrder.add (subSnpKey);
@@ -310,6 +332,8 @@ public class SnpFactory extends AbstractDataFactory
 	Integer strainKey = null;
 	DTO alleleCalls = null;
 	DTO subSnp = null;
+	DTO population = null;
+	String popStr = null;
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUBSNPS_ALLELES,
 	    snpKey));
@@ -320,21 +344,35 @@ public class SnpFactory extends AbstractDataFactory
 
 	    subSnpKey = rr.getInt(1);
 	    strainKey = rr.getInt(2);
+	    popStr = rr.getString(4);
 
 	    item = DTO.getDTO();
-	    item.set (DTOConstants.SubSnpKey, subSnpKey);
 	    item.set (DTOConstants.StrainKey, strainKey);
 	    item.set (DTOConstants.Allele, rr.getString(3));
-	    item.set (DTOConstants.Population, rr.getString(4));
-	    item.set (DTOConstants.SubHandle, rr.getString(5));
 
 	    subSnp = (DTO) subSnps.get (subSnpKey.toString());
 	    if (subSnp != null)
 	    {
-	    alleleCalls = (DTO) subSnp.get (DTOConstants.Alleles);
+	        populations = (DTO) subSnp.get (DTOConstants.Populations);
+		population = (DTO) populations.get (popStr);
 
-	    alleleCalls.set (strainKey.toString(), item);
-	    calls++;
+		if (population == null)
+		{
+		    population = DTO.getDTO();
+		    alleleCalls = DTO.getDTO();
+
+		    population.set (DTOConstants.SubHandle, rr.getString(5));
+		    population.set (DTOConstants.Alleles, alleleCalls);
+
+		    populations.set (popStr, population);
+		}
+		else
+		{
+	    	    alleleCalls = (DTO) population.get (DTOConstants.Alleles);
+		}
+
+	    	alleleCalls.set (strainKey.toString(), item);
+	    	calls++;
 	    }
 	}
 
@@ -354,26 +392,74 @@ public class SnpFactory extends AbstractDataFactory
 	ResultsNavigator nav = null;
 	RowReference rr = null;
 
-	nav = this.sqlDM.executeQuery (Sprintf.sprintf (REFSNP_GENES,snpKey));
-
-	ArrayList locations = new ArrayList();
-	DTO location = null;
-	Integer lastFeature = null;
+	ArrayList markerIDs = null;
 	Integer feature = null;
-	DTO gene = null;
-	DTO fcAllele = null;
-	ArrayList alleles = null;
 	Integer markerKey = null;
-	Integer lastMarkerKey = null;
-	ArrayList genes = null;
-	int markerCount = 0;
+	HashMap featureMap = new HashMap();
+	HashMap markerMap = null;
+	int idCount = 0;
+
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (REFSNP_GENE_IDS,
+	    snpKey));
 
 	while (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
 
 	    feature = rr.getInt(1);
-	    markerKey = rr.getInt(9);
+	    markerKey = rr.getInt(2);
+
+	    if (!featureMap.containsKey (feature))
+	    {
+	        markerMap = new HashMap();
+		markerIDs = new ArrayList(2);
+		markerIDs.add (rr.getString(3));
+		markerMap.put (markerKey, markerIDs);
+		featureMap.put (feature, markerMap);
+	    }
+	    else
+	    {
+	        markerMap = (HashMap) featureMap.get (feature);
+		if (!markerMap.containsKey (markerKey))
+		{
+		    markerIDs = new ArrayList(2);
+		    markerIDs.add (rr.getString(3));
+		    markerMap.put (markerKey, markerIDs);
+		}
+		else
+		{
+		    markerIDs = (ArrayList) markerMap.get (markerKey);
+		    markerIDs.add (rr.getString(3));
+		}
+	    }
+	    idCount++;
+	}
+	nav.close();
+
+	this.timeStamp (Sprintf.sprintf ("Got %d transcript & protein IDs",
+	    idCount));
+
+	// featureMap[feature][marker key] = list of IDs
+
+	String accID = null;
+	ArrayList locations = new ArrayList();
+	DTO location = null;
+	Integer lastFeature = null;
+	DTO gene = null;
+	DTO fcAllele = null;
+	ArrayList alleles = null;
+	Integer lastMarkerKey = null;
+	ArrayList genes = null;
+	int markerCount = 0;
+
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (REFSNP_GENES,snpKey));
+
+	while (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+
+	    feature = rr.getInt(1);
+	    markerKey = rr.getInt(7);
 
 	    // if this is a whole new feature...
 	    if ((lastFeature == null) || (!lastFeature.equals(feature)))
@@ -385,8 +471,6 @@ public class SnpFactory extends AbstractDataFactory
 		location.set (DTOConstants.StartCoord, rr.getDouble(3));
 		location.set (DTOConstants.Orientation, rr.getString(4));
 		location.set (DTOConstants.VariationClass, rr.getString(5));
-		location.set (DTOConstants.AccID, rr.getString(7));
-		location.set (DTOConstants.LogicalDbKey, rr.getInt(8));
 		location.set (DTOConstants.AssociatedGenes, genes);
 
 		locations.add (location);
@@ -400,7 +484,7 @@ public class SnpFactory extends AbstractDataFactory
 
 	    fcAllele = DTO.getDTO();
 	    fcAllele.set (DTOConstants.FunctionClass, rr.getString(6));
-	    fcAllele.set (DTOConstants.Allele, rr.getString(12));
+	    fcAllele.set (DTOConstants.Allele, rr.getString(10));
 
 	    // if we've started on a new gene, then we need to record all data
 	    // for that gene
@@ -412,12 +496,35 @@ public class SnpFactory extends AbstractDataFactory
 
 		gene = DTO.getDTO();
 		gene.set (DTOConstants.FxnAlleles, alleles);
-		gene.set (DTOConstants.MarkerKey, rr.getInt(9));
-		gene.set (DTOConstants.MarkerSymbol, rr.getString(10));
-		gene.set (DTOConstants.MarkerName, rr.getString(11));
-		gene.set (DTOConstants.Residue, rr.getString(13));
-		gene.set (DTOConstants.AminoAcidPosition, rr.getString(14));
-		gene.set (DTOConstants.ReadingFrame, rr.getString(15)); 
+		gene.set (DTOConstants.MarkerKey, markerKey);
+		gene.set (DTOConstants.MarkerSymbol, rr.getString(8));
+		gene.set (DTOConstants.MarkerName, rr.getString(9));
+		gene.set (DTOConstants.Residue, rr.getString(11));
+		gene.set (DTOConstants.AminoAcidPosition, rr.getString(12));
+		gene.set (DTOConstants.ReadingFrame, rr.getString(13)); 
+
+		if (featureMap.containsKey (feature))
+		{
+		    markerMap = (HashMap) featureMap.get (feature);
+		    if (markerMap.containsKey (markerKey))
+		    {
+		        markerIDs = (ArrayList) markerMap.get (markerKey);
+
+			for (int m = 0; m < markerIDs.size(); m++)
+			{
+			    accID = (String) markerIDs.get (m);
+			    if (accID.startsWith ("NM"))
+			    {
+			        gene.set (DTOConstants.RepRNASeq, accID);
+			    }
+			    else if (accID.startsWith ("NP"))
+			    {
+			        gene.set (DTOConstants.RepProteinSeq, accID);
+			    }
+			}
+		    }
+		}
+		
 		genes.add (gene);
 
 		lastMarkerKey = markerKey;
@@ -576,7 +683,7 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND vt._Term_key IN "
 	+ "        (SELECT DISTINCT _Fxn_key FROM SNP_ConsensusSnp_Marker) "
 	+ "    AND vt.term != 'reference' "
-	+ "ORDER BY vt.term";
+	+ "ORDER BY vt.sequenceNum";
 
     /** retrieve strains for the SNPs query form's Strain selection list
     ** fill in: nothing
@@ -605,7 +712,7 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND vv.name = 'SNP Variation Class'"
 	+ "    AND vt._Term_key IN "
 	+ "        (SELECT DISTINCT _VarClass_key FROM SNP_ConsensusSNP) "
-	+ "ORDER BY vt.term";
+	+ "ORDER BY vt.sequenceNum";
 
     /** retrieves flank for a given consensus snp, ordered by sequence num
     ** fill in: consensus snp key (int)
@@ -715,8 +822,6 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    scc.strand AS orientation, "
 	+ "    vt1.term AS variationClass, "
 	+ "    vt2.term AS functionClass, "
-	+ "    aa.accID, "
-	+ "    aa._LogicalDB_key, "
 	+ "    mm._Marker_key, "
 	+ "    mm.symbol, "
 	+ "    mm.name, "
@@ -726,7 +831,6 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    csm.reading_frame "
 	+ "FROM SNP_ConsensusSnp_Marker csm, "
 	+ "    SNP_Coord_Cache scc, "
-	+ "    ACC_Accession aa, "
 	+ "    MRK_Marker mm, "
 	+ "    VOC_Term vt1, "
 	+ "    VOC_Term vt2 "
@@ -736,14 +840,36 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND scc._VarClass_key = vt1._Term_key "
 	+ "    AND csm._Fxn_key = vt2._Term_key "
 	+ "    AND csm._Marker_key = mm._Marker_key "
-	+ "    AND csm._ConsensusSnp_Marker_key = aa._Object_key "
-	+ "    AND aa.private = 0 "
-	+ "    AND aa.preferred = 1 "
-	+ "    AND aa._MGIType_key = " + DBConstants.MGIType_ConsensusSnp
 	+ "ORDER BY scc.sequenceNum, scc.startCoordinate, mm.symbol ";
+
+    private static String REFSNP_GENE_IDS =
+	"SELECT DISTINCT csm._Feature_key, "
+	+ "    csm._Marker_key, "
+	+ "    aa.accID, "
+	+ "    aa._LogicalDB_key "
+	+ "FROM SNP_ConsensusSnp_Marker csm, "
+	+ "    ACC_Accession aa "
+	+ "WHERE csm._ConsensusSnp_key = %d "
+	+ "    AND csm._ConsensusSnp_Marker_key = aa._Object_key "
+	+ "    AND aa._MGIType_key = 32 "
+	+ "    AND aa._LogicalDB_key = 27 ";
+
+    private static String SUBSNP_SUBMITTER_IDS =
+	"SELECT DISTINCT ss._SubSnp_key, "
+	+ "    aa.accID, "
+	+ "    aa._LogicalDB_key "
+	+ "FROM SNP_SubSnp ss, "
+	+ "    ACC_Accession aa "
+	+ "WHERE ss._SubSnp_key = aa._Object_key "
+	+ "    AND ss._ConsensusSnp_key = %d "
+	+ "    AND aa._MGIType_key = 31 "
+	+ "    AND aa._LogicalDB_key = 75 ";
 }
 
 /*
 * $Log$
+* Revision 1.1.2.1  2005/10/03 20:11:24  jsb
+* initial addition
+*
 * $Copyright$
 */
