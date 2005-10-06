@@ -300,12 +300,20 @@ public class PIRSFFactory {
             sfm.put("humanChromosome", rr.getString(8));
             seqKey = rr.getInt(9);
             sfm.put("humanSeqKey", seqKey);
+            if (seqKey != null) {
+                DTO seqDTO = seqFac.getBasicInfo(seqKey.intValue());
+                sfm.put("humanSequence", seqDTO);
+            }
             sfm.put("humanSeqId",rr.getString(10));
             sfm.put("humanDbName", rr.getString(11));
             sfm.put("ratSymbol", rr.getString(12));
             sfm.put("ratChromosome", rr.getString(13));
             seqKey = rr.getInt(14);
             sfm.put("ratSeqKey", seqKey);
+            if (seqKey != null) {
+                DTO seqDTO = seqFac.getBasicInfo(seqKey.intValue());
+                sfm.put("ratSequence", seqDTO);
+            }
             sfm.put("ratSeqId",rr.getString(15));
             sfm.put("ratDbName", rr.getString(16));
 
@@ -508,5 +516,6 @@ public class PIRSFFactory {
         + " r.name \n"
         + "from #mouseGenes m, #humanGenes h, #ratGenes r \n"
         + "where m._Marker_key *= h._Marker_key \n"
-        + "and m._Marker_key *= r._Marker_key ";
+        + "and m._Marker_key *= r._Marker_key \n"
+        + "order by m.symbol ";
 }
