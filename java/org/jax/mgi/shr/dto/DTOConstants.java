@@ -293,13 +293,18 @@ public class DTOConstants
     public static String Flank5Prime = "flank5'";
     public static String Flank3Prime = "flank3'";
     public static String Population = "population";
+    public static String Populations = "populations";
     public static String Provider = "provider";
     public static String MapUnits = "mapUnits";
+    public static String SubmitterID = "submitterID";
     public static String Version = "version";
 }
 
 /*
 * $Log$
+* Revision 1.1.2.1  2005/10/04 14:09:13  jsb
+* moved from core
+*
 * Revision 1.1.2.1  2005/10/03 20:10:58  jsb
 * moved from dbsmgd product
 *
