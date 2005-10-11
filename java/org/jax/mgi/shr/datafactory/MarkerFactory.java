@@ -446,6 +446,11 @@ public class MarkerFactory
         DTO.putDTO (section);
         this.timeStamp ("Retrieved reference data");
 
+        section = this.getSuperFamily (key);
+        marker.merge (section);
+        DTO.putDTO (section);
+        this.timeStamp ("Retrieved super family data");
+
         // collect data from the minimap reader, then close it.
 
         if (minimapReader != null)
@@ -1625,7 +1630,7 @@ public class MarkerFactory
 
         int pcr = 0;                // DNA type == primer
         int rflp = 0;               // DNA type != primer
-
+ 
         nav = sqlDM.executeQuery (Sprintf.sprintf (POLYMORPHISM_COUNTS, key));
         while (nav.next())
         {
@@ -1646,6 +1651,17 @@ public class MarkerFactory
 
         marker.set (DTOConstants.PcrCount, new Integer(pcr));
         marker.set (DTOConstants.RflpCount, new Integer(rflp));
+
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (SNP_COUNT, key));
+        if (nav.next()) {
+                rr = (RowReference) nav.getCurrent();
+                marker.set (DTOConstants.SnpCount, rr.getInt(1));
+        }
+        else {
+            marker.set (DTOConstants.SnpCount, new Integer(0));
+        }
+        nav.close();
+
         return marker;
     }
 
@@ -2390,6 +2406,40 @@ public class MarkerFactory
         }
         return marker;
     }
+
+    /* -------------------------------------------------------------------- */
+
+    /** get the name and key for the superfamily to which this gene belongs.
+    * @param key marker key
+    * @return DTO which maps DTOConstants.SuperFamilyName to a String, and 
+    *    DTOCConstants.SuperFamilyKey to an Integer.  If the marker is not
+    *    associated with a super family page, then an empty DTO is returned.
+    * @assumes nothing
+    * @effects nothing
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
+    public DTO getSuperFamily (int key) throws DBException
+    {
+        DTO marker = DTO.getDTO();        // start with a new DTO
+
+        ResultsNavigator nav = null;            // set of query results
+        RowReference rr = null;                 // one row in 'nav'
+
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUPERFAMILY, key));
+        if (nav.next())
+        {
+            rr = (RowReference) nav.getCurrent();
+            System.out.println("Before assigning superfamily stuff");
+            marker.set (DTOConstants.SuperFamilyName, rr.getString(2));
+            marker.set (DTOConstants.SuperFamilyKey, rr.getInt(1));
+            System.out.println("After assigning superfamily stuff");
+        }
+        nav.close();
+
+        return marker;
+    }
+
 
     /** get InterPro terms associated with the marker with the given 'key'.
     * @param key the marker key of the marker whose data we seek
@@ -3514,6 +3564,17 @@ public class MarkerFactory
                 + "    and mm._Organism_key = mo._Organism_key"
                 + "    and mo._Organism_key != " + DBConstants.Species_Mouse;
 
+    // get the superfamily if one exists
+    // fill in: marker key (int)
+    private static final String SUPERFAMILY =
+        "select vt._Term_key, vt.term "
+        + " from VOC_Term vt, VOC_Annot va "
+        + " where _Object_key = %d " 
+        + " and _AnnotType_key = " + DBConstants.VOCAnnotType_PIRSF
+        + " and va._Term_key = vt._Term_key";
+
+
+
     // get counts of polymorphisms by type
     // fill in: marker key (int)
     private static final String POLYMORPHISM_COUNTS =
@@ -3661,10 +3722,24 @@ public class MarkerFactory
         + " and va._AnnotType_key = " + DBConstants.VOCAnnotType_OMIM
         + " and a.isWildType = 0"
         + " and va.isNot = 0";
+
+    // find count of snps associated with this allele "within 2 kb of"
+    // fill in: marker key (int)
+    private static final String SNP_COUNT =
+        "select count(distinct _ConsensusSnp_key) " +
+        "from SNP_ConsensusSnp_Marker scm, DAG_Closure dc, VOC_Term vt " +
+        "where scm._Marker_Key = %d " +
+        "and scm._Fxn_key = dc._Descendent_key " +
+        "and dc._Ancestor_key = vt._Term_key " +
+        "and term = 'within 2 kb of' ";
+
 }
 
 /*
 * $Log$
+* Revision 1.20  2005/08/25 15:28:02  dow
+* lib_java_dbsmgd-3-3-0-0
+*
 * Revision 1.19  2005/08/05 17:49:14  mbw
 * merged code from branch lib_java_dbsmgd-tr6046-1
 *

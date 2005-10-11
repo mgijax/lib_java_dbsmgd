@@ -59,6 +59,10 @@ public class DTOConstants
     public static String Markers = "markers";
     public static String OrthologCount = "orthologCount";
 
+    public static String SuperFamilyKey = "superFamilyKey";
+    public static String SuperFamilyName = "superFamilyName";
+    public static String SnpCount = "snpCount";
+
     // alleles -- constants dealing with allele information
 
     public static String AlleleCounts = "alleleCounts";
@@ -302,6 +306,9 @@ public class DTOConstants
 
 /*
 * $Log$
+* Revision 1.1.2.2  2005/10/06 19:03:08  jsb
+* added Populations and SubmitterID
+*
 * Revision 1.1.2.1  2005/10/04 14:09:13  jsb
 * moved from core
 *
