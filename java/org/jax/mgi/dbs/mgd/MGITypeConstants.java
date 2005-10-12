@@ -29,10 +29,25 @@ public class MGITypeConstants
     public static final int TISSUE = 24;
     public static final int SEQUENCE = 19;
     public static final int CHROMOSOME = 27;
+    public static final int CONSENSUSSNP = 30;
+    public static final int SUBSNP = 31;
+    public static final int SNPPOPULATION = 33;
 }
 
 
 //  $Log$
+//  Revision 1.5.26.1  2005/09/21 19:54:36  sc
+//  merge of snp and tr5972 branch to tr7081 branch
+//
+//  Revision 1.5.20.2  2005/09/21 14:33:00  sc
+//  added MGITypes tr1560 SNP
+//
+//  Revision 1.5.20.1  2005/08/30 15:26:15  sc
+//  TR1560 SNP
+//
+//  Revision 1.5  2004/10/12 12:42:38  sc
+//  TR5395 added CHROMOSOME. VOCABULARY key changed
+//
 //  Revision 1.4  2004/02/04 19:41:29  mbw
 //  merged jsam branch to the trunk
 //

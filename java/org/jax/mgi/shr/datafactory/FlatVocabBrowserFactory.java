@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.io.IOException;
 import org.jax.mgi.shr.stringutil.Sprintf;
 import org.jax.mgi.shr.stringutil.StringLib;
@@ -51,19 +53,28 @@ public class FlatVocabBrowserFactory {
     //  The script run to execute the text search
     private String searchScript = null;
 
+    //  Configuration for the specific vocabulary
+    Properties vocConfig = null;
+
+    //  Vocabulary logical database
+
     //  parameters that should come from config that are being passed in
     //  DTO.
-    private String pageTitle = "Human Disease";
-    private String titleSupportText = "The current vocabulary contains human disease, syndrome, and condition terms from Online Mendelian Inheritance in Man <a href=\"http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM\" target=\"new\">(OMIM database)</a>.";
-    private String accessionType = "OMIM";
-    private String subsetUrl = "WIFetch?page=omimBrowser&subset=";
-    private String subsetHead = "Human Diseases/Syndromes";
-    private String subsetNote = "To see all annotations for a disease, click the disease name.";
-    private String idHeader = "OMIM ID";
-    private String termHeader = "Human Disease";
-    private String annotCountText = "mouse model";
-    private String idUrl = "http://www.ncbi.nlm.nih.gov/entrez/dispomim.cgi?id=";
-    private String termUrl = "WIFetch?page=humanDisease&key=";
+    private String pageTitle = "Vocabulary";
+    private String titleSupportText = "";
+    private String searchTitle = "vocabulary";
+    private String accessionType = "";
+    private String accessionExample = "";
+    private String subsetUrl = "";
+    private String subsetHead = "Vocabulary";
+    private String subsetNote = "To see all annotations for a term, click the term name.";
+    private String idHeader = "ID";
+    private String termHeader = "Term";
+    private String countHeader = "";
+    private String annotCountText = "annotation";
+    private String idUrl = "";
+    private String termUrl = "";
+    private String helpLink = "";
     
 
     ///////////////
@@ -73,7 +84,8 @@ public class FlatVocabBrowserFactory {
      * @param config provides parameters needed to configure factory,
      * @param sqlDM provides access to a database
      * @param logger provides logging capability
-     * @assumes nothing
+     * @assumes that all vocabs have subsets A-Z and one category for 0-9.
+     *     also assumes that all vocabs use the same text search program.
      * @effects nothing
      * @throws nothing
      */
@@ -86,12 +98,14 @@ public class FlatVocabBrowserFactory {
         this.logger = logger;
 
         //  These attributes represent items that should be configurable.
-        //  For now, we are assuming this is an OMIM vocabulary browser.
+        //  For now, we are assuming all browsers have alphabetic subsets, 
+        //  with one category for 0-9..
         String[] l = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N",
                       "O","P","Q","R","S","T","U","V","W","X","Y","Z","0-9"};
         subsets = Arrays.asList(l);
         subsetHS = new HashSet(subsets);
 
+        //  Assumption that all vocabs use one text search program.
         searchScript = this.config.get ("TEXT_SEARCH_WRAPPER");
 
     }
@@ -141,7 +155,12 @@ public class FlatVocabBrowserFactory {
      * @param parms This will contain parameters to get either a
      *     simple subset or a subset based on a text search.
      * @return DTO which defines all vocab data for the parameters
-     * @assumes configuration defines what vocabulary we are searching
+     * @assumes configuration a "page" attribute that defines what vocabulary
+     *    we are fetching.  Also assumes that there is a properties file in
+     *    the class path that has a name the same as the vocab.  For example
+     *    for the OMIM vocabulary there is a page attribute equal to 
+     *    "omimVocab" therefore there should be a properties file named
+     *    "omimVocab.properties" in the classpath.
      * @effects retrieves data for a vocabulary using text searching and
      *    database queries. 
      * @throws DBException if there is a problem querying the database or
@@ -155,25 +174,66 @@ public class FlatVocabBrowserFactory {
         
         logger.logDebug("Getting Flat Vocabulary Info");
 
+        String whichVocab = StringLib.getFirst ((String[]) parms.get ("page"));
+        
+        logger.logDebug("FlatVocabBrowserFactory.getFlatVocab for -> " + whichVocab);
+        vocConfig = loadProperties(whichVocab);
+
+        logger.logDebug("Properties loaded");
+
         // all vocabulary data for either the subset or search terms submitted
         DTO vocabulary = DTO.getDTO();
 
         //  All of the following values are passed to the Caller for
-        //  display purposes and should come from a config of some sort
-        //  for a generic vocab browser.  Current assumption = OMIM.
-        //  Also values should be added to DTOConstants for all of these.
-        vocabulary.set("pageTitle", this.pageTitle);
-        vocabulary.set("subsets", this.subsets);
-        vocabulary.set("titleSupportText",this.titleSupportText);
-        vocabulary.set("accessionType",this.accessionType);
-        vocabulary.set("subsetUrl",this.subsetUrl);
-        vocabulary.set("subsetHead",this.subsetHead);
-        vocabulary.set("subsetNote",this.subsetNote);
-        vocabulary.set("idHeader",this.idHeader);
-        vocabulary.set("termHeader",this.termHeader);
-        vocabulary.set("annotCountText",this.annotCountText);
-        vocabulary.set("idUrl",this.idUrl);
-        vocabulary.set("termUrl",this.termUrl);
+        //  display purposes and come from a config/properties file.
+        //  There are private class attributes set for each with default values
+        //  Also values should be added to DTOConstants for all of these...
+        //  Not done at this time.
+        vocabulary.set("pageTitle", 
+                       vocConfig.getProperty("pageTitle", this.pageTitle));
+        vocabulary.set("subsets", subsets);
+        vocabulary.set("titleSupportText",
+                       vocConfig.getProperty("titleSupportText",
+                                             this.titleSupportText));
+        vocabulary.set("searchTitle",
+                       vocConfig.getProperty("searchTitle", 
+                                             this.searchTitle));
+        vocabulary.set("accessionType",
+                       vocConfig.getProperty("accessionType", 
+                                             this.accessionType));
+        vocabulary.set("accessionExample",
+                       vocConfig.getProperty("accessionExample",
+                                             this.accessionExample));
+        vocabulary.set("subsetUrl",
+                       vocConfig.getProperty("subsetUrl",
+                                             this.subsetUrl));
+        vocabulary.set("subsetHead",
+                       vocConfig.getProperty("subsetHead",
+                                             this.subsetHead));
+        vocabulary.set("subsetNote",
+                       vocConfig.getProperty("subsetNote",
+                                             this.subsetNote));
+        vocabulary.set("idHeader",
+                       vocConfig.getProperty("idHeader",
+                                             this.idHeader));
+        vocabulary.set("termHeader",
+                       vocConfig.getProperty("termHeader",
+                                             this.termHeader));
+        vocabulary.set("countHeader",
+                       vocConfig.getProperty("countHeader",
+                                             this.countHeader));
+        vocabulary.set("annotCountText",
+                       vocConfig.getProperty("annotCountText",
+                                             this.annotCountText));
+        vocabulary.set("idUrl",
+                       vocConfig.getProperty("idUrl",
+                                             this.idUrl));
+        vocabulary.set("termUrl",
+                       vocConfig.getProperty("termUrl",
+                                             this.termUrl));
+        vocabulary.set("helpLink",
+                       vocConfig.getProperty("helpLink",
+                                             this.helpLink));
 
         // data for a particular section, to merch with 'vocabulary'
         DTO section = null;
@@ -189,7 +249,7 @@ public class FlatVocabBrowserFactory {
             //vocabulary.set(DTOConstants.VocabSubset, keyStr);
             vocabulary.set("vocabSubset", keyStr);
            
-            section = getSubset(keyStr);
+            section = getSubset(whichVocab, keyStr);
             vocabulary.merge(section);
             DTO.putDTO(section);
             this.timeStamp ("Retrieved subset of vocabulary.");
@@ -213,9 +273,20 @@ public class FlatVocabBrowserFactory {
             TextSearchHandler tsh = new TextSearchHandler (this.searchScript);
 
             //try {
-            HashMap results = 
-                tsh.search(TextSearchHandler.OMIM, searchStr);
-            section = getSearchResults((String[])results.get("from"),
+            HashMap results = null;
+            // call the search on the appropriate index
+            if (whichVocab.equals("omimVocab")) {
+                results = 
+                    tsh.search(TextSearchHandler.OMIM, searchStr);
+            }
+            else if (whichVocab.equals("pirsfVocab")) {
+                logger.logDebug("doing pirsf text search...");
+                results = 
+                    tsh.search(TextSearchHandler.PIRSF, searchStr);
+            }
+                
+            section = getSearchResults(whichVocab,
+                                       (String[])results.get("from"),
                                        (String[])results.get("where"));
             if (section != null) {
                 vocabulary.merge(section);
@@ -241,13 +312,21 @@ public class FlatVocabBrowserFactory {
     //  This method currently assumes OMIM.  It should be abstracted either
     //  through configurable sql, or a class which can be extended to support
     //  other vocabularies.
-    private DTO getSubset ( String subset )
+    private DTO getSubset ( String vocab, String subset )
             throws DBException, MalformedURLException, IOException
     {
-        logger.logDebug("Getting Subset " + subset);
+        logger.logDebug("Getting Subset " + subset + " from " + vocab);
+
+        String SUBSET = "";
+        if (vocab.equals("omimVocab")) {
+            SUBSET = OMIM_SUBSET;
+        }
+        else if (vocab.equals("pirsfVocab")) {
+            SUBSET = PIRSF_SUBSET;
+        }
 
         //  The object to return.  Represents the subsection of vocabulary.
-        DTO vocabulary = null;
+        DTO vocabulary =  DTO.getDTO();
 
         //  The list of terms, this will be a list of HashMaps, each HashMap
         //  containing an accession ID
@@ -276,7 +355,8 @@ public class FlatVocabBrowserFactory {
             subsetsToFetch.add("8");
             subsetsToFetch.add("9");
         }
-        
+
+        logger.logDebug("before fetching subset " + subset);        
         //  For each subset we need fetch the terms and add them to our
         //  array list.
         for (int i = 0; i < subsetsToFetch.size(); i++) {
@@ -293,7 +373,7 @@ public class FlatVocabBrowserFactory {
                 //  If process term returns null, don't add the value
                 //  in the case of omim, this means an obsolete term with
                 //  no mouse models
-                HashMap term = processTerm(rr);
+                HashMap term = processTerm(vocab, rr);
                 if (term != null) {
                     terms.add(term);
                 }
@@ -317,10 +397,20 @@ public class FlatVocabBrowserFactory {
     //  This method currently assumes OMIM.  It should be abstracted either
     //  through configurable sql, or a class which can be extended to support
     //  other vocabularies.
-    private DTO getSearchResults ( String[] fromClause, String[] whereClause)
+    private DTO getSearchResults ( String vocab, String[] fromClause,
+                                   String[] whereClause)
             throws DBException, MalformedURLException, IOException
     {
         logger.logDebug("Building Results Info");
+
+        //  The vocab dictates which "terms" query we use.
+        String TERMS = "";
+        if (vocab.equals("omimVocab")) {
+            TERMS = OMIM_TERMS;
+        }
+        else if (vocab.equals("pirsfVocab")) {
+            TERMS = PIRSF_TERMS;
+        }
 
         //  The object to return.  Represents the subsection of vocabulary.
         DTO vocabulary = null;
@@ -350,7 +440,7 @@ public class FlatVocabBrowserFactory {
             whereStr = whereStr + whereClause[i];
         } 
 
-        String cmd = Sprintf.sprintf (OMIM_TERMS, fromStr, whereStr);
+        String cmd = Sprintf.sprintf (TERMS, fromStr, whereStr);
         logger.logDebug(cmd);
         nav = this.sqlDM.executeQuery ( cmd );
         while (nav.next()) {
@@ -359,7 +449,7 @@ public class FlatVocabBrowserFactory {
             //  If process term returns null, don't add the value
             //  in the case of omim, this means an obsolete term with
             //  no mouse models
-            HashMap term = processTerm(rr);
+            HashMap term = processTerm(vocab, rr);
             if (term != null) {
                 terms.add(term);
             }
@@ -385,12 +475,21 @@ public class FlatVocabBrowserFactory {
      *   method is specific to omim, as with omim there is the concept of 
      *   obsoleted terms that we may want to ignore and mouse model counts.
      */
-    private HashMap processTerm ( RowReference rr ) 
+    private HashMap processTerm ( String vocab, RowReference rr ) 
         throws DBException
     {
+
+        String ANNOTATIONS = "";
+        if (vocab.equals("omimVocab")) {
+            ANNOTATIONS = OMIM_ANNOTATIONS;
+        }
+        else if (vocab.equals("pirsfVocab")) {
+            ANNOTATIONS = PIRSF_MOUSE_GENES;
+        }
+        
         Integer termKey = rr.getInt(1);
         String term = rr.getString(2);
-        String omimId = rr.getString(3);
+        String termId = rr.getString(3);
         int obsoleteInt = rr.getInt(4).intValue();
 
         //  used to determine if we should include this term.  
@@ -401,14 +500,14 @@ public class FlatVocabBrowserFactory {
 
         HashMap hm = new HashMap();
         hm.put("term", term);
-        hm.put("id", omimId);
+        hm.put("id", termId);
         hm.put("key",termKey);
 
         ResultsNavigator nav2 = null;
         RowReference rr2 = null;
 
         //  Now get the count of genotype annotations for this term.
-        //  This should probably be done as a temp table in the long 
+        //  This should prboermably be done as a temp table in the long 
         //  haul.
         String cmd = Sprintf.sprintf(ANNOTATIONS, termKey.intValue());
         //logger.logDebug(cmd);
@@ -450,6 +549,34 @@ public class FlatVocabBrowserFactory {
 
     /* -------------------------------------------------------------------- */
 
+    /** load the properties associated with the given vocabulary..
+     * @param vocab The name of the flat vocabulary we're dealing with.  This
+     *              name should directly correlated to the name (minus the
+     *              .properties extension and path) of the file.
+     * @return java.util.Properties representing the configuration for this
+     *         vocabulary.
+     * @assumes that the vocab name passed in is the same as the name of the
+     *          properties file, minus the path and .properties extension,
+     *          and that the properties file is in the classpath.
+     * @effects nothing
+     * @throws java.io.IOException
+     */
+    private Properties loadProperties (String vocab)
+        throws IOException
+    {
+        String propFileName = vocab + ".properties";
+
+        InputStream istream = 
+            this.getClass().getClassLoader().getResourceAsStream(propFileName);
+	
+        Properties p = new Properties();
+        p.load(istream);
+
+		return p;
+    }
+
+    /* -------------------------------------------------------------------- */
+
     /** log the given 'entry' to the informational log within 'this.logger'
      * @param entry the entry to write to 'log'
      * @return nothing
@@ -479,7 +606,7 @@ public class FlatVocabBrowserFactory {
 
      // find the all OMIM Terms that begin with given subset character.
     // fill in: beginning character of term (String)
-    private static final String SUBSET =
+    private static final String OMIM_SUBSET =
 		"select vt._Term_key, vt.term, ac.accID, vt.isObsolete  "
         + "from VOC_Term vt, ACC_Accession ac "
 		+ "where vt.term like '%s%' "
@@ -505,7 +632,7 @@ public class FlatVocabBrowserFactory {
 
     //  find the count of genotypes annotated with this omim term
     //  fill in: term key (int)
-    private static final String ANNOTATIONS = 
+    private static final String OMIM_ANNOTATIONS = 
         "select count(distinct va._Object_key) "
         + "from VOC_Annot va, MRK_OMIM_Cache o "
         + "where va._Term_key = %d "
@@ -513,4 +640,44 @@ public class FlatVocabBrowserFactory {
         + " and va._Object_key = o._Genotype_key "
         + " and va._Term_key = o._Term_key "
         + " and o.isNot = 0";
+
+     // find the all PIRSF Terms that begin with given subset character.
+    // fill in: beginning character of term (String)
+    private static final String PIRSF_SUBSET =
+		"select vt._Term_key, vt.term, ac.accID, vt.isObsolete  "
+        + "from VOC_Term vt, ACC_Accession ac "
+		+ "where case "
+        + " when charindex('[', vt.term) = 1 then stuff(vt.term, 1, 1, null) "
+        + " when charindex('(', vt.term) = 1 then stuff(vt.term, 1, 1, null) "
+        + " else vt.term "
+        + " end like '%s%' "
+        + "and vt._Term_key = ac._Object_key "
+        + "and ac._MGIType_key =  " + DBConstants.MGIType_VocTerm
+        + " and ac._LogicalDB_key = " + DBConstants.LogicalDB_PIRSF
+        + " and ac.preferred = 1 "
+        + "order by vt.term";
+
+    // find the PIRSF Terms that correspond with associated from and where
+    // clause.
+    // fill in: portion of from clause (String) 
+    //          portion of where clause (String)
+    private static final String PIRSF_TERMS =
+		"select vt._Term_key, vt.term, ac.accID, vt.isObsolete "
+        + "from VOC_Term vt, ACC_Accession ac %s "
+        + "where %s "
+        + "and vt._Term_key = ac._Object_key "
+        + "and ac._MGIType_key =  " + DBConstants.MGIType_VocTerm
+        + " and ac._LogicalDB_key = " + DBConstants.LogicalDB_PIRSF
+        + " and ac.preferred = 1 "
+        + "order by term";
+
+    //  find the count of mouse genes annotated to this PIRSF term
+    //  !!!!  NEED TO FIGURE OUT WHERE TO GO INSTEAD OF OMIM_Cache  !!!!
+    //  fill in: term key (int)
+    private static final String PIRSF_MOUSE_GENES = 
+        "select count(distinct va._Object_key) "
+        + "from VOC_Annot va,  MRK_Marker m "
+        + "where va._Term_key = %d "
+        + "and _AnnotType_key = " + DBConstants.VOCAnnotType_PIRSF
+        + " and va._Object_key = m._Marker_key ";
 }

@@ -120,9 +120,10 @@ public class TextSearchHandler {
     // public constants
     /////////////////////
 
-    //  The datasets we can search, currently we've only implemented OMIM.
-    public static final String OMIM = "omim";
-    public static final String MP   = "mp";
+    //  The datasets we can search, nothing currently uses MP.
+    public static final String OMIM  = "omim";
+    public static final String MP    = "mp";
+    public static final String PIRSF = "pirsf";
 
 
     ///////////////
@@ -181,6 +182,10 @@ public class TextSearchHandler {
         }
         if (dataset.equals(TextSearchHandler.MP)) {
             return doSearch("phenotypeClauses","aa1._Allele_key",
+                            searchString);
+        }
+        if (dataset.equals(TextSearchHandler.PIRSF)) {
+            return doSearch("pirsfVocabClauses","vt._Term_key",
                             searchString);
         }
         else {

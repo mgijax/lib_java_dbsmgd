@@ -29,6 +29,7 @@ public class DBConstants
     public static final int LogicalDB_NIA = 53;
     public static final int LogicalDB_NCBI = 59;
     public static final int LogicalDB_Ensembl = 60;
+    public static final int LogicalDB_PIRSF = 78;
 
     // from ACC_ActualDB
 
@@ -44,6 +45,7 @@ public class DBConstants
 
     public static final int Species_Mouse = 1;
     public static final int Species_Human = 2;
+    public static final int Species_Rat = 40;
 
     // from ACC_MGIType
 
@@ -59,6 +61,8 @@ public class DBConstants
     public static final int MGIType_Genotype = 12;
     public static final int MGIType_VocTerm = 13;
     public static final int MGIType_Sequence = 19;
+    public static final int MGIType_ConsensusSnp = 30;
+    public static final int MGIType_SubSnp = 31;
 
     // from MRK_Status
 
@@ -84,13 +88,29 @@ public class DBConstants
     // from VOC_AnnotType
     public static final int VOCAnnotType_MP = 1002;
     public static final int VOCAnnotType_OMIM = 1005;
+    public static final int VOCAnnotType_PIRSF = 1007;
 
     // from MGI_RefAssocType
     public static final int MGIRefAssocType_ALLOriginal = 1011;
+
+    // from SEQ_Marker_Cache - Qualifier
+    public static final int SEQMarker_Polypeptide = 615421;
 }
 
 /*
 * $Log$
+* Revision 1.10.6.3  2005/10/04 19:34:28  dow
+* Changes for PIRSF Detail page.
+*
+* Revision 1.10.6.2  2005/10/03 20:10:09  jsb
+* added SNPs
+*
+* Revision 1.10.6.1  2005/09/28 16:46:53  dow
+* Changes for PRISF Vocab Browser capability.
+*
+* Revision 1.10  2005/08/25 15:28:00  dow
+* lib_java_dbsmgd-3-3-0-0
+*
 * Revision 1.9  2005/08/05 17:49:14  mbw
 * merged code from branch lib_java_dbsmgd-tr6046-1
 *

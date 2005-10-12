@@ -1,7 +1,60 @@
+TAG: lib_java_dbsmgd-3-4-0-0
+DATE: 10/12/05
+STAFF: jsb, dow, mbw, sc
+CHANGES: 
+1) merged changes from tr7081 branch
+
 TAG: lib_java_dbsmgd-maint7119-BP
 DATE: 09/30/05
 STAFF: jw,jsb,pf,djd
 CHANGES: branch point tag for 3.41
+
+TAG: lib_java_dbsmgd-tr7081-7
+DATE: 10/12/2005
+STAFF: jsb, dow
+CHANGES:
+1) changes for 2nd dev build
+
+TAG: lib_java_dbsmgd-tr7081-6
+DATE: 10/05/2005
+STAFF: jsb, dow
+CHANGES:
+1) code to support PIRSF browser
+
+TAG: lib_java_dbsmgd-tr7081-5
+DATE: 10/04/2005
+STAFF: jsb
+CHANGES:
+1) moved DTOConstants.java
+
+TAG: lib_java_dbsmgd-tr7081-4
+DATE: 10/04/2005
+STAFF: jsb, dow
+CHANGES:
+1) WI-related changes for SNPs release
+
+TAG: lib_java_dbsmgd-tr7081-3
+DATE: 09/30/2005
+STAFF: mbw
+CHANGES:
+1) development build
+
+DATE: 09/30/2005
+STAFF: mbw
+CHANGES:
+1) modified build.properties.default
+
+TAG: lib_java_dbsmgd-tr7081-2
+DATE: 09/30/2005
+STAFF: mbw
+CHANGES:
+1) development build
+
+TAG: lib_java_dbsmgd-tr7081-1
+DATE: 09/21/2005
+STAFF: sc
+CHANGES:
+1) merged snp and tr5972 branches into this branch
 
 TAG: lib_java_dbsmgd-tr7081-BP
 DATE: 09/13/2005
@@ -73,6 +126,25 @@ DATE: 08/03/2005
 STAFF: mbw
 CHANGES:
 1) integration testing entrezGene load
+
+TAG: lib_java_dbsmgd-tr1560-2
+DATE: 08/30/2005
+STAFF: sc
+CHANGES:
+1) MGISetConstants - added
+2) generatedTables - added MGI_Set
+
+TAG: lib_java_dbsmgd-tr1560-1
+DATE: 08/30/2005
+STAFF: sc
+CHANGES:
+1) generatedTables.txt - added SNP tables
+2) logicalDBConstantants - added JAXREGISTRY, REFSNP,
+   SUBSNP, SUBMITTERSNP, SNPPOPULATION
+3) MGITypeConstants - added CONSENSUSSNP, SUBSNP, 
+   SNPPOPULATION
+4) VocabularyTypeConstants = added SNPVARCLASS,
+   SUBHANDLE, SNPFUNCTION
 
 TAG: lib_java_dbsmgd-tr1560-BP
 DATE: 08/01/2005
