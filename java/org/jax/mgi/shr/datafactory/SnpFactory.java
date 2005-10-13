@@ -683,6 +683,8 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND vt._Term_key IN "
 	+ "        (SELECT DISTINCT _Fxn_key FROM SNP_ConsensusSnp_Marker) "
 	+ "    AND vt.term != 'reference' "
+	+ "    AND vt.term NOT LIKE 'within%' "
+	+ "    AND vt.term NOT LIKE '%stream)' "
 	+ "ORDER BY vt.sequenceNum";
 
     /** retrieve strains for the SNPs query form's Strain selection list
@@ -868,6 +870,9 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.2  2005/10/12 18:13:09  jsb
+* lib_java_dbsmgd-3-4-0-0
+*
 * Revision 1.1.2.2  2005/10/06 19:03:46  jsb
 * various data retrieval updates
 *
