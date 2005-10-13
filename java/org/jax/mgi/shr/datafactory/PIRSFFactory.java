@@ -292,30 +292,31 @@ public class PIRSFFactory {
                 DTO seqDTO = seqFac.getBasicInfo(seqKey.intValue());
                 sfm.put("sequence", seqDTO);
             }
-            sfm.put("mouseSeqId",rr.getString(5));
-            sfm.put("mouseDbName", rr.getString(6));
+            sfm.put("mouseMgiId",rr.getString(5));
+            sfm.put("mouseSeqId",rr.getString(6));
+            sfm.put("mouseDbName", rr.getString(7));
 
             //  Add human and rat homology info if they exist
-            sfm.put("humanSymbol", rr.getString(7));
-            sfm.put("humanChromosome", rr.getString(8));
-            seqKey = rr.getInt(9);
+            sfm.put("humanSymbol", rr.getString(8));
+            sfm.put("humanChromosome", rr.getString(9));
+            seqKey = rr.getInt(10);
             sfm.put("humanSeqKey", seqKey);
             if (seqKey != null) {
                 DTO seqDTO = seqFac.getBasicInfo(seqKey.intValue());
                 sfm.put("humanSequence", seqDTO);
             }
-            sfm.put("humanSeqId",rr.getString(10));
-            sfm.put("humanDbName", rr.getString(11));
-            sfm.put("ratSymbol", rr.getString(12));
-            sfm.put("ratChromosome", rr.getString(13));
-            seqKey = rr.getInt(14);
+            sfm.put("humanSeqId",rr.getString(11));
+            sfm.put("humanDbName", rr.getString(12));
+            sfm.put("ratSymbol", rr.getString(13));
+            sfm.put("ratChromosome", rr.getString(14));
+            seqKey = rr.getInt(15);
             sfm.put("ratSeqKey", seqKey);
             if (seqKey != null) {
                 DTO seqDTO = seqFac.getBasicInfo(seqKey.intValue());
                 sfm.put("ratSequence", seqDTO);
             }
-            sfm.put("ratSeqId",rr.getString(15));
-            sfm.put("ratDbName", rr.getString(16));
+            sfm.put("ratSeqId",rr.getString(16));
+            sfm.put("ratDbName", rr.getString(17));
 
             //  Add member to list.
             members.add(sfm);
@@ -502,6 +503,7 @@ public class PIRSFFactory {
         + " m.symbol, \n"
         + " m.chromosome,  \n"
         + " m._Sequence_key, \n"
+        + " a.accID, \n"
         + " m.accID, \n"
         + " m.name, \n"
         + " h.symbol, \n"
@@ -514,8 +516,12 @@ public class PIRSFFactory {
         + " r._Sequence_key, \n"
         + " r.accID,  \n"
         + " r.name \n"
-        + "from #mouseGenes m, #humanGenes h, #ratGenes r \n"
+        + "from #mouseGenes m, #humanGenes h, #ratGenes r, ACC_Accession a \n"
         + "where m._Marker_key *= h._Marker_key \n"
         + "and m._Marker_key *= r._Marker_key \n"
+        + "and m._Marker_key = a._Object_key \n"
+        + "and a._MGIType_key = " + DBConstants.MGIType_Marker + "\n" 
+        + "and a.preferred = 1 \n"
+        + "and a.prefixPart = 'MGI:' \n"
         + "order by m.symbol ";
 }
