@@ -2430,10 +2430,8 @@ public class MarkerFactory
         if (nav.next())
         {
             rr = (RowReference) nav.getCurrent();
-            System.out.println("Before assigning superfamily stuff");
             marker.set (DTOConstants.SuperFamilyName, rr.getString(2));
             marker.set (DTOConstants.SuperFamilyKey, rr.getInt(1));
-            System.out.println("After assigning superfamily stuff");
         }
         nav.close();
 
@@ -3729,14 +3727,17 @@ public class MarkerFactory
         "select count(distinct _ConsensusSnp_key) " +
         "from SNP_ConsensusSnp_Marker scm, DAG_Closure dc, VOC_Term vt " +
         "where scm._Marker_Key = %d " +
-        "and scm._Fxn_key = dc._Descendent_key " +
-        "and dc._Ancestor_key = vt._Term_key " +
+        "and scm._Fxn_key = dc._DescendentObject_key " +
+        "and dc._AncestorObject_key = vt._Term_key " +
         "and term = 'within 2 kb of' ";
 
 }
 
 /*
 * $Log$
+* Revision 1.21  2005/10/12 18:13:09  jsb
+* lib_java_dbsmgd-3-4-0-0
+*
 * Revision 1.20.6.1  2005/10/11 16:09:22  dow
 * Changes for PIRSF and SNP count links.
 *
