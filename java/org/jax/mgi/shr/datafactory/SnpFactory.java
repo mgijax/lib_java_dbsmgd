@@ -307,6 +307,7 @@ public class SnpFactory extends AbstractDataFactory
 	    item.set (DTOConstants.LogicalDbKey, rr.getInt(5));
 	    item.set (DTOConstants.Orientation, rr.getString(6));
 	    item.set (DTOConstants.IsExemplar, rr.getInt(7));
+	    item.set (DTOConstants.AlleleSummary, rr.getString(8));
 	    item.set (DTOConstants.Populations, DTO.getDTO());
 
 	    if (submitterIDs.containsKey (subSnpKey))
@@ -334,6 +335,8 @@ public class SnpFactory extends AbstractDataFactory
 	DTO subSnp = null;
 	DTO population = null;
 	String popStr = null;
+	String popID = null;
+	Integer popKey = null;
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUBSNPS_ALLELES,
 	    snpKey));
@@ -363,6 +366,13 @@ public class SnpFactory extends AbstractDataFactory
 
 		    population.set (DTOConstants.SubHandle, rr.getString(5));
 		    population.set (DTOConstants.Alleles, alleleCalls);
+
+		    popKey = rr.getInt(6);
+		    popID = getPopulationID (popKey);
+		    if (popID != null)
+		    {
+		        population.set (DTOConstants.AccID, popID);
+		    }
 
 		    populations.set (popStr, population);
 		}
@@ -629,7 +639,39 @@ public class SnpFactory extends AbstractDataFactory
     // private instance methods
     ///////////////////////////
 
-    // none yet
+    private String getPopulationID (Integer populationKey) throws DBException
+    {
+	ExpiringObjectCache cache = ExpiringObjectCache.getSharedCache();
+	String cacheKey = "SnpFactory.PopulationMapping";
+
+	DTO mapping = (DTO) cache.get(cacheKey);
+	if (mapping == null)
+	{
+	    RowReference rr = null;
+	    Integer popKey = null;
+	    String accID = null;
+	    ResultsNavigator nav = this.sqlDM.executeQuery (POPULATIONS);
+
+	    mapping = DTO.getDTO();
+	    while (nav.next())
+	    {
+	        rr = (RowReference) nav.getCurrent();
+
+	        popKey = rr.getInt(1);
+		accID = rr.getString(2);
+
+		if (popKey != null)
+		{
+		    mapping.set (popKey.toString(), accID);
+	    	}
+	    }
+
+	    cache.put (cacheKey, (DTO) mapping.clone(), 480 * 60);  // 8 hours
+	    this.timeStamp ("Got population IDs");
+	}
+
+	return (String) mapping.get (populationKey.toString());
+    }
 
     /* -------------------------------------------------------------------- */
 
@@ -743,26 +785,17 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND aa._MGIType_key = " + DBConstants.MGIType_SubSnp
 	+ "    AND aa._Object_key = ss._SubSnp_key ";
    
-    /** retrieves markers and their functional classes for a consensus snp
-    ** fill in: consensus snp key (int)
+    /** gets the set of populations and their IDs
+    ** fill in: nothing
     */
-    private static String SNP_MARKERS =
-	"SELECT mm._Marker_key, "
-	+ "    mm.symbol, "
-	+ "    vt.term as functionClass, "
-	+ "    csm.contig_allele, "
-	+ "    csm.residue, "
-	+ "    csm.aa_position, "
-	+ "    csm.reading_frame, "
-	+ "    csm._Feature_key "
-	+ "FROM SNP_ConsensusSnp_Marker csm, "
-	+ "    MRK_Marker mm, "
-	+ "    VOC_Term vt "
-	+ "WHERE csm._ConsensusSnp_key = %d "
-	+ "    AND csm._Marker_key = mm._Marker_key "
-	+ "    AND csm._Fxn_key = vt._Term_key ";
-
-/* --- new -----------------------------------------------------------------*/
+    private static String POPULATIONS =
+    	"SELECT DISTINCT p._Population_key, "
+	+ "	aa.accID "
+	+ "FROM ACC_Accession aa, "
+	+ "	SNP_Population p "
+	+ "WHERE aa._Object_key = p._Population_key "
+	+ "	AND aa._MGIType_key = " + DBConstants.MGIType_Population
+	+ "	AND aa.preferred = 1";
 
     /** gets allele calls for the reference snp, ordered by strain ordering.
     ** fill in: consensus snp key (int)
@@ -787,7 +820,8 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    aa.accID, "
 	+ "    aa._LogicalDB_key, "
 	+ "    ss.orientation, "
-	+ "    ss.isExemplar "
+	+ "    ss.isExemplar, "
+	+ "    ss.alleleSummary "
 	+ "FROM SNP_SubSnp ss, "
 	+ "    ACC_Accession aa, "
 	+ "    VOC_Term vt1, "
@@ -807,14 +841,19 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    ssa._Strain_key, "
 	+ "    ssa.allele, "
 	+ "    pop.name, "
-	+ "    vt.term AS popSubmitterHandle "
+	+ "    vt.term AS popSubmitterHandle, "
+	+ "    pop._Population_key "
 	+ "FROM SNP_SubSnp ss, "
 	+ "    SNP_SubSnp_StrainAllele ssa, "
 	+ "    SNP_Population pop, "
-	+ "    VOC_Term vt "
+	+ "    VOC_Term vt, "
+	+ "    ACC_Accession aa "
 	+ "WHERE ss._ConsensusSnp_key = %d "
 	+ "    AND ss._SubSnp_key = ssa._SubSnp_key "
 	+ "    AND ssa._Population_key = pop._Population_key "
+	+ "    AND pop._Population_key = aa._Object_key "
+	+ "    AND aa._MGIType_key = " + DBConstants.MGIType_Population
+	+ "    AND aa.preferred = 1 "
 	+ "    AND pop._SubHandle_key = vt._Term_key ";
 
     private static String REFSNP_GENES =
@@ -833,6 +872,8 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    csm.reading_frame "
 	+ "FROM SNP_ConsensusSnp_Marker csm, "
 	+ "    SNP_Coord_Cache scc, "
+	+ "    VOC_Term vt3, "
+	+ "    DAG_Closure dc, "
 	+ "    MRK_Marker mm, "
 	+ "    VOC_Term vt1, "
 	+ "    VOC_Term vt2 "
@@ -842,6 +883,10 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND scc._VarClass_key = vt1._Term_key "
 	+ "    AND csm._Fxn_key = vt2._Term_key "
 	+ "    AND csm._Marker_key = mm._Marker_key "
+	+ "    AND csm._Fxn_key = dc._DescendentObject_key "
+	+ "    AND dc._AncestorObject_key = vt3._Term_key "
+	+ "    AND (vt3.term = 'within coordinates of' OR "
+	+ "	    vt3.term = 'dbSNP Function Class') "
 	+ "ORDER BY scc.sequenceNum, scc.startCoordinate, mm.symbol ";
 
     private static String REFSNP_GENE_IDS =
@@ -870,6 +915,9 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.3  2005/10/13 11:50:22  jsb
+* updated function class picklist query
+*
 * Revision 1.2  2005/10/12 18:13:09  jsb
 * lib_java_dbsmgd-3-4-0-0
 *
