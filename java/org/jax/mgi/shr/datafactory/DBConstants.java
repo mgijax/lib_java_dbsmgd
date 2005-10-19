@@ -63,6 +63,8 @@ public class DBConstants
     public static final int MGIType_Sequence = 19;
     public static final int MGIType_ConsensusSnp = 30;
     public static final int MGIType_SubSnp = 31;
+    public static final int MGIType_SnpMarker = 32;
+    public static final int MGIType_Population = 33;
 
     // from MRK_Status
 
@@ -99,6 +101,9 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.11  2005/10/12 18:13:09  jsb
+* lib_java_dbsmgd-3-4-0-0
+*
 * Revision 1.10.6.3  2005/10/04 19:34:28  dow
 * Changes for PIRSF Detail page.
 *
