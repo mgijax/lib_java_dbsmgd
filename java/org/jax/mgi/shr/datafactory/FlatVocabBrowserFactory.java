@@ -75,7 +75,8 @@ public class FlatVocabBrowserFactory {
     private String idUrl = "";
     private String termUrl = "";
     private String helpLink = "";
-    
+    private String selfText = "Vocabulary Browser";
+  
 
     ///////////////
     // Constructors
@@ -234,6 +235,9 @@ public class FlatVocabBrowserFactory {
         vocabulary.set("helpLink",
                        vocConfig.getProperty("helpLink",
                                              this.helpLink));
+        vocabulary.set("selfText",
+                       vocConfig.getProperty("selfText",
+                                             this.selfText));
 
         // data for a particular section, to merch with 'vocabulary'
         DTO section = null;
@@ -280,7 +284,7 @@ public class FlatVocabBrowserFactory {
                     tsh.search(TextSearchHandler.OMIM, searchStr);
             }
             else if (whichVocab.equals("pirsfVocab")) {
-                logger.logDebug("doing pirsf text search...");
+                logger.logDebug("doing pirsf text search on ... " + searchStr);
                 results = 
                     tsh.search(TextSearchHandler.PIRSF, searchStr);
             }
