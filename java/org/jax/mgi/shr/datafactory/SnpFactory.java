@@ -594,6 +594,14 @@ public class SnpFactory extends AbstractDataFactory
 	    key = rr.getInt(1);
 	    value = rr.getString(2);
 
+	    try
+	    {
+	        value = value.replaceAll ("<", "&lt;");
+		value = value.replaceAll (">", "&gt;");
+	    }
+	    catch (Exception e)
+	    {}
+
 	    strains.append (Sprintf.sprintf (template, key, value));
 	}
 	nav.close();
@@ -915,6 +923,9 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.4  2005/10/19 10:11:27  jsb
+* now gets population IDs and subSNP's allele summary
+*
 * Revision 1.3  2005/10/13 11:50:22  jsb
 * updated function class picklist query
 *
