@@ -7,7 +7,6 @@ import org.jax.mgi.shr.dbutils.*;
  * is a lazy cached lookup for vocabulary definitions in the database
  * @has an internal cache
  * @does provides a lookup for accessing vocabulary definitions
- * @Company: The Jackson Laboratory
  * @author M Walker
  * @version 1.0
  */
@@ -61,8 +60,9 @@ public class VocVocabLookup extends LazyCachedLookup
 
     /**
      * get the query to use when adding ne entries tothe cache
-     * @param addObject the lookup object
-     * @return
+     * @param addObject the lookup object which triggers the cache add
+     * @return the query to add a vocabulary definition to the cache based
+     * on the given addObject
      */
     public String getAddQuery(Object addObject)
     {
@@ -93,7 +93,6 @@ public class VocVocabLookup extends LazyCachedLookup
      * is a plain old java object for storing vocabulary information
      * @has vocabulary attributes
      * @does nothing
-     * @Company: The Jackson Laboratory
      * @author M Walker
      * @version 1.0
      */
