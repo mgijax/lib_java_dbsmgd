@@ -167,7 +167,7 @@ public class TextSearchHandler {
      *   to execute the search.
      * @effects updates the radar database with the results, assuming any are
      *   found.
-     * @returns a java.util.HashMap, containing two entries: <UL>
+     * @return a java.util.HashMap, containing two entries: <UL>
      *   <LI> a from clause, which is a string array of table names
      *   <LI> a where clause, which is a  string array of sql expressions.
      *   </UL>If no results are found, an empty HashMap is returned
@@ -210,7 +210,7 @@ public class TextSearchHandler {
      * @assumes the method name is valid for the text search engine being,
      *    that we have the handle to the text search engine (script) already.
      * @effects updates the Radar database with the results of the search
-     * @returns  a java.util.HashMap, containing two entries: <UL>
+     * @return  a java.util.HashMap, containing two entries: <UL>
      *   <LI> a from clause, which is a string array of table names
      *   <LI> a where clause, which is a  string array of sql expressions.
      *   </UL>If no results are found, an empty HashMap is returned
