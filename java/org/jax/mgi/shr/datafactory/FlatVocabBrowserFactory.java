@@ -63,6 +63,7 @@ public class FlatVocabBrowserFactory {
     private String pageTitle = "Vocabulary";
     private String titleSupportText = "";
     private String searchTitle = "vocabulary";
+    private String beingSearched = "";
     private String accessionType = "";
     private String accessionExample = "";
     private String subsetUrl = "";
@@ -199,6 +200,9 @@ public class FlatVocabBrowserFactory {
         vocabulary.set("searchTitle",
                        vocConfig.getProperty("searchTitle", 
                                              this.searchTitle));
+        vocabulary.set("beingSearched",
+                       vocConfig.getProperty("beingSearched", 
+                                             this.beingSearched));
         vocabulary.set("accessionType",
                        vocConfig.getProperty("accessionType", 
                                              this.accessionType));
