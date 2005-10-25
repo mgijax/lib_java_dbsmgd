@@ -735,7 +735,7 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND vt.term != 'reference' "
 	+ "    AND vt.term NOT LIKE 'within%' "
 	+ "    AND vt.term NOT LIKE '%stream)' "
-	+ "ORDER BY vt.sequenceNum";
+	+ "ORDER BY vt.term";
 
     /** retrieve strains for the SNPs query form's Strain selection list
     ** fill in: nothing
@@ -923,6 +923,9 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.5  2005/10/21 14:04:50  jsb
+* Escaped < and > characters in strain names
+*
 * Revision 1.4  2005/10/19 10:11:27  jsb
 * now gets population IDs and subSNP's allele summary
 *
