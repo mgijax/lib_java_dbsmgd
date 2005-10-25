@@ -181,8 +181,6 @@ public class FlatVocabBrowserFactory {
         logger.logDebug("FlatVocabBrowserFactory.getFlatVocab for -> " + whichVocab);
         vocConfig = loadProperties(whichVocab);
 
-        logger.logDebug("Properties loaded");
-
         // all vocabulary data for either the subset or search terms submitted
         DTO vocabulary = DTO.getDTO();
 
@@ -266,15 +264,17 @@ public class FlatVocabBrowserFactory {
         // If we don't have a subset we're searching, then we must have a
         // search string.
         else  {
-            logger.logDebug("fetching search string");
             searchStr = StringLib.getFirst ((String[]) parms.get ("query"));
+            if (searchStr != null) {
+                searchStr = searchStr.trim();
+            }
             //searchStr = (String) parms.get("query");
             logger.logDebug("Have search string " + searchStr);
         }
         //  If there is a search string, go ahead and do textsearch,
         //  and associated query to bring back results.
 
-        if (searchStr != null) {
+        if (searchStr != null && ! searchStr.equals("")) {
             // Need to add to DTOConstants
             //vocabulary.set(DTOConstants.QueryResults, searchStr);
             vocabulary.set("queryResults", searchStr);
@@ -288,7 +288,6 @@ public class FlatVocabBrowserFactory {
                     tsh.search(TextSearchHandler.OMIM, searchStr);
             }
             else if (whichVocab.equals("pirsfVocab")) {
-                logger.logDebug("doing pirsf text search on ... " + searchStr);
                 results = 
                     tsh.search(TextSearchHandler.PIRSF, searchStr);
             }
@@ -311,6 +310,7 @@ public class FlatVocabBrowserFactory {
 
         return vocabulary;
     }
+
     /* ------------------------------------------------------------------- */
 
     ///////////////////////////
@@ -364,7 +364,6 @@ public class FlatVocabBrowserFactory {
             subsetsToFetch.add("9");
         }
 
-        logger.logDebug("before fetching subset " + subset);        
         //  For each subset we need fetch the terms and add them to our
         //  array list.
         for (int i = 0; i < subsetsToFetch.size(); i++) {

@@ -167,7 +167,7 @@ public class TextSearchHandler {
      *   to execute the search.
      * @effects updates the radar database with the results, assuming any are
      *   found.
-     * @return a java.util.HashMap, containing two entries: <UL>
+     * @returns a java.util.HashMap, containing two entries: <UL>
      *   <LI> a from clause, which is a string array of table names
      *   <LI> a where clause, which is a  string array of sql expressions.
      *   </UL>If no results are found, an empty HashMap is returned
@@ -210,7 +210,7 @@ public class TextSearchHandler {
      * @assumes the method name is valid for the text search engine being,
      *    that we have the handle to the text search engine (script) already.
      * @effects updates the Radar database with the results of the search
-     * @return  a java.util.HashMap, containing two entries: <UL>
+     * @returns  a java.util.HashMap, containing two entries: <UL>
      *   <LI> a from clause, which is a string array of table names
      *   <LI> a where clause, which is a  string array of sql expressions.
      *   </UL>If no results are found, an empty HashMap is returned
@@ -262,8 +262,16 @@ public class TextSearchHandler {
             // command failed, throw an exception
             if (exitVal != 0) {
                 StringBuffer error = errorGobbler.getData();
-                throw new MGIException("ERROR Received from script:\n"
+                System.err.println("ERROR Received from script:\n"
                                        + error.toString());
+
+                String[] msgs = (error.toString()).split("\n");
+                String msg = "Cause unknown";
+                if (msgs.length == 2 && msgs[1].length() > 0) {
+                    msg = msgs[1];
+                }
+                    
+                throw new MGIException(msg);
             }
             
             // get the contents of standard out...
