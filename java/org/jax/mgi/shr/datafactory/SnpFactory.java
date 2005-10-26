@@ -732,7 +732,7 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND vv.name = 'SNP Function Class'"
 	+ "    AND vt._Term_key IN "
 	+ "        (SELECT DISTINCT _Fxn_key FROM SNP_ConsensusSnp_Marker) "
-	+ "    AND vt.term != 'reference' "
+	+ "    AND vt.term != 'Contig-Reference' "
 	+ "    AND vt.term NOT LIKE 'within%' "
 	+ "    AND vt.term NOT LIKE '%stream)' "
 	+ "ORDER BY vt.term";
@@ -923,6 +923,9 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.6  2005/10/25 11:23:11  jsb
+* fixes for alpha 2
+*
 * Revision 1.5  2005/10/21 14:04:50  jsb
 * Escaped < and > characters in strain names
 *
