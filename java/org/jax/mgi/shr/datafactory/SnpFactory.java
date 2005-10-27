@@ -398,6 +398,141 @@ public class SnpFactory extends AbstractDataFactory
 
     public DTO getMarkers (int snpKey) throws DBException
     {
+	ResultsNavigator nav = null;
+	RowReference rr = null;
+
+	// info from each data row
+
+	String chromosome = null;
+	Double startCoordinate = null;
+	Integer consensusSnpMarkerKey = null;
+	String symbol = null;
+	String accID = null;
+	String functionClass = null;
+	String orientation = null;
+	Integer featureKey = null;
+	Integer functionKey = null;
+	String contigAllele = null;
+	String residue = null;
+	String aaPosition = null;
+	String readingFrame = null;
+	Integer markerKey = null;
+	Integer consensusSnpKey = null;
+	String markerName = null;
+
+	Integer lastFeatureKey = null;
+	Integer lastMarkerKey = null;
+	Integer lastCsmKey = null;
+
+	int subRowCount = 0;
+
+        DTO data = DTO.getDTO();
+	ArrayList locations = new ArrayList();
+	data.set (DTOConstants.Markers, locations);
+	
+	DTO location = null;
+	ArrayList genes = null;
+	DTO gene = null;
+	ArrayList subrows = null;
+	DTO subrow = null;
+
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (REFSNP_GENES,snpKey));
+
+	while (nav.next())
+	{
+	    rr = (RowReference) nav.getCurrent();
+	    chromosome = rr.getString(1);		//
+	    startCoordinate = rr.getDouble(2);		//
+	    consensusSnpMarkerKey = rr.getInt(3);	//
+	    symbol = rr.getString(4);			//
+	    accID = rr.getString(5);			//
+	    functionClass = rr.getString(6);		//
+	    orientation = rr.getString(7);		//
+	    featureKey = rr.getInt(8);			//
+	    functionKey = rr.getInt(9);
+	    contigAllele = rr.getString(10);		//
+	    residue = rr.getString(11);			//
+	    aaPosition = rr.getString(12);		//
+	    readingFrame = rr.getString(13);		//
+	    markerKey = rr.getInt(14);			//
+	    consensusSnpKey = rr.getInt(15);
+	    markerName = rr.getString(16);		//
+
+	    // still need:  orientation, NCBI build #, 
+
+	    if ((lastFeatureKey == null) || 
+	        (!lastFeatureKey.equals(featureKey)) )
+	    {
+		location = DTO.getDTO();
+		location.set (DTOConstants.Chromosome, chromosome);
+		location.set (DTOConstants.StartCoord, startCoordinate);
+		location.set (DTOConstants.Orientation, orientation);
+
+		genes = new ArrayList();
+		location.set (DTOConstants.AssociatedGenes, genes);
+
+		locations.add (location);
+		lastFeatureKey = featureKey;
+
+		lastMarkerKey = null;
+		lastCsmKey = null;
+	    }
+	    // else -- just use the 'location' from last time
+
+	    if ((lastMarkerKey == null) ||
+	        (!lastMarkerKey.equals (markerKey)) )
+	    {
+		gene = DTO.getDTO();
+		gene.set (DTOConstants.MarkerSymbol, symbol);
+		gene.set (DTOConstants.MarkerName, markerName);
+		gene.set (DTOConstants.MarkerKey, markerKey);
+		subrows = new ArrayList();
+		gene.set (DTOConstants.FxnAlleles, subrows);
+		genes.add (gene);
+		lastMarkerKey = markerKey;
+		lastCsmKey = null;
+	    }
+	    // else -- just use the 'gene' from last time
+
+	    if ((lastCsmKey == null) ||
+	        (!lastCsmKey.equals (consensusSnpMarkerKey)) )
+	    {
+		subrow = DTO.getDTO();
+		subrow.set (DTOConstants.FunctionClass, functionClass);
+		subrow.set (DTOConstants.Residue, residue);
+		subrow.set (DTOConstants.AminoAcidPosition, aaPosition);
+		subrow.set (DTOConstants.ReadingFrame, readingFrame);
+		subrow.set (DTOConstants.Allele, contigAllele);
+
+		subrows.add (subrow);
+		lastCsmKey = consensusSnpMarkerKey;
+		subRowCount++;
+	    }
+	    // else -- just use the 'subrow' from last time
+
+	    if (accID != null)
+	    {
+		if (accID.startsWith ("NM"))
+		{
+		    subrow.set (DTOConstants.RepRNASeq, accID);
+		}
+		else if (accID.startsWith ("NP"))
+		{
+		    subrow.set (DTOConstants.RepProteinSeq, accID);
+		}
+	    }
+
+	} // end -- while
+
+	nav.close();
+
+	this.timeStamp (Sprintf.sprintf ("got %d subrows for markers",
+	    subRowCount) );
+	return data;
+    }
+
+    public DTO old_getMarkers (int snpKey) throws DBException
+    {
         DTO data = DTO.getDTO();
 	ResultsNavigator nav = null;
 	RowReference rr = null;
@@ -864,7 +999,45 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND aa.preferred = 1 "
 	+ "    AND pop._SubHandle_key = vt._Term_key ";
 
+    /** gets gene/function class associations for this SNP, with associated
+    *  transcript and protein IDs.
+    * fill in: integer refSNP ID
+    */
     private static String REFSNP_GENES =
+	"SELECT scc.chromosome, "
+	+ "    scc.startCoordinate, "
+	+ "    csm._ConsensusSnp_Marker_key, "
+	+ "    mm.symbol, "
+	+ "    aa.accID, "
+	+ "    vt1.term as functionClass, "
+	+ "    scc.strand, "
+	+ "    csm._Feature_key, "
+	+ "    csm._Fxn_key, "
+	+ "    csm.contig_allele, "
+	+ "    csm.residue, "
+	+ "    csm.aa_position, "
+	+ "    csm.reading_frame, "
+	+ "    csm._Marker_key, "
+	+ "    csm._ConsensusSnp_key, "
+	+ "    mm.name "
+	+ "FROM SNP_ConsensusSnp_Marker csm, "
+	+ "    SNP_Coord_Cache scc, "
+	+ "    MRK_Marker mm, "
+	+ "    VOC_Term vt1, "
+	+ "    ACC_Accession aa "
+	+ "WHERE csm._ConsensusSnp_key = %d "
+	+ "    AND csm._ConsensusSnp_key = scc._ConsensusSnp_key "
+	+ "    AND csm._Feature_key = scc._Feature_key "
+	+ "    AND csm._Marker_key = mm._Marker_key "
+	+ "    AND csm._Fxn_key = vt1._Term_key "
+	+ "    AND csm._ConsensusSnp_Marker_key *= aa._Object_key "
+	+ "    AND aa._MGIType_key = 32 "
+	+ "ORDER BY scc.sequenceNum, "
+	+ "    scc.startCoordinate, "
+	+ "    mm.symbol, "
+	+ "    vt1.term";
+
+    private static String old_REFSNP_GENES =
 	"SELECT DISTINCT scc._Feature_key, "
 	+ "    scc.chromosome, "
 	+ "    scc.startCoordinate, "
@@ -923,6 +1096,9 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.7  2005/10/26 17:04:26  jsb
+* updated 'reference' to be 'Contig-Reference' in vocab term
+*
 * Revision 1.6  2005/10/25 11:23:11  jsb
 * fixes for alpha 2
 *
