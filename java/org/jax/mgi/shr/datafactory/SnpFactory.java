@@ -337,6 +337,8 @@ public class SnpFactory extends AbstractDataFactory
 	String popStr = null;
 	String popID = null;
 	Integer popKey = null;
+	boolean anyInsertions = false;
+	String allele = null;
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUBSNPS_ALLELES,
 	    snpKey));
@@ -347,11 +349,19 @@ public class SnpFactory extends AbstractDataFactory
 
 	    subSnpKey = rr.getInt(1);
 	    strainKey = rr.getInt(2);
+	    allele = rr.getString(3);
 	    popStr = rr.getString(4);
 
 	    item = DTO.getDTO();
 	    item.set (DTOConstants.StrainKey, strainKey);
-	    item.set (DTOConstants.Allele, rr.getString(3));
+	    if (allele != null)
+	    {
+	        item.set (DTOConstants.Allele, allele);
+	        if (!anyInsertions && (allele.length() > 1))
+		{
+		    anyInsertions = true;
+		}
+	    }
 
 	    subSnp = (DTO) subSnps.get (subSnpKey.toString());
 	    if (subSnp != null)
@@ -387,6 +397,8 @@ public class SnpFactory extends AbstractDataFactory
 	}
 
 	nav.close();
+
+	data.set (DTOConstants.AnyInsertions, new Boolean(anyInsertions));
 
 	this.timeStamp (Sprintf.sprintf ("Got %d allele calls for subSnps",
 	    calls));
@@ -1096,6 +1108,9 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.8  2005/10/27 14:49:18  jsb
+* fixed retrieval of associated markers
+*
 * Revision 1.7  2005/10/26 17:04:26  jsb
 * updated 'reference' to be 'Contig-Reference' in vocab term
 *
