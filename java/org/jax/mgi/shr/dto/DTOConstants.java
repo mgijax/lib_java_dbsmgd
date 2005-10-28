@@ -302,10 +302,14 @@ public class DTOConstants
     public static String MapUnits = "mapUnits";
     public static String SubmitterID = "submitterID";
     public static String Version = "version";
+    public static String AnyInsertions = "anyInsertions";
 }
 
 /*
 * $Log$
+* Revision 1.2  2005/10/12 18:13:10  jsb
+* lib_java_dbsmgd-3-4-0-0
+*
 * Revision 1.1.2.3  2005/10/11 16:09:29  dow
 * Changes for PIRSF and SNP count links.
 *
