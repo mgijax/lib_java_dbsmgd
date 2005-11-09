@@ -26,4 +26,8 @@ public class VocabularyTypeConstants
     public static final int SEQUENCESTATUS = 20;
     public static final int MAPTYPE = 29;
     public static final int MAPUNIT = 30;
+    public static final int SNPVARCLASS = 50;
+    public static final int SUBHANDLE = 51;
+    public static final int SNPFUNCTION = 49;
+
 }

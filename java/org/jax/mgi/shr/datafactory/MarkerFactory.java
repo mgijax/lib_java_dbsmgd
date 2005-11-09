@@ -446,6 +446,11 @@ public class MarkerFactory
         DTO.putDTO (section);
         this.timeStamp ("Retrieved reference data");
 
+        section = this.getSuperFamily (key);
+        marker.merge (section);
+        DTO.putDTO (section);
+        this.timeStamp ("Retrieved super family data");
+
         // collect data from the minimap reader, then close it.
 
         if (minimapReader != null)
@@ -479,7 +484,7 @@ public class MarkerFactory
     *    (marker symbol).
     * @return DTO which defines all human disease related marker data fields
     * @assumes nothing
-    * @effects retrieves human disease related marker data by quering a 
+    * @effects retrieves human disease related marker data by quering a
     *    database.
     * @throws DBException if there is a problem querying the database or
     *    processing the results
@@ -1625,7 +1630,7 @@ public class MarkerFactory
 
         int pcr = 0;                // DNA type == primer
         int rflp = 0;               // DNA type != primer
-
+ 
         nav = sqlDM.executeQuery (Sprintf.sprintf (POLYMORPHISM_COUNTS, key));
         while (nav.next())
         {
@@ -1646,6 +1651,17 @@ public class MarkerFactory
 
         marker.set (DTOConstants.PcrCount, new Integer(pcr));
         marker.set (DTOConstants.RflpCount, new Integer(rflp));
+
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (SNP_COUNT, key));
+        if (nav.next()) {
+                rr = (RowReference) nav.getCurrent();
+                marker.set (DTOConstants.SnpCount, rr.getInt(1));
+        }
+        else {
+            marker.set (DTOConstants.SnpCount, new Integer(0));
+        }
+        nav.close();
+
         return marker;
     }
 
@@ -1723,7 +1739,7 @@ public class MarkerFactory
 
 	// also get the count of alleles with associations to disease annotations
 
-	nav = 
+	nav =
         this.sqlDM.executeQuery (Sprintf.sprintf (DISEASE_ALLELE_COUNT, key));
 	if (nav.next())
 	{
@@ -2391,6 +2407,38 @@ public class MarkerFactory
         return marker;
     }
 
+    /* -------------------------------------------------------------------- */
+
+    /** get the name and key for the superfamily to which this gene belongs.
+    * @param key marker key
+    * @return DTO which maps DTOConstants.SuperFamilyName to a String, and 
+    *    DTOCConstants.SuperFamilyKey to an Integer.  If the marker is not
+    *    associated with a super family page, then an empty DTO is returned.
+    * @assumes nothing
+    * @effects nothing
+    * @throws DBException if there are problems querying the database or
+    *    stepping through the results
+    */
+    public DTO getSuperFamily (int key) throws DBException
+    {
+        DTO marker = DTO.getDTO();        // start with a new DTO
+
+        ResultsNavigator nav = null;            // set of query results
+        RowReference rr = null;                 // one row in 'nav'
+
+        nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUPERFAMILY, key));
+        if (nav.next())
+        {
+            rr = (RowReference) nav.getCurrent();
+            marker.set (DTOConstants.SuperFamilyName, rr.getString(2));
+            marker.set (DTOConstants.SuperFamilyKey, rr.getInt(1));
+        }
+        nav.close();
+
+        return marker;
+    }
+
+
     /** get InterPro terms associated with the marker with the given 'key'.
     * @param key the marker key of the marker whose data we seek
     * @return DTO which defines one field:  DTOConstants.InterProTerms which
@@ -2578,7 +2626,7 @@ public class MarkerFactory
             rr = (RowReference) nav.getCurrent();
 
             disease = new Disease(rr.getInt(1),
-                                  rr.getString(2), 
+                                  rr.getString(2),
                                   rr.getString(3));
             diseases.add (disease);
         }
@@ -2588,7 +2636,7 @@ public class MarkerFactory
 
         if (diseases.size() > 0)  {
             marker.set (DTOConstants.Diseases, diseases);
-        }        
+        }
 
         return marker;
     }
@@ -3155,7 +3203,7 @@ public class MarkerFactory
 	    + "WHERE mvat.associationType = 'Marker Detail Allele Category' "
 	    + "    AND mvat._AssociationType_key = mva._AssociationType_key "
 	    + "    AND mva._Term_key_1 = vt._Term_key "
-	    + "    AND mva._Term_key_2 = aal._Allele_Type_key " 
+	    + "    AND mva._Term_key_2 = aal._Allele_Type_key "
 	    + "    AND aal._Marker_key = %d "
 	    + "    AND aal.isWildType = 0 "
 	    + "GROUP BY vt.term, vt._Term_key "
@@ -3171,7 +3219,7 @@ public class MarkerFactory
 	    + "FROM ALL_Allele "
 	    + "WHERE _Marker_key = %d "
 	    + "    AND isWildType = 0";
-    
+
     // get a count of the antibodies associated with the marker
     // fill in: marker key (int)
     private static final String ANTIBODY_COUNT =
@@ -3339,11 +3387,13 @@ public class MarkerFactory
 
     private static final String GO_UPDATE_3 =
         "delete #GO_Annotations "
-        + "from #GO_Annotations ga1, #GO_Annotations ga2 "
+        + "from #GO_Annotations ga1, #GO_Annotations ga2, ACC_Accession aa "
         + "where ga1.ontology = ga2.ontology "
-        + "and (ga1.term = 'molecular_function unknown' "
-        + "or ga1.term = 'cellular_component unknown' "
-        + "or ga1.term = 'biological_process unknown') "
+        + "and ga1._Term_key = aa._Object_key "
+        + "and aa._MGIType_key = 13 "
+        + "and (aa.accID = 'GO:0000004' "
+        + "or aa.accID = 'GO:0005554' "
+        + "or aa.accID = 'GO:0008372') "
         + "and ga2.term != ga1.term";
 
     // retrieve the GO data from the temp table (from GO_CREATE_TEMP).
@@ -3514,6 +3564,17 @@ public class MarkerFactory
                 + "    and mm._Organism_key = mo._Organism_key"
                 + "    and mo._Organism_key != " + DBConstants.Species_Mouse;
 
+    // get the superfamily if one exists
+    // fill in: marker key (int)
+    private static final String SUPERFAMILY =
+        "select vt._Term_key, vt.term "
+        + " from VOC_Term vt, VOC_Annot va "
+        + " where _Object_key = %d " 
+        + " and _AnnotType_key = " + DBConstants.VOCAnnotType_PIRSF
+        + " and va._Term_key = vt._Term_key";
+
+
+
     // get counts of polymorphisms by type
     // fill in: marker key (int)
     private static final String POLYMORPHISM_COUNTS =
@@ -3661,10 +3722,33 @@ public class MarkerFactory
         + " and va._AnnotType_key = " + DBConstants.VOCAnnotType_OMIM
         + " and a.isWildType = 0"
         + " and va.isNot = 0";
+
+    // find count of snps associated with this allele "within 2 kb of"
+    // fill in: marker key (int)
+    private static final String SNP_COUNT =
+        "select count(distinct _ConsensusSnp_key) " +
+        "from SNP_ConsensusSnp_Marker scm, DAG_Closure dc, VOC_Term vt " +
+        "where scm._Marker_Key = %d " +
+        "and scm._Fxn_key = dc._DescendentObject_key " +
+        "and dc._AncestorObject_key = vt._Term_key " +
+        "and term = 'within 2 kb of' ";
+
 }
 
 /*
 * $Log$
+* Revision 1.22  2005/10/18 14:04:25  dow
+* Fix to the snps count link.
+*
+* Revision 1.21  2005/10/12 18:13:09  jsb
+* lib_java_dbsmgd-3-4-0-0
+*
+* Revision 1.20.6.1  2005/10/11 16:09:22  dow
+* Changes for PIRSF and SNP count links.
+*
+* Revision 1.20  2005/08/25 15:28:02  dow
+* lib_java_dbsmgd-3-3-0-0
+*
 * Revision 1.19  2005/08/05 17:49:14  mbw
 * merged code from branch lib_java_dbsmgd-tr6046-1
 *

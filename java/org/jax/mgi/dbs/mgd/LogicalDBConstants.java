@@ -1,6 +1,9 @@
 //  $Header$
 //  $Header$
 //  $Name$
+//  $Header$
+//  $Header$
+//  $Name$
 
 package org.jax.mgi.dbs.mgd;
 
@@ -30,6 +33,11 @@ public class LogicalDBConstants
     public static final int NCBI_GENE = 59;
     public static final int ENSEMBL_GENE = 60;
     public static final int ENTREZ_GENE = 55;
+    public static final int JAXREGISTRY = 22;
+    public static final int REFSNP = 73;
+    public static final int SUBSNP = 74;
+    public static final int SUBMITTERSNP = 75;
+    public static final int SNPPOPULATION = 76;
 
     public static final int RIKEN = 51;
     public static final int NIA15K = 46;
@@ -41,8 +49,20 @@ public class LogicalDBConstants
 
 
 //  $Log$
+//  Revision 1.6  2005/10/12 18:13:08  jsb
+//  lib_java_dbsmgd-3-4-0-0
+//
+//  Revision 1.5.6.1  2005/09/21 19:54:35  sc
+//  merge of snp and tr5972 branch to tr7081 branch
+//
+//  Revision 1.5  2005/08/05 17:51:26  mbw
+//  merged code from branch lib_java_dbsmgd-tr6046-1
+//
 //  Revision 1.4.8.1  2005/08/02 17:49:19  mbw
 //  added entry for ENTREZ_GENE
+//
+//  Revision 1.4.18.1  2005/08/30 15:24:58  sc
+//  TR1560 SNP
 //
 //  Revision 1.4  2004/12/17 17:58:29  sc
 //  tr6365

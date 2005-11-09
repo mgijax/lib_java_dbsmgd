@@ -120,9 +120,10 @@ public class TextSearchHandler {
     // public constants
     /////////////////////
 
-    //  The datasets we can search, currently we've only implemented OMIM.
-    public static final String OMIM = "omim";
-    public static final String MP   = "mp";
+    //  The datasets we can search, nothing currently uses MP.
+    public static final String OMIM  = "omim";
+    public static final String MP    = "mp";
+    public static final String PIRSF = "pirsf";
 
 
     ///////////////
@@ -181,6 +182,10 @@ public class TextSearchHandler {
         }
         if (dataset.equals(TextSearchHandler.MP)) {
             return doSearch("phenotypeClauses","aa1._Allele_key",
+                            searchString);
+        }
+        if (dataset.equals(TextSearchHandler.PIRSF)) {
+            return doSearch("pirsfVocabClauses","vt._Term_key",
                             searchString);
         }
         else {
@@ -257,8 +262,16 @@ public class TextSearchHandler {
             // command failed, throw an exception
             if (exitVal != 0) {
                 StringBuffer error = errorGobbler.getData();
-                throw new MGIException("ERROR Received from script:\n"
+                System.err.println("ERROR Received from script:\n"
                                        + error.toString());
+
+                String[] msgs = (error.toString()).split("\n");
+                String msg = "Cause unknown";
+                if (msgs.length == 2 && msgs[1].length() > 0) {
+                    msg = msgs[1];
+                }
+                    
+                throw new MGIException(msg);
             }
             
             // get the contents of standard out...

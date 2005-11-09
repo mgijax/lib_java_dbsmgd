@@ -2,5 +2,5 @@ classpath = /usr/local/mgi/live/lib/java1.4/core.jar:/usr/local/mgi/live/dbsgen/
 dbname = mgd
 dbserver = PROD_MGI
 dbuser = mgd_public
-dbpasswordfile = /usr/local/mgi/dbutils/mgidbutilities/.mgd_public_password
+dbpasswordfile = /usr/local/mgi/live/dbutils/mgidbutilities/.mgd_public_password
 dburl = shire.informatics.jax.org:4100
