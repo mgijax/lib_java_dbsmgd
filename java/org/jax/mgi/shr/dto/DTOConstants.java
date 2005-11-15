@@ -302,7 +302,6 @@ public class DTOConstants
     public static String MapUnits = "mapUnits";
     public static String SubmitterID = "submitterID";
     public static String Version = "version";
-    public static String AnyInsertions = "anyInsertions";
 }
 
 /*
