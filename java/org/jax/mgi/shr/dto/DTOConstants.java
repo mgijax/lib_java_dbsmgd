@@ -12,7 +12,7 @@ package org.jax.mgi.shr.dto;
 
 /** contains common constants for use in constructing <tt>DTO</tt>s.
 *  a set of static constants to use for fieldnames when building DTOs.
-*   (no instances of this class are to be created)
+*    (no instances of this class are to be created)
 * @has a set of static constants.
 * @does simply provides public access to these constants.
 */
@@ -306,6 +306,9 @@ public class DTOConstants
 
 /*
 * $Log$
+* Revision 1.3.6.1  2005/11/15 02:27:58  jw
+* Adding missed files from merge
+*
 * Revision 1.2  2005/10/12 18:13:10  jsb
 * lib_java_dbsmgd-3-4-0-0
 *
