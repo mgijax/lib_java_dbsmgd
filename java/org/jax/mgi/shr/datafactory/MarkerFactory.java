@@ -1630,7 +1630,7 @@ public class MarkerFactory
 
         int pcr = 0;                // DNA type == primer
         int rflp = 0;               // DNA type != primer
- 
+
         nav = sqlDM.executeQuery (Sprintf.sprintf (POLYMORPHISM_COUNTS, key));
         while (nav.next())
         {
@@ -2411,7 +2411,7 @@ public class MarkerFactory
 
     /** get the name and key for the superfamily to which this gene belongs.
     * @param key marker key
-    * @return DTO which maps DTOConstants.SuperFamilyName to a String, and 
+    * @return DTO which maps DTOConstants.SuperFamilyName to a String, and
     *    DTOCConstants.SuperFamilyKey to an Integer.  If the marker is not
     *    associated with a super family page, then an empty DTO is returned.
     * @assumes nothing
@@ -3569,7 +3569,7 @@ public class MarkerFactory
     private static final String SUPERFAMILY =
         "select vt._Term_key, vt.term "
         + " from VOC_Term vt, VOC_Annot va "
-        + " where _Object_key = %d " 
+        + " where _Object_key = %d "
         + " and _AnnotType_key = " + DBConstants.VOCAnnotType_PIRSF
         + " and va._Term_key = vt._Term_key";
 
@@ -3650,7 +3650,7 @@ public class MarkerFactory
     // get count of total number of sequences associated with a marker
     // fill in: marker key (int)
     private static final String SEQUENCE_COUNT =
-                    "SELECT cnt = count(smc._Sequence_key)"
+                    "SELECT cnt = count(distinct(smc._Sequence_key))"
                 + " FROM SEQ_Marker_Cache smc"
                 +        ", ACC_Accession aa"
                 + " WHERE smc._Marker_key = %d"
@@ -3737,6 +3737,9 @@ public class MarkerFactory
 
 /*
 * $Log$
+* Revision 1.20.8.1  2005/11/09 00:08:26  jw
+* lib_java_dbsmgd-3-4-1-0
+*
 * Revision 1.22  2005/10/18 14:04:25  dow
 * Fix to the snps count link.
 *
