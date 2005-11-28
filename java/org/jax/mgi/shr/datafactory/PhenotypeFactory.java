@@ -27,7 +27,7 @@ public class PhenotypeFactory {
     // instance variables
     /////////////////////
     public static final String CLOSURE_CACHE_KEY = "phenotypeClosureCache";
-    public static final long CLOSURE_LIFE = 86400;  // 24hrs in seconds
+    public static final long CLOSURE_LIFE = 60 * 60 * 2; // 2 hours as seconds
 
 
     // provides access to the database
