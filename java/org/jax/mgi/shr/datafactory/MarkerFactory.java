@@ -3726,17 +3726,24 @@ public class MarkerFactory
     // find count of snps associated with this allele "within 2 kb of"
     // fill in: marker key (int)
     private static final String SNP_COUNT =
-        "select count(distinct _ConsensusSnp_key) " +
+        "select count(distinct scm._ConsensusSnp_key) " +
         "from SNP_ConsensusSnp_Marker scm, DAG_Closure dc, VOC_Term vt " +
+	"  , SNP_Coord_Cache scc " +
         "where scm._Marker_Key = %d " +
         "and scm._Fxn_key = dc._DescendentObject_key " +
         "and dc._AncestorObject_key = vt._Term_key " +
-        "and term = 'within 2 kb of' ";
+	"and scc._ConsensusSnp_key = scm._ConsensusSnp_key " +
+	"and scc._Feature_key = scm._Feature_key " +
+	"and scc.isMultiCoord = 0 " +
+        "and vt.term = 'within 2 kb of' ";
 
 }
 
 /*
 * $Log$
+* Revision 1.20.8.2  2005/11/21 15:28:10  pf
+* Modified SQL for sequence count to be distinct
+*
 * Revision 1.20.8.1  2005/11/09 00:08:26  jw
 * lib_java_dbsmgd-3-4-1-0
 *
