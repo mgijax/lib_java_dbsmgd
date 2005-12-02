@@ -1108,6 +1108,12 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.9.2.1  2005/11/09 00:08:27  jw
+* lib_java_dbsmgd-3-4-1-0
+*
+* Revision 1.9  2005/10/28 10:28:58  jsb
+* added code to look for insertions
+*
 * Revision 1.8  2005/10/27 14:49:18  jsb
 * fixed retrieval of associated markers
 *

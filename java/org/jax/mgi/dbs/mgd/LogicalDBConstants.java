@@ -8,7 +8,6 @@
 //  $Name$
 //  $Header$
 //  $Header$
->>>>>>> 1.5.8.1
 //  $Name$
 
 package org.jax.mgi.dbs.mgd;
@@ -53,9 +52,10 @@ public class LogicalDBConstants
     public static final int MEDLINE = 7;
 }
 
-
 //  $Log$
-<<<<<<< LogicalDBConstants.java
+//  Revision 1.7  2005/12/02 16:04:30  pf
+//  3.41 maint7119 branch merge to trunk
+//
 //  Revision 1.6  2005/10/12 18:13:08  jsb
 //  lib_java_dbsmgd-3-4-0-0
 //

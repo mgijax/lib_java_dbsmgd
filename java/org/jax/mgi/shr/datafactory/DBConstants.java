@@ -101,6 +101,12 @@ public class DBConstants
 
 /*
 * $Log$
+* Revision 1.10.8.1  2005/11/09 00:08:26  jw
+* lib_java_dbsmgd-3-4-1-0
+*
+* Revision 1.12  2005/10/19 10:11:47  jsb
+* added new MGI Types
+*
 * Revision 1.11  2005/10/12 18:13:09  jsb
 * lib_java_dbsmgd-3-4-0-0
 *

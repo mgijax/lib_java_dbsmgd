@@ -307,6 +307,12 @@ public class DTOConstants
 
 /*
 * $Log$
+* Revision 1.3.6.4  2005/11/17 18:57:17  jw
+* Merge from trunk by hand
+*
+* Revision 1.3  2005/10/28 10:29:16  jsb
+* added AnyInsertions
+*
 * Revision 1.2  2005/10/12 18:13:10  jsb
 * lib_java_dbsmgd-3-4-0-0
 *
