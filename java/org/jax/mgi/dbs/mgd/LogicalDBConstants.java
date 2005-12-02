@@ -3,6 +3,12 @@
 //  $Name$
 //  $Header$
 //  $Header$
+//  $Header$
+//  $Header$
+//  $Name$
+//  $Header$
+//  $Header$
+>>>>>>> 1.5.8.1
 //  $Name$
 
 package org.jax.mgi.dbs.mgd;
@@ -49,6 +55,19 @@ public class LogicalDBConstants
 
 
 //  $Log$
+<<<<<<< LogicalDBConstants.java
+//  Revision 1.6  2005/10/12 18:13:08  jsb
+//  lib_java_dbsmgd-3-4-0-0
+//
+//  Revision 1.5.6.1  2005/09/21 19:54:35  sc
+//  merge of snp and tr5972 branch to tr7081 branch
+//
+//  Revision 1.5.8.1  2005/11/09 00:08:25  jw
+//  lib_java_dbsmgd-3-4-1-0
+//
+//  Revision 1.6  2005/10/12 18:13:08  jsb
+//  lib_java_dbsmgd-3-4-0-0
+//
 //  Revision 1.5.6.1  2005/09/21 19:54:35  sc
 //  merge of snp and tr5972 branch to tr7081 branch
 //

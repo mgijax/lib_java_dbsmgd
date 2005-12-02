@@ -1,4 +1,5 @@
 //  $Header$
+//  $Header$
 //  $Name$
 
 package org.jax.mgi.dbs.mgd;
@@ -36,6 +37,25 @@ public class MGITypeConstants
 
 
 //  $Log$
+<<<<<<< MGITypeConstants.java
+//  Revision 1.6  2005/10/12 18:13:08  jsb
+//  lib_java_dbsmgd-3-4-0-0
+//
+//  Revision 1.5.26.1  2005/09/21 19:54:36  sc
+//  merge of snp and tr5972 branch to tr7081 branch
+//
+//  Revision 1.5.20.2  2005/09/21 14:33:00  sc
+//  added MGITypes tr1560 SNP
+//
+//  Revision 1.5.20.1  2005/08/30 15:26:15  sc
+//  TR1560 SNP
+//
+//  Revision 1.5.28.1  2005/11/09 00:08:25  jw
+//  lib_java_dbsmgd-3-4-1-0
+//
+//  Revision 1.6  2005/10/12 18:13:08  jsb
+//  lib_java_dbsmgd-3-4-0-0
+//
 //  Revision 1.5.26.1  2005/09/21 19:54:36  sc
 //  merge of snp and tr5972 branch to tr7081 branch
 //
