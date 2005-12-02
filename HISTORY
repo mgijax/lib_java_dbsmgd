@@ -1,3 +1,9 @@
+<<<<<<< HISTORY
+TAG: lib_java_dbsmgd-3-4-1-1
+DATE: 12/2/05
+STAFF: pf
+CHANGES: merged maint7119 branch to the trunk for 3.41
+
 TAG: lib_java_dbsmgd-tr7067-BP
 DATE: 11/09/05
 STAFF: mbw
@@ -44,6 +50,50 @@ STAFF: jsb, dow, mbw, sc
 CHANGES: 
 1) merged changes from tr7081 branch
 
+=======
+TAG: lib_java_dbsmgd-3-4-1-0
+DATE: 11/08/05
+STAFF: jw
+CHANGES: Merging 3.4 changes onto 3.41 branch.
+
+
+TAG: lib_java_dbsmgd-3-4-0-5
+DATE: 10/28/05
+STAFF: jsb, dow
+CHANGES:
+1) beta build for 3.4
+
+TAG: lib_java_dbsmgd-3-4-0-4
+DATE: 10/25/05
+STAFF: jsb, dow
+CHANGES:
+1) fixes for alpha 2
+
+TAG: lib_java_dbsmgd-3-4-0-3
+DATE: 10/21/05
+STAFF: mbw
+CHANGES:
+1) javadocs
+
+TAG: lib_java_dbsmgd-3-4-0-2
+DATE: 10/19/05
+STAFF: jsb, dow, mbw, sc
+CHANGES: 
+1) changes after 2nd beta
+
+TAG: lib_java_dbsmgd-3-4-0-1
+DATE: 10/13/05
+STAFF: jsb, dow, mbw, sc
+CHANGES: 
+1) changes for first alpha build
+
+TAG: lib_java_dbsmgd-3-4-0-0
+DATE: 10/12/05
+STAFF: jsb, dow, mbw, sc
+CHANGES: 
+1) merged changes from tr7081 branch
+
+>>>>>>> 1.68.2.1
 TAG: lib_java_dbsmgd-maint7119-BP
 DATE: 09/30/05
 STAFF: jw,jsb,pf,djd
