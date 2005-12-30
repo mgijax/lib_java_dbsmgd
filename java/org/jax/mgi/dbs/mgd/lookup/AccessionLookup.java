@@ -5,7 +5,8 @@ package org.jax.mgi.dbs.mgd.lookup;
 
 import org.jax.mgi.shr.dbutils.RowDataInterpreter;
 import org.jax.mgi.shr.dbutils.RowReference;
-import org.jax.mgi.shr.cache.FullCachedLookup;
+import org.jax.mgi.shr.cache.CachedLookup;
+import org.jax.mgi.shr.cache.CacheConstants;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.config.ConfigException;
@@ -29,7 +30,7 @@ import org.jax.mgi.dbs.SchemaConstants;
  */
 
 
-public class AccessionLookup extends FullCachedLookup {
+public class AccessionLookup extends CachedLookup {
     private int logicalDBKey;
     private int mgiTypeKey;
     private int preferred;
@@ -48,18 +49,44 @@ public class AccessionLookup extends FullCachedLookup {
 
     public AccessionLookup(int logicalDBKey, int mgiTypeKey, int preferred)
         throws CacheException, ConfigException, DBException {
-        super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
+        super(CacheConstants.FULL_CACHE,
+              SQLDataManagerFactory.getShared(SchemaConstants.MGD));
         this.logicalDBKey = logicalDBKey;
         this.mgiTypeKey = mgiTypeKey;
         this.preferred = preferred;
     }
 
     /**
+     * Constructs an AccessionLookup object.
+     * @assumes Nothing
+     * @effects Nothing
+     * @param logicalDBKey the logical db of the accession id to look up
+     * @param mgiTypeKey the MGI type of the object key to return
+     * @param preferred true (1)if preferred accession ids
+     * @param cacheType type of lazy or full
+     * (see org.jax.mgi.shr.cache.CacheConstants)
+     * @throws CacheException
+     * @throws ConfigException
+     * @throws DBException
+     */
+
+    public AccessionLookup(int logicalDBKey, int mgiTypeKey, int preferred,
+                           int cacheType)
+        throws CacheException, ConfigException, DBException {
+        super(cacheType,
+              SQLDataManagerFactory.getShared(SchemaConstants.MGD));
+        this.logicalDBKey = logicalDBKey;
+        this.mgiTypeKey = mgiTypeKey;
+        this.preferred = preferred;
+    }
+
+
+
+    /**
      * Get the query to fully initialize the cache.
      * @assumes Nothing
      * @effects Nothing
      * @return the query to fully initialize the cache
-     * @throws Nothing
      */
 
     public String getFullInitQuery() {
@@ -72,6 +99,39 @@ public class AccessionLookup extends FullCachedLookup {
           return query;
 
     }
+
+    /**
+     * Get the query to add an object to the cache.
+     * @param obj accid to be added to cache
+     * @assumes Nothing
+     * @effects Nothing
+     * @return the query to fully initialize the cache
+     */
+
+    public String getAddQuery(Object obj) {
+        String accid = (String)obj;
+        String query = "select accID, _Object_key " +
+                        "from ACC_Accession " +
+                        "where _LogicalDB_key = " + logicalDBKey +
+                        " and " + "_MGIType_key = " + mgiTypeKey +
+                        " and " + "preferred = " + preferred +
+                        " and accid = '" + accid + "'";
+
+        return query;
+    }
+
+    /**
+     * Get the query to partially initialize the cache.
+     * @assumes Nothing
+     * @effects Nothing
+     * @return The query to partially initialize the cache.
+     */
+
+    public String getPartialInitQuery()
+    {
+      return null;
+    }
+
 
     /**
     * Get a RowDataInterpreter for creating a KeyValue object from a database
