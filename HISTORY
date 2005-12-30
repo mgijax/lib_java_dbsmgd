@@ -1,3 +1,8 @@
+TAG: lib_java_dbsmgd-tr7062-2
+DATE: 12/30/05
+STAFF: mbw
+CHANGES: changed AccessionLookup to be either lazy or full cache
+
 TAG: lib_java_dbsmgd-tr7062-1
 DATE: 11/10/05
 STAFF: mbw
