@@ -290,6 +290,11 @@ public class AlleleFactory
         DTO.putDTO (section);
         this.timeStamp ("Retrieved allele details");
 
+        section = this.getKnockoutInfo (key);
+        allele.merge (section);
+        DTO.putDTO (section);
+        this.timeStamp ("Retrieved knockout page information");
+
         section = this.getExpressionResultCounts (key);
         allele.merge (section);
         DTO.putDTO (section);
@@ -556,6 +561,33 @@ public class AlleleFactory
         }
         */
         allele.set(DTOConstants.InIMSR, new Boolean(true));
+        return allele;
+    }
+
+    public DTO getKnockoutInfo (int key) throws DBException
+    {
+        ResultsNavigator nav = null;	// set of query results
+        RowReference rr = null;		// one row in 'nav'
+        DTO allele = DTO.getDTO();	// start with an empty DTO
+
+        // get the knockout information; if no records, just
+        // return an empty DTO.
+        String cmd = Sprintf.sprintf (KNOCKOUT_DATA, key);
+        logger.logDebug(cmd);
+        nav = this.sqlDM.executeQuery ( cmd );
+
+        if (!nav.next()) {
+	    nav.close();
+            return allele;
+        }
+
+        // otherwise collect the data fields
+
+        rr = (RowReference) nav.getCurrent();
+
+        allele.set (DTOConstants.Holder, rr.getString(1));
+        allele.set (DTOConstants.CompanyID, rr.getString(2));
+
         return allele;
     }
 
@@ -1522,6 +1554,14 @@ public class AlleleFactory
         + " and mc.cellLine *= ac.accID "
         + " and ac._LogicalDB_key *= adb._LogicalDB_key "
         + " and a._CreatedBy_key *= mu._User_key ";
+
+    // find whether this allele has a corresponding knockout page for the
+    // deltagen/lexicon data sets
+    // fill in: allele key (int)
+    private static final String KNOCKOUT_DATA =
+	"SELECT holder, companyID"
+	+ " FROM ALL_Knockout_Cache"
+	+ " WHERE _Allele_key = %d";
 
     //  Nomenclature notes should only be displayed in the production version
     // fill in: allele key (int)

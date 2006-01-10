@@ -93,6 +93,8 @@ public class DTOConstants
     public static String QtlExpts = "qtlExpts";
     public static String DiseaseCount = "diseaseCount";
     public static String IsWildType = "isWildType";
+    public static String Holder = "holder";
+    public static String CompanyID = "companyID";
 
     // mapping -- constants dealing with mapping information
 
@@ -307,6 +309,9 @@ public class DTOConstants
 
 /*
 * $Log$
+* Revision 1.4  2005/12/02 16:04:31  pf
+* 3.41 maint7119 branch merge to trunk
+*
 * Revision 1.3.6.4  2005/11/17 18:57:17  jw
 * Merge from trunk by hand
 *
