@@ -543,166 +543,6 @@ public class SnpFactory extends AbstractDataFactory
 	return data;
     }
 
-    public DTO old_getMarkers (int snpKey) throws DBException
-    {
-        DTO data = DTO.getDTO();
-	ResultsNavigator nav = null;
-	RowReference rr = null;
-
-	ArrayList markerIDs = null;
-	Integer feature = null;
-	Integer markerKey = null;
-	HashMap featureMap = new HashMap();
-	HashMap markerMap = null;
-	int idCount = 0;
-
-	nav = this.sqlDM.executeQuery (Sprintf.sprintf (REFSNP_GENE_IDS,
-	    snpKey));
-
-	while (nav.next())
-	{
-	    rr = (RowReference) nav.getCurrent();
-
-	    feature = rr.getInt(1);
-	    markerKey = rr.getInt(2);
-
-	    if (!featureMap.containsKey (feature))
-	    {
-	        markerMap = new HashMap();
-		markerIDs = new ArrayList(2);
-		markerIDs.add (rr.getString(3));
-		markerMap.put (markerKey, markerIDs);
-		featureMap.put (feature, markerMap);
-	    }
-	    else
-	    {
-	        markerMap = (HashMap) featureMap.get (feature);
-		if (!markerMap.containsKey (markerKey))
-		{
-		    markerIDs = new ArrayList(2);
-		    markerIDs.add (rr.getString(3));
-		    markerMap.put (markerKey, markerIDs);
-		}
-		else
-		{
-		    markerIDs = (ArrayList) markerMap.get (markerKey);
-		    markerIDs.add (rr.getString(3));
-		}
-	    }
-	    idCount++;
-	}
-	nav.close();
-
-	this.timeStamp (Sprintf.sprintf ("Got %d transcript & protein IDs",
-	    idCount));
-
-	// featureMap[feature][marker key] = list of IDs
-
-	String accID = null;
-	ArrayList locations = new ArrayList();
-	DTO location = null;
-	Integer lastFeature = null;
-	DTO gene = null;
-	DTO fcAllele = null;
-	ArrayList alleles = null;
-	Integer lastMarkerKey = null;
-	ArrayList genes = null;
-	int markerCount = 0;
-
-	nav = this.sqlDM.executeQuery (Sprintf.sprintf (REFSNP_GENES,snpKey));
-
-	while (nav.next())
-	{
-	    rr = (RowReference) nav.getCurrent();
-
-	    feature = rr.getInt(1);
-	    markerKey = rr.getInt(7);
-
-	    // if this is a whole new feature...
-	    if ((lastFeature == null) || (!lastFeature.equals(feature)))
-	    {
-	        location = DTO.getDTO();
-		genes = new ArrayList();
-
-		location.set (DTOConstants.Chromosome, rr.getString(2));
-		location.set (DTOConstants.StartCoord, rr.getDouble(3));
-		location.set (DTOConstants.Orientation, rr.getString(4));
-		location.set (DTOConstants.VariationClass, rr.getString(5));
-		location.set (DTOConstants.AssociatedGenes, genes);
-
-		locations.add (location);
-
-		lastFeature = feature;
-	    }
-
-	    // now need to add gene info to the current 'location'...
-
-	    // build the object with function class & allele info
-
-	    fcAllele = DTO.getDTO();
-	    fcAllele.set (DTOConstants.FunctionClass, rr.getString(6));
-	    fcAllele.set (DTOConstants.Allele, rr.getString(10));
-
-	    // if we've started on a new gene, then we need to record all data
-	    // for that gene
-
-	    if ((lastMarkerKey == null) || (!lastMarkerKey.equals(markerKey)))
-	    {
-	    	alleles = new ArrayList();
-		alleles.add (fcAllele);
-
-		gene = DTO.getDTO();
-		gene.set (DTOConstants.FxnAlleles, alleles);
-		gene.set (DTOConstants.MarkerKey, markerKey);
-		gene.set (DTOConstants.MarkerSymbol, rr.getString(8));
-		gene.set (DTOConstants.MarkerName, rr.getString(9));
-		gene.set (DTOConstants.Residue, rr.getString(11));
-		gene.set (DTOConstants.AminoAcidPosition, rr.getString(12));
-		gene.set (DTOConstants.ReadingFrame, rr.getString(13)); 
-
-		if (featureMap.containsKey (feature))
-		{
-		    markerMap = (HashMap) featureMap.get (feature);
-		    if (markerMap.containsKey (markerKey))
-		    {
-		        markerIDs = (ArrayList) markerMap.get (markerKey);
-
-			for (int m = 0; m < markerIDs.size(); m++)
-			{
-			    accID = (String) markerIDs.get (m);
-			    if (accID.startsWith ("NM"))
-			    {
-			        gene.set (DTOConstants.RepRNASeq, accID);
-			    }
-			    else if (accID.startsWith ("NP"))
-			    {
-			        gene.set (DTOConstants.RepProteinSeq, accID);
-			    }
-			}
-		    }
-		}
-		
-		genes.add (gene);
-
-		lastMarkerKey = markerKey;
-		markerCount++;
-	    }
-	    else	// otherwise, just add the allele/fxn info to old gene
-	    {
-		alleles.add (fcAllele);
-	    }
-	}
-
-	nav.close();
-	data.set (DTOConstants.Markers, locations);
-
-	String msg = Sprintf.sprintf ("Got %d genes", markerCount) +
-		Sprintf.sprintf (" in %d locations", locations.size());
-	this.timeStamp (msg);
-
-        return data;
-    }
-
     /* -------------------------------------------------------------------- */
 
     public DTO getQueryFormData (Map parms) throws DBException
@@ -877,8 +717,10 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    VOC_Vocab vv "
 	+ "WHERE vt._Vocab_key = vv._Vocab_key "
 	+ "    AND vv.name = 'SNP Function Class'"
-	+ "    AND vt._Term_key IN "
-	+ "        (SELECT DISTINCT _Fxn_key FROM SNP_ConsensusSnp_Marker) "
+	+ "    AND ( (vt._Term_key IN "
+	+ "          (SELECT DISTINCT _Fxn_key FROM SNP_ConsensusSnp_Marker))"
+	+ "	    OR "
+	+ "	    (vt.term = 'Locus-Region') ) "
 	+ "    AND vt.term != 'Contig-Reference' "
 	+ "    AND vt.term NOT LIKE 'within%' "
 	+ "    AND vt.term NOT LIKE '%stream)' "
@@ -1049,39 +891,6 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    mm.symbol, "
 	+ "    vt1.term";
 
-    private static String old_REFSNP_GENES =
-	"SELECT DISTINCT scc._Feature_key, "
-	+ "    scc.chromosome, "
-	+ "    scc.startCoordinate, "
-	+ "    scc.strand AS orientation, "
-	+ "    vt1.term AS variationClass, "
-	+ "    vt2.term AS functionClass, "
-	+ "    mm._Marker_key, "
-	+ "    mm.symbol, "
-	+ "    mm.name, "
-	+ "    csm.contig_allele, "
-	+ "    csm.residue, "
-	+ "    csm.aa_position, "
-	+ "    csm.reading_frame "
-	+ "FROM SNP_ConsensusSnp_Marker csm, "
-	+ "    SNP_Coord_Cache scc, "
-	+ "    VOC_Term vt3, "
-	+ "    DAG_Closure dc, "
-	+ "    MRK_Marker mm, "
-	+ "    VOC_Term vt1, "
-	+ "    VOC_Term vt2 "
-	+ "WHERE csm._ConsensusSnp_key = %d "
-	+ "    AND csm._ConsensusSnp_key = scc._ConsensusSnp_key "
-	+ "    AND csm._Feature_key = scc._Feature_key "
-	+ "    AND scc._VarClass_key = vt1._Term_key "
-	+ "    AND csm._Fxn_key = vt2._Term_key "
-	+ "    AND csm._Marker_key = mm._Marker_key "
-	+ "    AND csm._Fxn_key = dc._DescendentObject_key "
-	+ "    AND dc._AncestorObject_key = vt3._Term_key "
-	+ "    AND (vt3.term = 'within coordinates of' OR "
-	+ "	    vt3.term = 'dbSNP Function Class') "
-	+ "ORDER BY scc.sequenceNum, scc.startCoordinate, mm.symbol ";
-
     private static String REFSNP_GENE_IDS =
 	"SELECT DISTINCT csm._Feature_key, "
 	+ "    csm._Marker_key, "
@@ -1108,6 +917,9 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.10  2005/12/02 16:04:31  pf
+* 3.41 maint7119 branch merge to trunk
+*
 * Revision 1.9.2.1  2005/11/09 00:08:27  jw
 * lib_java_dbsmgd-3-4-1-0
 *
