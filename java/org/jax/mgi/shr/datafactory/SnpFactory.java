@@ -878,7 +878,9 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    SNP_Coord_Cache scc, "
 	+ "    MRK_Marker mm, "
 	+ "    VOC_Term vt1, "
-	+ "    ACC_Accession aa "
+	+ "    ACC_Accession aa, "
+	+ "    DAG_Closure dc, "
+	+ "    VOC_Term vt2 "
 	+ "WHERE csm._ConsensusSnp_key = %d "
 	+ "    AND csm._ConsensusSnp_key = scc._ConsensusSnp_key "
 	+ "    AND csm._Feature_key = scc._Feature_key "
@@ -886,6 +888,9 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    AND csm._Fxn_key = vt1._Term_key "
 	+ "    AND csm._ConsensusSnp_Marker_key *= aa._Object_key "
 	+ "    AND aa._MGIType_key = 32 "
+	+ "    AND csm._Fxn_key = dc._DescendentObject_key "
+	+ "    AND dc._AncestorObject_key = vt2._Term_key "
+	+ "    AND vt2.term = 'dbSNP Function Class' "
 	+ "ORDER BY scc.sequenceNum, "
 	+ "    scc.startCoordinate, "
 	+ "    mm.symbol, "
@@ -917,6 +922,9 @@ public class SnpFactory extends AbstractDataFactory
 
 /*
 * $Log$
+* Revision 1.10.4.1  2006/01/26 17:35:36  jsb
+* updated SNP QF function class lookup query
+*
 * Revision 1.10  2005/12/02 16:04:31  pf
 * 3.41 maint7119 branch merge to trunk
 *
