@@ -1,3 +1,26 @@
+TAG: lib_java_dbsmgd-3-4-3-1
+DATE: 02/10/06
+STAFF: sc
+CHANGES: merged tr7392 branch to trunk
+
+TAG: lib_java_dbsmgd-tr7392-3
+DATE: 02/06/06
+STAFF: jsb
+CHANGES:
+1) update in retrieval of SNP/gene associations
+
+TAG: lib_java_dbsmgd-tr7392-2
+DATE: 02/01/06
+STAFF: sc
+CHANGES:
+1) jsb change for the SNP query form's function class pick list
+
+TAG: lib_java_dbsmgd-tr7392-1
+DATE: 01/16/06
+STAFF: sc
+CHANGES:
+1) generatedTables.txt - removed SNP_Strain_Cache
+
 TAG: lib_java_dbsmgd-tr7392-BP
 DATE: 01/16/06
 STAFF: sc
