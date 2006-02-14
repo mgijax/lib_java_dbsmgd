@@ -1,3 +1,32 @@
+DATE: 02/14/06
+STAFF: 
+CHANGES:
+1) merged tr7392 changes to tr7203 branch
+
+TAG: lib_java_dbsmgd-tr7392-3
+DATE: 02/06/06
+STAFF: jsb
+CHANGES:
+1) update in retrieval of SNP/gene associations
+
+TAG: lib_java_dbsmgd-tr7392-2
+DATE: 02/01/06
+STAFF: sc
+CHANGES:
+1) jsb change for the SNP query form's function class pick list
+
+TAG: lib_java_dbsmgd-tr7392-1
+DATE: 01/16/06
+STAFF: sc
+CHANGES:
+1) generatedTables.txt - removed SNP_Strain_Cache
+
+TAG: lib_java_dbsmgd-tr7392-BP
+DATE: 01/16/06
+STAFF: sc
+CHANGES: Branch point tag for tr7392 SNP Shoe Horn
+     changes
+
 TAG: lib_java_dbsmgd-tr7203-BP
 DATE: 01/10/06
 STAFF: sc
