@@ -1,28 +1,25 @@
 <?xml version="1.0"?>
-<!DOCTYPE definitions [
-  <!ENTITY build.targets SYSTEM "/usr/local/mgi/etc/build.lib.targets.xml">
-  <!ENTITY local.build.targets SYSTEM "build.targets.xml">
-]>
-
-<!-- Enter the name of your current project here 
+<!-- Enter the name of your current project here
  -->
 <project name="lib_java_dbsmgd" default="compile" basedir=".">
 
-  <!-- Enter the name of your jar file here minus the dot jar suffix
-   -->
-  <property name="jar.name" value="dbsmgd"/>
+   <!-- Get the system environment variables.
+    -->
+   <property environment="env"/>
 
-  <!-- To override property definitions in the following 
-       properties file, add new definitions in preceding lines.
-       The first definition of a property takes precedence 
-   -->
-  <property file="build.properties"/>
-  <property file="/usr/local/mgi/etc/build.lib.properties"/>
+   <!-- Enter the name of your jar file here minus the dot jar suffix
+    -->
+   <property name="jar.name" value="dbsmgd"/>
+   <property name="classpath" value="${env.MGI_JAVALIB}/core.jar:${env.DBSGEN}/classes:${env.JAVALIB}/velocity-dep-1.3.1.jar:${env.JAVALIB}/junit.jar:${env.SYBASE}/jConnect-5_5/classes/jconn2.jar"/>
 
-  <!-- Universal targets get included here  
-   -->
-  &build.targets;
-  &local.build.targets;
+   <!-- To override property definitions in the following
+        properties file, add new definitions in preceding lines.
+        The first definition of a property takes precedence
+    -->
+   <property file="${env.MGICONFIG}/etc/build.lib.properties"/>
 
+   <!-- Universal targets get included here
+    -->
+   <import file="${env.MGICONFIG}/etc/build.lib.targets.xml"/>
+   <import file="build.targets.xml"/>
 </project>
-
