@@ -3,7 +3,7 @@
    <target name="gen.code" description="Generates schema specific source code">
       <java classname="org.jax.mgi.shr.dbutils.cg.MGDGen"
             classpath="${classpath}"
-            fork="true" dir="${src.dir}">
+            fork="true" failonerror="true" dir="${src.dir}">
          <jvmarg value="-DDBSERVER=${env.MGD_DBSERVER}"/>
          <jvmarg value="-DDBNAME=${env.MGD_DBNAME}"/>
          <jvmarg value="-DDBUSER=${env.MGD_DBUSER}"/>
