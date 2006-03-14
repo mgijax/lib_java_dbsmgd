@@ -1,7 +1,11 @@
-DATE: 02/14/06
-STAFF: 
+DATE: 03/14/06
+STAFF: sc
 CHANGES:
 1) merged tr7392 changes to tr7203 branch
+2) generated tables.txt - removed SNP* tables, add MGI_dbinfo and MGI_Tables
+3) MGITypeLookup - corrected lookup method parameter names
+4) VocabKeyLookup - corrected cut an paste errors in comments
+5) MGIUserKeyLookup - initial add/commit
 
 TAG: lib_java_dbsmgd-tr7392-3
 DATE: 02/06/06
