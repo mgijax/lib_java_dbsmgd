@@ -123,7 +123,7 @@ public class VocabKeyLookup extends CachedLookup
 
 
   /**
-   * look up the primary key for a Strain term in the PRB_Strain table
+   * look up the primary key for a term in the VOC_Term table
    * @param term the term to look up
    * @return the key value
    * @throws CacheException thrown if there is an error accessing the cache
