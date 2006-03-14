@@ -55,10 +55,10 @@ public class MGITypeLookup extends FullCachedLookup
      * database
      * @throws KeyNotFoundException thrown if the key is not found
      */
-    public Integer lookup (String logicalDB)
+    public Integer lookup (String mgiType)
         throws KeyNotFoundException, DBException, CacheException
     {
-        return (Integer)super.lookup(logicalDB);
+        return (Integer)super.lookup(mgiType);
     }
 
 
@@ -97,6 +97,9 @@ public class MGITypeLookup extends FullCachedLookup
 
 
 //  $Log$
+//  Revision 1.1  2004/10/20 17:25:40  sc
+//  initial commit
+//
 //  Revision 1.12  2004/07/28 19:23:14  mbw
 //  javadocs only
 //
