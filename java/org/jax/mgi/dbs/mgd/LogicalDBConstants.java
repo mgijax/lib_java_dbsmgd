@@ -38,6 +38,7 @@ public class LogicalDBConstants
     public static final int SUBSNP = 74;
     public static final int SUBMITTERSNP = 75;
     public static final int SNPPOPULATION = 76;
+    public static final int HOMOLOGENE = 81;
 
     public static final int RIKEN = 51;
     public static final int NIA15K = 46;
@@ -49,6 +50,9 @@ public class LogicalDBConstants
 
 
 //  $Log$
+//  Revision 1.6  2005/10/12 18:13:08  jsb
+//  lib_java_dbsmgd-3-4-0-0
+//
 //  Revision 1.5.6.1  2005/09/21 19:54:35  sc
 //  merge of snp and tr5972 branch to tr7081 branch
 //
