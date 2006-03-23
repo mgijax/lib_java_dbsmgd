@@ -17,5 +17,5 @@
   </target>
 
   <target name="buildall" description="Executes task 'gen.code' and 'all'"
-          depends="gen.code, all">
+          depends="clean.code, gen.code, all">
   </target>
