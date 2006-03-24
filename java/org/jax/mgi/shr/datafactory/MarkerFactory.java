@@ -3736,8 +3736,8 @@ public class MarkerFactory extends AbstractDataFactory
 	"and scc.isMultiCoord = 0 " +
         "and vt.term = 'within 2 kb of' ";
 
-    // find count of snps associated with this allele "within 2 kb of" -- only
-    //    including SNPs with multiple locations
+    // find count of all locations for snps associated with this allele
+    //    "within 2 kb of" (also including SNPs with multiple locations)
     // fill in: SNP db name (String), SNP db name (String), marker key(String)
     private static final String SNP_COUNT_WITH_MULTIPLES =
         "select count(distinct scc._Coord_Cache_key) " +
@@ -3747,14 +3747,15 @@ public class MarkerFactory extends AbstractDataFactory
         "and scm._Fxn_key = dc._DescendentObject_key " +
         "and dc._AncestorObject_key = vt._Term_key " +
 	"and scc._ConsensusSnp_key = scm._ConsensusSnp_key " +
-	"and scc._Coord_Cache_key = scm._Coord_Cache_key " +
-	"and scc.isMultiCoord = 1 " +
         "and vt.term = 'within 2 kb of' ";
 
 }
 
 /*
 * $Log$
+* Revision 1.23.2.1  2006/03/24 17:51:59  jsb
+* updated to use separate SNPs schema; made subclass of AbstractDataFactory
+*
 * Revision 1.23  2005/12/02 16:04:30  pf
 * 3.41 maint7119 branch merge to trunk
 *
