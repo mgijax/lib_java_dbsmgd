@@ -62,6 +62,7 @@ public class DTOConstants
     public static String SuperFamilyKey = "superFamilyKey";
     public static String SuperFamilyName = "superFamilyName";
     public static String SnpCount = "snpCount";
+    public static String SnpCountWithMultiples = "snpCountWithMultiples";
 
     // alleles -- constants dealing with allele information
 
@@ -309,6 +310,9 @@ public class DTOConstants
 
 /*
 * $Log$
+* Revision 1.5  2006/01/10 14:05:05  jsb
+* deltagen/lexicon data on allele detail
+*
 * Revision 1.4  2005/12/02 16:04:31  pf
 * 3.41 maint7119 branch merge to trunk
 *
