@@ -88,7 +88,8 @@ public class SnpFactory extends AbstractDataFactory
 	RowReference rr = null;
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SNP_KEY_FOR_ID,
-	    accID, accID) );
+	    this.snpDatabaseName, accID, this.snpDatabaseName,
+	    this.snpDatabaseName, accID) );
 
 	// just takes the first, even if multiple are returned
 
@@ -151,7 +152,8 @@ public class SnpFactory extends AbstractDataFactory
 	DTO location = null;
 
 	nav = this.sqlDM.executeQuery (
-		Sprintf.sprintf (BASIC_SNP_DATA, snpKey) );
+		Sprintf.sprintf (BASIC_SNP_DATA, this.snpDatabaseName,
+		    this.snpDatabaseName, Integer.toString(snpKey)) );
 
 	while (nav.next())
 	{
@@ -195,7 +197,8 @@ public class SnpFactory extends AbstractDataFactory
 	String fivePrime = "";
 	String threePrime = "";
 
-	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SNP_FLANK, snpKey));
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SNP_FLANK,
+	    this.snpDatabaseName, Integer.toString(snpKey) ));
 
 	while (nav.next())
 	{
@@ -235,7 +238,8 @@ public class SnpFactory extends AbstractDataFactory
 	Integer strainKey = null;
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (
-	    REFSNP_ALLELES, snpKey));
+	    REFSNP_ALLELES, this.snpDatabaseName, this.snpDatabaseName,
+	    Integer.toString(snpKey)));
 
 	while (nav.next())
 	{
@@ -274,7 +278,8 @@ public class SnpFactory extends AbstractDataFactory
 	HashMap submitterIDs = new HashMap();
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUBSNP_SUBMITTER_IDS,
-	    snpKey));
+	    this.snpDatabaseName, this.snpDatabaseName,
+	    Integer.toString(snpKey) ));
 
 	while (nav.next())
 	{
@@ -291,7 +296,9 @@ public class SnpFactory extends AbstractDataFactory
 	ArrayList subSnpOrder = new ArrayList();
 	DTO populations = null;
 
-	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUBSNPS, snpKey));
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUBSNPS,
+	    this.snpDatabaseName, this.snpDatabaseName,
+	    Integer.toString(snpKey) ));
 
 	while (nav.next())
 	{
@@ -341,7 +348,8 @@ public class SnpFactory extends AbstractDataFactory
 	String allele = null;
 
 	nav = this.sqlDM.executeQuery (Sprintf.sprintf (SUBSNPS_ALLELES,
-	    snpKey));
+	    this.snpDatabaseName, this.snpDatabaseName, this.snpDatabaseName,
+	    this.snpDatabaseName, Integer.toString(snpKey) ));
 
 	while (nav.next())
 	{
@@ -448,7 +456,9 @@ public class SnpFactory extends AbstractDataFactory
 	ArrayList subrows = null;
 	DTO subrow = null;
 
-	nav = this.sqlDM.executeQuery (Sprintf.sprintf (REFSNP_GENES,snpKey));
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (REFSNP_GENES,
+	    this.snpDatabaseName, this.snpDatabaseName, this.snpDatabaseName,
+	    Integer.toString(snpKey) ));
 
 	while (nav.next())
 	{
@@ -574,7 +584,8 @@ public class SnpFactory extends AbstractDataFactory
 
 	String template = "<OPTION VALUE='%d'>%s</OPTION>\n";
 
-	nav = this.sqlDM.executeQuery (OPTIONLIST_STRAINS);
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (OPTIONLIST_STRAINS,
+	    this.snpDatabaseName) );
 	while (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
@@ -594,7 +605,8 @@ public class SnpFactory extends AbstractDataFactory
 	nav.close();
 	this.timeStamp ("Got strains");
 
-	nav = this.sqlDM.executeQuery (OPTIONLIST_FUNCTION_CLASSES);
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (
+	    OPTIONLIST_FUNCTION_CLASSES, this.snpDatabaseName) );
 	while (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
@@ -606,7 +618,8 @@ public class SnpFactory extends AbstractDataFactory
 	nav.close();
 	this.timeStamp ("Got function classes");
 
-	nav = this.sqlDM.executeQuery (OPTIONLIST_VARIATION_TYPES);
+	nav = this.sqlDM.executeQuery (Sprintf.sprintf (
+	    OPTIONLIST_VARIATION_TYPES, this.snpDatabaseName) );
 	while (nav.next())
 	{
 	    rr = (RowReference) nav.getCurrent();
@@ -645,7 +658,9 @@ public class SnpFactory extends AbstractDataFactory
 	    RowReference rr = null;
 	    Integer popKey = null;
 	    String accID = null;
-	    ResultsNavigator nav = this.sqlDM.executeQuery (POPULATIONS);
+	    ResultsNavigator nav = this.sqlDM.executeQuery (
+	        Sprintf.sprintf (POPULATIONS, this.snpDatabaseName,
+			this.snpDatabaseName) );
 
 	    mapping = DTO.getDTO();
 	    while (nav.next())
@@ -683,7 +698,7 @@ public class SnpFactory extends AbstractDataFactory
 
     /* retrieves basic data for a SNP, including multiple positions as
     **    multiple rows returned
-    ** fill in: consensus snp key (int)
+    ** fill in: SNP db (String), SNP db (String), consensus snp key (String)
     */
     private static String BASIC_SNP_DATA =
     	"SELECT DISTINCT cc._ConsensusSnp_key, "
@@ -694,21 +709,19 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    cc.startCoordinate, "
 	+ "    aa.accID, "
 	+ "    aa._LogicalDB_key, "
-	+ "    cc._Feature_key, "
+	+ "    cc._Coord_Cache_key, "
 	+ "    cc.iupacCode "
-	+ "FROM SNP_Coord_Cache cc, "
-	+ "    ACC_Accession aa, "
+	+ "FROM %s..SNP_Coord_Cache cc, "
+	+ "    %s..SNP_Accession aa, "
 	+ "    VOC_Term vt "
-	+ "WHERE cc._ConsensusSnp_key = %d "
+	+ "WHERE cc._ConsensusSnp_key = %s "
 	+ "    AND cc._ConsensusSnp_key = aa._Object_key "
 	+ "    AND aa._MGIType_key = " + DBConstants.MGIType_ConsensusSnp
-	+ "    AND aa.preferred = 1 "
-	+ "    AND aa.private = 0 "
 	+ "    AND cc._VarClass_key = vt._Term_key";
 
     /** retrieve function classes for the SNPs query form's Function Class
     **    selection list
-    ** fill in: nothing
+    ** fill in: SNP db (String)
     */
     private static String OPTIONLIST_FUNCTION_CLASSES =
         "SELECT DISTINCT vt._Term_key, "
@@ -718,31 +731,26 @@ public class SnpFactory extends AbstractDataFactory
 	+ "WHERE vt._Vocab_key = vv._Vocab_key "
 	+ "    AND vv.name = 'SNP Function Class'"
 	+ "    AND ( (vt._Term_key IN "
-	+ "          (SELECT DISTINCT _Fxn_key FROM SNP_ConsensusSnp_Marker))"
+	+ "          (SELECT DISTINCT _Fxn_key "
+	+ "		FROM %s..SNP_ConsensusSnp_Marker))"
 	+ "	    OR "
 	+ "	    (vt.term = 'Locus-Region') ) "
 	+ "    AND vt.term != 'Contig-Reference' "
-	+ "    AND vt.term NOT LIKE 'within%' "
-	+ "    AND vt.term NOT LIKE '%stream)' "
+	+ "    AND vt.term NOT LIKE 'within%%' "
+	+ "    AND vt.term NOT LIKE '%%stream)' "
 	+ "ORDER BY vt.term";
 
     /** retrieve strains for the SNPs query form's Strain selection list
-    ** fill in: nothing
+    ** fill in: SNP db (String)
     */
     private static String OPTIONLIST_STRAINS =
-	"SELECT DISTINCT ps._Strain_key, "
-	+ "    ps.strain "
-	+ "FROM PRB_Strain ps, "
-	+ "    MGI_Set ms, "
-	+ "    MGI_SetMember msm "
-	+ "WHERE ps._Strain_key = msm._Object_key "
-	+ "    AND msm._Set_key = ms._Set_key "
-	+ "    AND ms.name = 'SNP Strains' "
-	+ "ORDER BY msm.sequenceNum";
+    	"SELECT _mgdStrain_key, strain "
+	+ " FROM %s..SNP_Strain "
+	+ " ORDER BY sequenceNum";
 
     /** retrieve variation types for the SNPs query form's Variation Type
     **    selection list
-    ** fill in: nothing
+    ** fill in: SNP db (String)
     */
     private static String OPTIONLIST_VARIATION_TYPES =
         "SELECT DISTINCT vt._Term_key, "
@@ -752,64 +760,65 @@ public class SnpFactory extends AbstractDataFactory
 	+ "WHERE vt._Vocab_key = vv._Vocab_key "
 	+ "    AND vv.name = 'SNP Variation Class'"
 	+ "    AND vt._Term_key IN "
-	+ "        (SELECT DISTINCT _VarClass_key FROM SNP_ConsensusSNP) "
+	+ "        (SELECT DISTINCT _VarClass_key "
+	+ "		FROM %s..SNP_ConsensusSNP) "
 	+ "ORDER BY vt.sequenceNum";
 
     /** retrieves flank for a given consensus snp, ordered by sequence num
-    ** fill in: consensus snp key (int)
+    ** fill in: SNP db (String), consensus snp key (String)
     */
     private static String SNP_FLANK = 
 	"SELECT flank, "
 	+ "    is5Prime, "
 	+ "    sequenceNum "
-	+ "FROM SNP_Flank "
-	+ "WHERE _ConsensusSnp_key = %d "
+	+ "FROM %s..SNP_Flank "
+	+ "WHERE _ConsensusSnp_key = %s "
 	+ "ORDER BY sequenceNum";
     
     /** retrieves consensus snp keys matching a given accession ID
-    ** fill in: accession ID (string), accession ID (string)
+    ** fill in: SNP db (String), accession ID (string), SNP db (String),
+    **    SNP db (String), accession ID (string)
     */
     private static String SNP_KEY_FOR_ID = 
 	"SELECT _Object_key "
-	+ "FROM ACC_Accession "
+	+ "FROM %s..SNP_Accession "
 	+ "WHERE accID = '%s' "
 	+ "    AND _MGIType_key = " + DBConstants.MGIType_ConsensusSnp
 	+ " UNION "
 	+ "SELECT ss._ConsensusSnp_key "
-	+ "FROM ACC_Accession aa, "
-	+ "    SNP_SubSnp ss "
+	+ "FROM %s..SNP_Accession aa, "
+	+ "    %s..SNP_SubSnp ss "
 	+ "WHERE aa.accID = '%s' "
 	+ "    AND aa._MGIType_key = " + DBConstants.MGIType_SubSnp
 	+ "    AND aa._Object_key = ss._SubSnp_key ";
    
     /** gets the set of populations and their IDs
-    ** fill in: nothing
+    ** fill in: SNP db (String), SNP db (String)
     */
     private static String POPULATIONS =
     	"SELECT DISTINCT p._Population_key, "
 	+ "	aa.accID "
-	+ "FROM ACC_Accession aa, "
-	+ "	SNP_Population p "
+	+ "FROM %s..SNP_Accession aa, "
+	+ "	%s..SNP_Population p "
 	+ "WHERE aa._Object_key = p._Population_key "
-	+ "	AND aa._MGIType_key = " + DBConstants.MGIType_Population
-	+ "	AND aa.preferred = 1";
+	+ "	AND aa._MGIType_key = " + DBConstants.MGIType_Population;
 
     /** gets allele calls for the reference snp, ordered by strain ordering.
-    ** fill in: consensus snp key (int)
+    ** fill in: SNP db (String), SNP db (String), consensus snp key (String)
     */
     private static String REFSNP_ALLELES =
-	"SELECT ssa._Strain_key, "
+	"SELECT ssa._mgdStrain_key, "
 	+ "    ssa.allele, "
 	+ "    ssa.isConflict "
-	+ "FROM SNP_ConsensusSnp_StrainAllele ssa, "
-	+ "    MGI_SetMember msm, "
-	+ "    MGI_Set ms "
-	+ "WHERE ssa._ConsensusSnp_key = %d "
-	+ "    AND ssa._Strain_key = msm._Object_key "
-	+ "    AND msm._Set_key = ms._Set_key "
-	+ "    AND ms.name = 'SNP Strains' "
-	+ "ORDER BY msm.sequenceNum";
+	+ "FROM %s..SNP_ConsensusSnp_StrainAllele ssa, "
+	+ "    %s..SNP_Strain ss "
+	+ "WHERE ssa._ConsensusSnp_key = %s "
+	+ "    AND ssa._mgdStrain_key = ss._mgdStrain_key "
+	+ "ORDER BY ss.sequenceNum";
 
+    /** retrieves SubSnps for a given consensus SNP key
+    ** fill in:  SNP db (String), SNP db (String), consensus SNP key (String)
+    */
     private static String SUBSNPS =
 	"SELECT DISTINCT ss._SubSnp_key, "
 	+ "    vt1.term AS variationClass, "
@@ -819,43 +828,45 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    ss.orientation, "
 	+ "    ss.isExemplar, "
 	+ "    ss.alleleSummary "
-	+ "FROM SNP_SubSnp ss, "
-	+ "    ACC_Accession aa, "
+	+ "FROM %s..SNP_SubSnp ss, "
+	+ "    %s..SNP_Accession aa, "
 	+ "    VOC_Term vt1, "
 	+ "    VOC_Term vt2 "
-	+ "WHERE ss._ConsensusSnp_key = %d "
+	+ "WHERE ss._ConsensusSnp_key = %s "
 	+ "    AND ss._VarClass_key = vt1._Term_key "
 	+ "    AND ss._SubHandle_key = vt2._Term_key "
 	+ "    AND ss._SubSnp_key = aa._Object_key "
 	+ "    AND aa._MGIType_key = " + DBConstants.MGIType_SubSnp
-	+ "    AND aa.private = 0 "
-	+ "    AND aa.preferred = 1 "
 	+ "    AND aa._LogicalDB_key = 74"
 	+ "ORDER BY aa.accID";
 
+    /** retrieve allele calls for SubSnps of a given consensus SNP key
+    ** fill in: SNP db (String), SNP db (String), SNP db (String),
+    **    SNP db (String), consensus snp key (String)
+    */
     private static String SUBSNPS_ALLELES =
 	"SELECT DISTINCT ssa._SubSnp_key, "
-	+ "    ssa._Strain_key, "
+	+ "    ssa._mgdStrain_key, "
 	+ "    ssa.allele, "
 	+ "    pop.name, "
 	+ "    vt.term AS popSubmitterHandle, "
 	+ "    pop._Population_key "
-	+ "FROM SNP_SubSnp ss, "
-	+ "    SNP_SubSnp_StrainAllele ssa, "
-	+ "    SNP_Population pop, "
+	+ "FROM %s..SNP_SubSnp ss, "
+	+ "    %s..SNP_SubSnp_StrainAllele ssa, "
+	+ "    %s..SNP_Population pop, "
 	+ "    VOC_Term vt, "
-	+ "    ACC_Accession aa "
-	+ "WHERE ss._ConsensusSnp_key = %d "
+	+ "    %s..SNP_Accession aa "
+	+ "WHERE ss._ConsensusSnp_key = %s "
 	+ "    AND ss._SubSnp_key = ssa._SubSnp_key "
 	+ "    AND ssa._Population_key = pop._Population_key "
 	+ "    AND pop._Population_key = aa._Object_key "
 	+ "    AND aa._MGIType_key = " + DBConstants.MGIType_Population
-	+ "    AND aa.preferred = 1 "
 	+ "    AND pop._SubHandle_key = vt._Term_key ";
 
     /** gets gene/function class associations for this SNP, with associated
     *  transcript and protein IDs.
-    * fill in: integer refSNP ID
+    * fill in: SNP db (String), SNP db (String), SNP db (String),
+    *    refSNP ID (String)
     */
     private static String REFSNP_GENES =
 	"SELECT scc.chromosome, "
@@ -865,7 +876,7 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    aa.accID, "
 	+ "    vt1.term as functionClass, "
 	+ "    scc.strand, "
-	+ "    csm._Feature_key, "
+	+ "    csm._Coord_Cache_key, "
 	+ "    csm._Fxn_key, "
 	+ "    csm.contig_allele, "
 	+ "    csm.residue, "
@@ -874,54 +885,49 @@ public class SnpFactory extends AbstractDataFactory
 	+ "    csm._Marker_key, "
 	+ "    csm._ConsensusSnp_key, "
 	+ "    mm.name "
-	+ "FROM SNP_ConsensusSnp_Marker csm, "
-	+ "    SNP_Coord_Cache scc, "
+	+ "FROM %s..SNP_ConsensusSnp_Marker csm, "
+	+ "    %s..SNP_Coord_Cache scc, "
 	+ "    MRK_Marker mm, "
 	+ "    VOC_Term vt1, "
-	+ "    ACC_Accession aa, "
+	+ "    %s..SNP_Accession aa, "
 	+ "    DAG_Closure dc, "
 	+ "    VOC_Term vt2 "
-	+ "WHERE csm._ConsensusSnp_key = %d "
+	+ "WHERE csm._ConsensusSnp_key = %s "
 	+ "    AND csm._ConsensusSnp_key = scc._ConsensusSnp_key "
-	+ "    AND csm._Feature_key = scc._Feature_key "
+	+ "    AND csm._Coord_Cache_key = scc._Coord_Cache_key "
 	+ "    AND csm._Marker_key = mm._Marker_key "
 	+ "    AND csm._Fxn_key = vt1._Term_key "
 	+ "    AND csm._ConsensusSnp_Marker_key *= aa._Object_key "
 	+ "    AND aa._MGIType_key = 32 "
 	+ "    AND csm._Fxn_key = dc._DescendentObject_key "
 	+ "    AND dc._AncestorObject_key = vt2._Term_key "
-	+ "    AND vt2.term = 'dbSNP Function Class' "
+//	+ "    AND vt2.term = 'dbSNP Function Class' "
+	+ "    AND vt2.term = 'within 2 kb of' "
 	+ "ORDER BY scc.sequenceNum, "
 	+ "    scc.startCoordinate, "
 	+ "    mm.symbol, "
 	+ "    vt1.term";
 
-    private static String REFSNP_GENE_IDS =
-	"SELECT DISTINCT csm._Feature_key, "
-	+ "    csm._Marker_key, "
-	+ "    aa.accID, "
-	+ "    aa._LogicalDB_key "
-	+ "FROM SNP_ConsensusSnp_Marker csm, "
-	+ "    ACC_Accession aa "
-	+ "WHERE csm._ConsensusSnp_key = %d "
-	+ "    AND csm._ConsensusSnp_Marker_key = aa._Object_key "
-	+ "    AND aa._MGIType_key = 32 "
-	+ "    AND aa._LogicalDB_key = 27 ";
-
+    /** get the submitter ID for each SubSnp of a given consensus SNP
+    ** fill in: SNP db (String), SNP db (String), refsnp key (String)
+    */
     private static String SUBSNP_SUBMITTER_IDS =
 	"SELECT DISTINCT ss._SubSnp_key, "
 	+ "    aa.accID, "
 	+ "    aa._LogicalDB_key "
-	+ "FROM SNP_SubSnp ss, "
-	+ "    ACC_Accession aa "
+	+ "FROM %s..SNP_SubSnp ss, "
+	+ "    %s..SNP_Accession aa "
 	+ "WHERE ss._SubSnp_key = aa._Object_key "
-	+ "    AND ss._ConsensusSnp_key = %d "
+	+ "    AND ss._ConsensusSnp_key = %s "
 	+ "    AND aa._MGIType_key = 31 "
 	+ "    AND aa._LogicalDB_key = 75 ";
 }
 
 /*
 * $Log$
+* Revision 1.10.2.1  2006/02/14 18:27:22  sc
+* MGI3.44 - merged branch tr7392 (MGI3.43) into tr7203 branch
+*
 * Revision 1.10.4.2  2006/02/06 20:18:57  jsb
 * updated query for retrieving SNP/gene associations
 *
