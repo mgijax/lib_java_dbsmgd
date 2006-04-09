@@ -51,7 +51,7 @@ import org.jax.mgi.shr.dbutils.DBException;
 *        for details.</I>
 *    </OL>
 */
-public class MarkerFactory
+public class MarkerFactory extends AbstractDataFactory
 {
     /////////////////////
     // instance variables
@@ -104,13 +104,13 @@ public class MarkerFactory
     * @effects nothing
     * @throws nothing
     */
-    public void setTimeStamper (TimeStamper timer)
+/*    public void setTimeStamper (TimeStamper timer)
     {
         this.timer = timer;
         this.timeStamp ("TimeStamper added to MarkerFactory");
         return;
     }
-
+*/
     /////////////////////////////////////
     // methods for retrieving marker keys
     /////////////////////////////////////
@@ -1652,15 +1652,53 @@ public class MarkerFactory
         marker.set (DTOConstants.PcrCount, new Integer(pcr));
         marker.set (DTOConstants.RflpCount, new Integer(rflp));
 
-        nav = this.sqlDM.executeQuery (Sprintf.sprintf (SNP_COUNT, key));
-        if (nav.next()) {
-                rr = (RowReference) nav.getCurrent();
-                marker.set (DTOConstants.SnpCount, rr.getInt(1));
-        }
-        else {
+	if (this.snpDatabaseName != null)
+	{
+	    try
+	    {
+                nav = this.sqlDM.executeQuery (Sprintf.sprintf (
+		    SNP_COUNT_NO_MULTIPLES,
+	            this.snpDatabaseName, this.snpDatabaseName,
+	            Integer.toString(key) ) );
+
+                if (nav.next()) {
+                    rr = (RowReference) nav.getCurrent();
+                    marker.set (DTOConstants.SnpCount, rr.getInt(1));
+                }
+                else {
+                    marker.set (DTOConstants.SnpCount, new Integer(0));
+                }
+                nav.close();
+
+                nav = this.sqlDM.executeQuery (Sprintf.sprintf (
+		    SNP_COUNT_WITH_MULTIPLES,
+	            this.snpDatabaseName, this.snpDatabaseName,
+	            Integer.toString(key) ) );
+
+                if (nav.next()) {
+                    rr = (RowReference) nav.getCurrent();
+                    marker.set (DTOConstants.SnpCountWithMultiples,
+		        rr.getInt(1));
+                }
+                else {
+                    marker.set (DTOConstants.SnpCountWithMultiples,
+		        new Integer(0));
+                }
+                nav.close();
+	    }
+	    catch (Exception e)
+	    {
+                marker.set (DTOConstants.SnpCount, new Integer(0));
+                marker.set (DTOConstants.SnpCountWithMultiples,new Integer(0));
+		this.logInfo ("Error: could not get SNP counts for marker " +
+			key);
+	    }
+	}
+	else
+	{
             marker.set (DTOConstants.SnpCount, new Integer(0));
-        }
-        nav.close();
+	    this.logInfo ("Error: SNP database name undefined");
+	}
 
         return marker;
     }
@@ -2677,7 +2715,7 @@ public class MarkerFactory
 
         gfm = new GeneFamilyMap (url);
         cache.put (gfmKey, gfm, 4 * 60 * 60);
-        this.timeStamp ("retrieved and cached new GeneFamilyMap");
+        this.timeStamp ("Retrieved and cached new GeneFamilyMap");
         return gfm;
     }
 
@@ -2715,7 +2753,7 @@ public class MarkerFactory
 
         prs = new PrivateRefSet (this.sqlDM);
         cache.put (prsKey, prs, 4 * 60 * 60);
-        this.timeStamp ("retrieved and cached new PrivateRefSet");
+        this.timeStamp ("Retrieved and cached new PrivateRefSet");
         return prs;
     }
 
@@ -2953,43 +2991,6 @@ public class MarkerFactory
 
         marker.set (DTOConstants.MinimapURL, result);
         return marker;
-    }
-
-    /* -------------------------------------------------------------------- */
-
-    /** log the given 'entry' to the informational log within 'this.logger'
-    * @param entry the entry to write to 'log'
-    * @return nothing
-    * @assumes nothing
-    * @effects writes 'entry' to the informational log
-    * @throws nothing
-    */
-    private void logInfo (String entry)
-    {
-        if (this.logger != null)
-        {
-            logger.logInfo (entry);
-        }
-        return;
-    }
-
-    /* -------------------------------------------------------------------- */
-
-    /** add the given 'entry' to the TimeStamper in this MarkerFactory, if
-    *    one was added using setTimeStamper().
-    * @param entry the entry to write to the TimeStamper
-    * @return nothing
-    * @assumes nothing
-    * @effects nothing
-    * @throws nothing
-    */
-    private void timeStamp (String entry)
-    {
-        if (this.timer != null)
-        {
-            this.timer.record (entry);
-        }
-        return;
     }
 
     /* -------------------------------------------------------------------- */
@@ -3355,9 +3356,9 @@ public class MarkerFactory
             "INSERT #GO_Annotations (_Annot_key, _AnnotType_key, _Term_key, isNot) "
                 + " SELECT va._Annot_key, va._AnnotType_key, va._Term_key, "
                 + "        va.isNot "
-                + " FROM VOC_Annot va, VOC_GOMarker_AnnotType_View gm "
+                + " FROM VOC_Annot va "
                 + " WHERE va._Object_key = %d "
-                + "        AND va._AnnotType_key = gm._AnnotType_key";
+		+ "	AND va._AnnotType_key = 1000";
 
     // fill in the temp table (from GO_CREATE_TEMP) with the corresponding
     // vocabulary terms and GO IDs.
@@ -3720,24 +3721,47 @@ public class MarkerFactory
         + " and a.isWildType = 0"
         + " and va.isNot = 0";
 
-    // find count of snps associated with this allele "within 2 kb of"
-    // fill in: marker key (int)
-    private static final String SNP_COUNT =
+    // find count of snps associated with this allele "within 2 kb of" -- only
+    //    including SNPs with a single location
+    // fill in: SNP db name (String), SNP db name (String), marker key(String)
+    private static final String SNP_COUNT_NO_MULTIPLES =
         "select count(distinct scm._ConsensusSnp_key) " +
-        "from SNP_ConsensusSnp_Marker scm, DAG_Closure dc, VOC_Term vt " +
-	"  , SNP_Coord_Cache scc " +
-        "where scm._Marker_Key = %d " +
+        "from %s..SNP_ConsensusSnp_Marker scm, DAG_Closure dc, VOC_Term vt " +
+	"  , %s..SNP_Coord_Cache scc " +
+        "where scm._Marker_Key = %s " +
         "and scm._Fxn_key = dc._DescendentObject_key " +
         "and dc._AncestorObject_key = vt._Term_key " +
 	"and scc._ConsensusSnp_key = scm._ConsensusSnp_key " +
-	"and scc._Feature_key = scm._Feature_key " +
+	"and scc._Coord_Cache_key = scm._Coord_Cache_key " +
 	"and scc.isMultiCoord = 0 " +
+        "and vt.term = 'within 2 kb of' ";
+
+    // find count of all locations for snps associated with this allele
+    //    "within 2 kb of" (also including SNPs with multiple locations)
+    // fill in: SNP db name (String), SNP db name (String), marker key(String)
+    private static final String SNP_COUNT_WITH_MULTIPLES =
+        "select count(distinct scc._Coord_Cache_key) " +
+        "from %s..SNP_ConsensusSnp_Marker scm, DAG_Closure dc, VOC_Term vt " +
+	"  , %s..SNP_Coord_Cache scc " +
+        "where scm._Marker_Key = %s " +
+        "and scm._Fxn_key = dc._DescendentObject_key " +
+        "and dc._AncestorObject_key = vt._Term_key " +
+	"and scc._ConsensusSnp_key = scm._ConsensusSnp_key " +
         "and vt.term = 'within 2 kb of' ";
 
 }
 
 /*
 * $Log$
+* Revision 1.23.2.2  2006/03/24 19:05:37  jsb
+* fixed query that includes multi-location SNPs in count
+*
+* Revision 1.23.2.1  2006/03/24 17:51:59  jsb
+* updated to use separate SNPs schema; made subclass of AbstractDataFactory
+*
+* Revision 1.23  2005/12/02 16:04:30  pf
+* 3.41 maint7119 branch merge to trunk
+*
 * Revision 1.20.8.3  2005/11/28 14:24:25  jsb
 * fixed to ensure that SNP count has none with multiple coords
 *
