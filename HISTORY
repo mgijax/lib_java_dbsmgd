@@ -1,3 +1,8 @@
+TAG: lib_java_dbsmgd-3-4-4-1
+DATE: 4/7/2006
+STAFF: pf
+CHANGES: merge tr7230 branch to trunk
+
 TAG: lib_java_dbsmgd-tr7203-1
 TAG: lib_java_dbsmgd-tr7392-4  ERROR wrong branch name
 DATE: 03/14/06
@@ -9,6 +14,16 @@ CHANGES:
 4) VocabKeyLookup - corrected cut an paste errors in comments
 5) MGIUserKeyLookup - initial add/commit
 6) build.targets.xml - added clean.code as dependency to buildall
+
+TAG: lib_java_dbsmgd-tr6594-BP
+DATE: 3/2/2006
+STAFF: dbm
+CHANGES: Branch point tag for configuration changes
+
+TAG: lib_java_dbsmgd-3-4-3-1
+DATE: 02/10/06
+STAFF: sc
+CHANGES: merged tr7392 branch to trunk
 
 TAG: lib_java_dbsmgd-tr7392-3
 DATE: 02/06/06
