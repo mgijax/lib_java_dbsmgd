@@ -1,3 +1,8 @@
+TAG: lib_java_dbsmgd-3-5-0-1
+DATE: 04/28/06
+STAFF: sc
+CHANGES: MGI 3.5 merge tr7062 to trunk
+
 TAG: lib_java_dbsmgd-3-4-4-2
 DATE: 4/10/2006
 STAFF: sc
@@ -69,6 +74,31 @@ TAG: lib_java_dbsmgd-3-4-1-1
 DATE: 12/2/05
 STAFF: pf
 CHANGES: merged maint7119 branch to the trunk for 3.41
+
+TAG: lib_java_dbsmgd-tr7067-BP
+DATE: 11/09/05
+STAFF: mbw
+CHANGES: branch point tag for jconnect upgrade
+
+TAG: lib_java_dbsmgd-tr7062-3
+DATE: 01/09/06
+STAFF: sc
+CHANGES: merged tr7067 (jconnect upgrade) branch into this branch
+
+TAG: lib_java_dbsmgd-tr7062-2
+DATE: 12/30/05
+STAFF: mbw
+CHANGES: changed AccessionLookup to be either lazy or full cache
+
+TAG: lib_java_dbsmgd-tr7062-1
+DATE: 11/10/05
+STAFF: mbw
+CHANGES: added SEQ_Sequence_Raw to generated_tables.txt
+
+TAG: lib_java_dbsmgd-tr7067-1
+DATE: 11/09/05
+STAFF: mbw
+CHANGES: modified build.properties.default to suit jconnect upgrade
 
 TAG: lib_java_dbsmgd-tr7067-BP
 DATE: 11/09/05
