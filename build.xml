@@ -1,28 +1,40 @@
 <?xml version="1.0"?>
-<!DOCTYPE definitions [
-  <!ENTITY build.targets SYSTEM "/usr/local/mgi/etc/build.lib.targets.xml">
-  <!ENTITY local.build.targets SYSTEM "build.targets.xml">
-]>
-
-<!-- Enter the name of your current project here 
- -->
+<!-- This XML script is used to build the lib_java_dbsmgd product.
+-->
 <project name="lib_java_dbsmgd" default="compile" basedir=".">
 
-  <!-- Enter the name of your jar file here minus the dot jar suffix
+   <!-- Get the system environment variables and define any other system
+        properties needed by the build.
    -->
-  <property name="jar.name" value="dbsmgd"/>
+   <property environment="env"/>
+   <property name="jar.name" value="dbsmgd"/>
+   <property name="classpath" value="${env.MGI_JAVALIB}/core.jar:${env.DBSGEN}/classes:${env.VELOCITY}:${env.JUNIT}:${env.JCONNECT}"/>
 
-  <!-- To override property definitions in the following 
-       properties file, add new definitions in preceding lines.
-       The first definition of a property takes precedence 
+   <!-- Import the universal targets.
    -->
-  <property file="build.properties"/>
-  <property file="/usr/local/mgi/etc/build.lib.properties"/>
+   <import file="${env.MGICONFIG}/etc/build.lib.targets.xml"/>
 
-  <!-- Universal targets get included here  
+   <!-- Define product specific targets.
    -->
-  &build.targets;
-  &local.build.targets;
+   <target name="gen.code" description="Generates schema specific source code">
+      <java classname="org.jax.mgi.shr.dbutils.cg.MGDGen"
+            classpath="${classpath}"
+            fork="true" failonerror="true" dir="${src.dir}">
+         <jvmarg value="-DDBSERVER=${env.MGD_DBSERVER}"/>
+         <jvmarg value="-DDBNAME=${env.MGD_DBNAME}"/>
+         <jvmarg value="-DDBUSER=${env.MGD_DBUSER}"/>
+         <jvmarg value="-DDBPASSWORDFILE=${env.MGD_DBPASSWORDFILE}"/>
+         <jvmarg value="-DDBURL=${env.MGD_DBURL}"/>
+      </java>
+   </target>
 
+   <target name="clean.code" description="Removed code generated sourec files">
+      <delete>
+         <fileset dir="${src.dir}/org/jax/mgi/dbs/mgd/dao" includes="*.java"/>
+      </delete>
+   </target>
+
+   <target name="buildall" description="Executes task 'gen.code' and 'all'"
+           depends="gen.code, all, link">
+   </target>
 </project>
-

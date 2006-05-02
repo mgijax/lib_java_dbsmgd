@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-3-5-0-2
+DATE: 5/2/2006
+STAFF: dbm
+CHANGES:
+1) Merge configuration changes from tr6549 branch
+
 TAG: lib_java_dbsmgd-3-5-0-1
 DATE: 04/28/06
 STAFF: sc
@@ -24,6 +30,21 @@ CHANGES:
 4) VocabKeyLookup - corrected cut an paste errors in comments
 5) MGIUserKeyLookup - initial add/commit
 6) build.targets.xml - added clean.code as dependency to buildall
+
+TAG: lib_java_dbsmgd-tr6594-3
+DATE: 3/27/2006
+STAFF: dbm
+CHANGES: Consolidate build scripts
+
+TAG: lib_java_dbsmgd-tr6594-2
+DATE: 3/8/2006
+STAFF: dbm
+CHANGES: Fixed bug in build.targets.xml
+
+TAG: lib_java_dbsmgd-tr6594-1
+DATE: 3/7/2006
+STAFF: dbm
+CHANGES: Initial tag for testing installation
 
 TAG: lib_java_dbsmgd-tr6594-BP
 DATE: 3/2/2006
