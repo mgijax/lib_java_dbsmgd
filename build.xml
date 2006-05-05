@@ -28,13 +28,13 @@
       </java>
    </target>
 
-   <target name="clean.code" description="Removed code generated sourec files">
+   <target name="clean.code" description="Removes code generated source files">
       <delete>
          <fileset dir="${src.dir}/org/jax/mgi/dbs/mgd/dao" includes="*.java"/>
       </delete>
    </target>
 
-   <target name="buildall" description="Executes task 'gen.code' and 'all'"
-           depends="gen.code, all, link">
+   <target name="buildall" description="Performs main build tasks"
+           depends="clean.code, gen.code, all, link">
    </target>
 </project>
