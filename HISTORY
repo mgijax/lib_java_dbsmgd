@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-3-5-0-3
+DATE: 5/5/2006
+STAFF: dbm
+CHANGES:
+1) Added clean.code to buildall task
+
 TAG: lib_java_dbsmgd-3-5-0-2
 DATE: 5/2/2006
 STAFF: dbm
