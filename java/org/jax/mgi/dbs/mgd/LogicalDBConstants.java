@@ -32,6 +32,7 @@ public class LogicalDBConstants
     public static final int SUBMITTERSNP = 75;
     public static final int SNPPOPULATION = 76;
     public static final int HOMOLOGENE = 81;
+    public static final int VEGA_GENE = 85;
 
     public static final int RIKEN = 51;
     public static final int NIA15K = 46;
