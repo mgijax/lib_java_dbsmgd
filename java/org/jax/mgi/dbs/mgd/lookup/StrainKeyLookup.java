@@ -42,18 +42,23 @@ public class StrainKeyLookup extends FullCachedLookup
    * constructor
    * @throws CacheException thrown if there is an error with the cache
    * @throws DBException thrown if there is an error accessing the db
-   * @throws ConfigException thrown if there is an error accessing the
+   * @throws ConfigException thrown if there is an error accessing configuration
+   * @throws TranslationException thrown if error creating translator
    * configuration file
    */
   public StrainKeyLookup()
-      throws CacheException, DBException, ConfigException
+      throws CacheException, DBException, ConfigException, TranslationException
   {
-    super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
-    // since cache is static make sure you do not reinit
-    if (!hasBeenInitialized)
-      initCache(cache);
-    hasBeenInitialized = true;
+      super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
+      // since cache is static make sure you do not reinit
+      if (!hasBeenInitialized) {
+          initCache(cache);
+          translator = new Translator(TranslationTypeConstants.STRAIN,
+                                      CacheConstants.FULL_CACHE);
+          translator.initCache();
+          hasBeenInitialized = true;
 
+      }
   }
   /**
    * look up the primary key for a Strain term in the PRB_Strain table
@@ -71,11 +76,11 @@ public class StrainKeyLookup extends FullCachedLookup
   public Integer lookup(String term) throws CacheException,
       DBException, TranslationException, ConfigException, KeyNotFoundException
   {
-    if (translator == null)
-    {
-      translator = new Translator(TranslationTypeConstants.STRAIN,
-                                  CacheConstants.FULL_CACHE);
-    }
+    //if (translator == null)
+    //{
+    //  translator = new Translator(TranslationTypeConstants.STRAIN,
+    //                              CacheConstants.FULL_CACHE);
+    //}
     // do a translation of the term and expect null if term is not found.
     // if the term is translated then we dont have to look it up in the
     // PRB_Strain table since we were given it from the translator
