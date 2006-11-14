@@ -21,7 +21,7 @@ public class LogicalDBConstants
     public static final int SWISSPROT = 13;
     public static final int REFSEQ = 27;
     public static final int TREMBL = 41;
-    public static final int TIGR = 35;
+    public static final int DFCI = 35;
     public static final int DOTS = 36;
     public static final int NCBI_GENE = 59;
     public static final int ENSEMBL_GENE = 60;
