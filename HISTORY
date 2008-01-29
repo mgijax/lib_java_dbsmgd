@@ -1,3 +1,11 @@
+TAG: lib_java_dbsmgd-tr7493-1
+DATE: 01/29/2008
+STAFF: sc
+CHANGES:
+1) CoordMapCollectionKeyLookup - updated to return null rather than 
+    exception upon failed lookup (not in MGI)
+2) CoordMapFeatureKeyLookup, CoordMapFeatureLookup - added
+
 TAG: lib_java_dbsmgd-tr7493-BP
 DATE: 01/28/2008
 STAFF: sc
