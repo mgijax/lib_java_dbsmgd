@@ -69,8 +69,7 @@ public class SeqIdsByMarkerIdLookup extends FullCachedLookup {
      */
     public String getFullInitQuery() {
 
-	// select sequence ids, sequence types for GenBank and RefSeq associated with mouse Markers
-	// and secondary MGI ids for Markers
+	// select mgiIds of markers and their seqId associations of type "seqLdbKey"
 
         String sql =
             "select markerID = ma.accID, sequenceID = c.accID " +
