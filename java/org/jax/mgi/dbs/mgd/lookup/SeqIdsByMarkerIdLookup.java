@@ -30,7 +30,7 @@ import org.jax.mgi.dbs.SchemaConstants;
  */
 
 public class SeqIdsByMarkerIdLookup extends FullCachedLookup {
-    private int seqLdbKey;
+    private String seqLdbKey;
     /**
      * Constructor
      * @throws DBException thrown if there is an error accessing the database
@@ -44,7 +44,7 @@ public class SeqIdsByMarkerIdLookup extends FullCachedLookup {
         ConfigException,
         CacheException {
         super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
-	this.seqLdbKey = seqLdbKey;
+	this.seqLdbKey = (new Integer(seqLdbKey)).toString();
     }
 
     /**
