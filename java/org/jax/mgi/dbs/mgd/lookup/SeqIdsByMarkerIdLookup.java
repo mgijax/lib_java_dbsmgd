@@ -100,7 +100,7 @@ public class SeqIdsByMarkerIdLookup extends FullCachedLookup {
 
 		public Object interpretKey(RowReference ref) throws DBException
 		{
-		    return ref.getInt(1);
+		    return ref.getString(1);
 		}
 
 		public Object interpretRows(Vector v)
