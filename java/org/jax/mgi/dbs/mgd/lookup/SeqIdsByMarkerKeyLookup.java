@@ -72,15 +72,10 @@ public class SeqIdsByMarkerKeyLookup extends FullCachedLookup {
 	// select marker keys and their seqId associations of type "seqLdbKey"
 
         String sql =
-            "select markerID = ma.accID, sequenceID = c.accID " +
-	    "from SEQ_Marker_Cache c, ACC_Accession ma " +
-	    "where c._Marker_key = ma._Object_key " +
-	    "and ma._MGIType_key = 2 " +
-	    "and ma._LogicalDB_key = 1 " +
-	    "and ma.prefixPart = 'MGI:' " +
-	    "and ma.preferred = 1 " +
-	    "and c._LogicalDB_key =  " + seqLdbKey + " " +
-	    "order by ma.accID";
+            "select c._Marker_key, sequenceID = c.accID " +
+	    "from SEQ_Marker_Cache c " +
+	    "where c._LogicalDB_key =  " + seqLdbKey + " " +
+	    "order by c._Marker_key";
 
         return sql;
     }
