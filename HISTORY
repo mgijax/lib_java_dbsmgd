@@ -1,7 +1,32 @@
 TAG: lib_java_dbsmgd-tr8543-BP
 DATE: 03/26/2008
 STAFF: sc
-CHANGES: Build 37 Branch Point 
+CHANGES: Build 37 Branch Point - this branch point tag is no longer
+needed, its changes are included in the tr7493 branch
+
+TAG: lib_java_dbsmgd-tr7493-3
+DATE: 04/15/2008
+STAFF: sc
+CHANGES:
+1) removed SeqIdsByMarkerIdLookup, added SeqIdsByMarkerKeyLookup
+TAG: lib_java_dbsmgd-4-0-0-1
+DATE: 05/07/2008
+STAFF: sc
+CHANGES: merge tr7493 branch (egload)
+
+TAG: lib_java_dbsmgd-tr7493-2
+DATE: 03/31/2008
+STAFF: sc
+CHANGES:
+1) SeqIdsByMarkerIdLookup (egload)
+
+TAG: lib_java_dbsmgd-tr7493-1
+DATE: 01/29/2008
+STAFF: sc
+CHANGES:
+1) CoordMapCollectionKeyLookup - updated to return null rather than 
+    exception upon failed lookup (not in MGI)
+2) CoordMapFeatureKeyLookup, CoordMapFeatureLookup - added
 
 TAG: lib_java_dbsmgd-tr7493-BP
 DATE: 01/28/2008
