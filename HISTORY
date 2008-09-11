@@ -1,3 +1,8 @@
+TAG: lib_java_dbsmgd-4-1-2-2
+DATE: 09/11/2008
+STAFF: jmason
+CHANGES: add tables required for the targeted allele load (TR 8524)
+
 TAG: lib_java_dbsmgd-4-1-2-1
 DATE: 09/11/2008
 STAFF: jmason
