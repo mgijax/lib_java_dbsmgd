@@ -4,6 +4,7 @@ PRB_Reference
 ACC_Accession
 ACC_AccessionReference
 ALL_Allele
+ALL_Allele_Mutation
 ALL_CellLine
 MGI_Note
 MGI_NoteChunk
