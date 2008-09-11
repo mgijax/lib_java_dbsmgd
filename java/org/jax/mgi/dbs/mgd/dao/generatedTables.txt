@@ -3,6 +3,10 @@ PRB_Source
 PRB_Reference
 ACC_Accession
 ACC_AccessionReference
+ALL_Allele
+ALL_CellLine
+MGI_Note
+MGI_NoteChunk
 SEQ_Sequence
 SEQ_Sequence_Raw
 MGI_Reference_Assoc
