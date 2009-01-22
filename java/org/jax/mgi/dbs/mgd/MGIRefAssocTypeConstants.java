@@ -1,5 +1,3 @@
-//  $Header
-//  $Name
 
 package org.jax.mgi.dbs.mgd;
 
@@ -17,38 +15,30 @@ package org.jax.mgi.dbs.mgd;
  */
 
 public class MGIRefAssocTypeConstants {
+	//
         // Constants
         //
         public static final int ORIGINAL = 1000;
         public static final int GENERAL = 1002;
-        public static final int PRIMARY = 1003;
-        public static final int RELATED = 1004;
+        public static final int NOMEN_PRIMARY = 1003;
+        public static final int NOMEN_RELATED = 1004;
         public static final int PROVIDER = 1006;
-        public static final int CURATOR = 1007;
+        public static final int SEQ_CURATOR = 1007;
         public static final int LOAD = 1008;
+	public static final int STRAIN_SELECTED = 1009;
+	public static final int STRAIN_ADDITIONAL = 1010;
+	public static final int ALLELE_ORIGINAL = 1011;
+	public static final int ALLELE_MOLECULAR = 1012;
+	public static final int ALLELE_INDEXED = 1013;
+	public static final int ALLELE_NOT_USED = 1014;
+	public static final int ALLELE_USED_PS = 1015;
+	public static final int ALLELE_USED_CUR = 1016;
+	public static final int ALLELE_USED_FC = 1017;
+	public static final int MARKER_GENERAL = 1018;
+	public static final int ALLELE_EXPR_ONLY = 1019;
+	public static final int IMG_PANE_ASSOC_GENERAL = 1020;
+	public static final int ALLELE_PRIORITY_INDEX = 1021;
+	public static final int ALLELE_FOR_REVIEW = 1022;
+	public static final int ALLELE_CHIMERA_GEN = 1023;
+	public static final int ALLELE_GL_TRANS = 1024;
 }
-
-//  $Log
-
-/**************************************************************************
-*
-* Warranty Disclaimer and Copyright Notice
-*
-*  THE JACKSON LABORATORY MAKES NO REPRESENTATION ABOUT THE SUITABILITY OR
-*  ACCURACY OF THIS SOFTWARE OR DATA FOR ANY PURPOSE, AND MAKES NO WARRANTIES,
-*  EITHER EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR A
-*  PARTICULAR PURPOSE OR THAT THE USE OF THIS SOFTWARE OR DATA WILL NOT
-*  INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS, OR OTHER RIGHTS.
-*  THE SOFTWARE AND DATA ARE PROVIDED "AS IS".
-*
-*  This software and data are provided to enhance knowledge and encourage
-*  progress in the scientific community and are to be used only for research
-*  and educational purposes.  Any reproduction or use for commercial purpose
-*  is prohibited without the prior express written permission of The Jackson
-*  Laboratory.
-*
-* Copyright \251 1996, 1999, 2002, 2003 by The Jackson Laboratory
-*
-* All Rights Reserved
-*
-**************************************************************************/
