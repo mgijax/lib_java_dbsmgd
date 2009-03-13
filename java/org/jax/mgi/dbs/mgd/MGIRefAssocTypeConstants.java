@@ -38,7 +38,7 @@ public class MGIRefAssocTypeConstants {
 	public static final int ALLELE_EXPR_ONLY = 1019;
 	public static final int IMG_PANE_ASSOC_GENERAL = 1020;
 	public static final int ALLELE_PRIORITY_INDEX = 1021;
-	public static final int ALLELE_FOR_REVIEW = 1022;
+	public static final int ALLELE_SEQUENCE = 1022;
 	public static final int ALLELE_CHIMERA_GEN = 1023;
 	public static final int ALLELE_GL_TRANS = 1024;
 }

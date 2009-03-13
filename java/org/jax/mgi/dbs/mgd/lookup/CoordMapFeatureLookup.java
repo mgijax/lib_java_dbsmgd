@@ -17,12 +17,12 @@ import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 /**
- * @is An object that knows how to look up a J-Number to find its
- *     reference key.
+ * @is An object that knows how to look up feature key to get a 
+ *      MAP_Coord_FeatureDAO
  * @has Nothing
  * @does
  *   <UL>
- *   <LI> Provides a method to look up a J-Number.
+ *   <LI> Provides a query and a lookup method to look up Feature
  *   </UL>
  * @company The Jackson Laboratory
  * @author dbm
@@ -72,12 +72,11 @@ public class CoordMapFeatureLookup extends FullCachedLookup
 		" AND f._MGIType_key = " + mgiTypeKey );
     }
     /**
-    * Looks up a J-Number to find its reference key.
+    * Looks up feature key to get a MAP_Coord_FeatureDAO.
     * @assumes Nothing
     * @effects Nothing
-    * @param jNumber The J-Number to look up.
-    * @return An Integer object containing the reference key for the J-Number or
-    *         a null if the J-Number was not found.
+    * @param key the feature key to lookup
+    * @return A MAP_Coord_FeatureDAO or null if not found
     * @throws CacheException thrown if there is an error accessing the cache
     * @throws DBException thrown if there is an error accessing the
     * database

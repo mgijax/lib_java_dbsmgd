@@ -1,3 +1,12 @@
+TAG: lib_java_dbsmgd-gtlf-2
+DATE: 03/13/2009
+STAFF: sc
+CHANGES: 
+1) Added MGINoteTypeConstants.java
+2) Added ALLELE_SEQUENCE to MGIRefAssocTypeConstants.java
+3) AccessionLookup.java - removed throw of KeyNotFound (i.e. not thrown)
+4) CoordMapFeatureLookup - updated comments
+
 TAG: lib_java_dbsmgd-gtlf-1
 DATE: 01/21/2009
 STAFF: sc

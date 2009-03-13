@@ -162,10 +162,9 @@ public class AccessionLookup extends CachedLookup {
     * @return The _object_key for that accession id
     * @throws DBException thrown if there is an error accessing the database
     * @throws CacheException thrown if there is an error accessing the cache
-    * @throws KeyNotFoundException thrown if there is the key is not found
     */
     public Integer lookup (String accid)
-        throws DBException, CacheException, KeyNotFoundException{
+        throws DBException, CacheException {
         return (Integer)super.lookupNullsOk(accid);
     }
 }
