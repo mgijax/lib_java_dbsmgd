@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-gtlf-4
+DATE: 06/23/2009
+STAFF: sc
+CHANGES: TR7493 - Post Dev Build 5
+1) PubMedIDLookupByAlleleKey- added "order by _Allele_key" to query
+
 TAG: lib_java_dbsmgd-gtlf-3
 DATE: 06/18/2009
 STAFF: sc

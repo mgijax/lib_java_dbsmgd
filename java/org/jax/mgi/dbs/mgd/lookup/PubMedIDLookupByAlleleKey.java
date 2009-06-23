@@ -111,7 +111,8 @@ public class PubMedIDLookupByAlleleKey extends FullCachedLookup
 			MGIRefAssocTypeConstants.ALLELE_SEQUENCE +
 		      " and ra._Refs_key = aa._Object_key " +
 		      " and aa._MGIType_key = " + MGITypeConstants.REF +
-		      " and aa._LogicalDB_key = " + LogicalDBConstants.PUBMED;
+		      " and aa._LogicalDB_key = " + LogicalDBConstants.PUBMED +
+		      " order by ra._Object_key";
 	   
         return stmt;
     }
