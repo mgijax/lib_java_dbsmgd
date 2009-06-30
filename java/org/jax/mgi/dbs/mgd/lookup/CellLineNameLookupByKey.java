@@ -25,72 +25,73 @@ import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
  * @version 1.0
  */
 public class CellLineNameLookupByKey extends FullCachedLookup {
-  // provide a static cache so that all instances share one cache
-  private static HashMap cache = new HashMap();
+	// provide a static cache so that all instances share one cache
+	private static HashMap cache = new HashMap();
 
-  // indicator of whether or not the cache has been initialized
-  private static boolean hasBeenInitialized = false;
+	// indicator of whether or not the cache has been initialized
+	private static boolean hasBeenInitialized = false;
 
-  /**
-   * constructor
-   * @throws CacheException thrown if there is an error with the cache
-   * @throws DBException thrown if there is an error accessing the db
-   * @throws ConfigException thrown if there is an error accessing the
-   * configuration file
-   */
-  public CellLineNameLookupByKey()
-      throws CacheException, DBException, ConfigException {
-    super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
-    // since cache is static make sure you do not reinit
-    if (!hasBeenInitialized) {
-      initCache(cache);
-    }
-    hasBeenInitialized = true;
-  }
-  /**
-   * look up the cell line name given a cell line database key
-   * @param key the key to lookup
-   * @return the cell line name
-   * @throws CacheException thrown if there is an error accessing the cache
-   * @throws ConfigException thrown if there is an error accessing the
-   * configuration
-   * @throws DBException thrown if there is an error accessing the
-   * database
-   * @throws KeyNotFoundException thrown if the key is not found
-   */
-  public String lookup(Integer key) throws CacheException,
-          DBException, ConfigException, KeyNotFoundException {
-      return (String)super.lookup(key);
-  }
+	/**
+	* constructor
+	* @throws CacheException thrown if there is an error with the cache
+	* @throws DBException thrown if there is an error accessing the db
+	* @throws ConfigException thrown if there is an error accessing the
+	* configuration file
+	*/
+	public CellLineNameLookupByKey()
+	  throws CacheException, DBException, ConfigException {
+		super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
+		// since cache is static make sure you do not reinit
+		if (!hasBeenInitialized) {
+			initCache(cache);
+		}
+		hasBeenInitialized = true;
+	}
+	/**
+	* look up the cell line name given a cell line database key
+	* @param key the key to lookup
+	* @return the cell line name
+	* @throws CacheException thrown if there is an error accessing the cache
+	* @throws ConfigException thrown if there is an error accessing the
+	* configuration
+	* @throws DBException thrown if there is an error accessing the
+	* database
+	* @throws KeyNotFoundException thrown if the key is not found
+	*/
+	public String lookup(Integer key) throws CacheException,
+		  DBException, ConfigException, KeyNotFoundException {
+		return (String)super.lookup(key);
 
-  /**
-   * get the full initialization query which is called by the CacheStrategy
-   * class when performing cache initialization
-   * @assumes nothing
-   * @effects nothing
-   * @return the full initialization query
-   */
-  public String getFullInitQuery() {
-    String s = "SELECT " +
-               "c._CellLine_key, c.cellLine " +
-               "FROM ALL_CellLine c ";
-    return s;
-  }
+	}
+
+	/**
+	* get the full initialization query which is called by the CacheStrategy
+	* class when performing cache initialization
+	* @assumes nothing
+	* @effects nothing
+	* @return the full initialization query
+	*/
+	public String getFullInitQuery() {
+		String s = "SELECT " +
+				   "c._CellLine_key, c.cellLine " +
+				   "FROM ALL_CellLine c ";
+		return s;
+	}
 
 
-  /**
-   * get the RowDataInterpreter which is required by the CacheStrategy to
-   * read the results of a database query.
-   * @assumes nothing
-   * @effects nothing
-   * @return the partial initialization query
-   */
-  public RowDataInterpreter getRowDataInterpreter() {
-    class Interpreter implements RowDataInterpreter {
-      public Object interpret(RowReference row) throws DBException {
-       return new KeyValue(row.getInt(1), row.getString(2));
-      }
-    }
-    return new Interpreter();
-  }
+	/**
+	* get the RowDataInterpreter which is required by the CacheStrategy to
+	* read the results of a database query.
+	* @assumes nothing
+	* @effects nothing
+	* @return the partial initialization query
+	*/
+	public RowDataInterpreter getRowDataInterpreter() {
+		class Interpreter implements RowDataInterpreter {
+			public Object interpret(RowReference row) throws DBException {
+				return new KeyValue(row.getInt(1), row.getString(2));
+			}
+		}
+		return new Interpreter();
+	}
 }

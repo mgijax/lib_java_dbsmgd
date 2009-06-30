@@ -16,15 +16,15 @@ package org.jax.mgi.dbs.mgd;
 
 public class MGIRefAssocTypeConstants {
 	//
-        // Constants
-        //
-        public static final int ORIGINAL = 1000;
-        public static final int GENERAL = 1002;
-        public static final int NOMEN_PRIMARY = 1003;
-        public static final int NOMEN_RELATED = 1004;
-        public static final int PROVIDER = 1006;
-        public static final int SEQ_CURATOR = 1007;
-        public static final int LOAD = 1008;
+	// Constants
+	//
+	public static final int ORIGINAL = 1000;
+	public static final int GENERAL = 1002;
+	public static final int NOMEN_PRIMARY = 1003;
+	public static final int NOMEN_RELATED = 1004;
+	public static final int PROVIDER = 1006;
+	public static final int SEQ_CURATOR = 1007;
+	public static final int LOAD = 1008;
 	public static final int STRAIN_SELECTED = 1009;
 	public static final int STRAIN_ADDITIONAL = 1010;
 	public static final int ALLELE_ORIGINAL = 1011;

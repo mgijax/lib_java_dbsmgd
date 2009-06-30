@@ -14,7 +14,7 @@ import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 /**
- @is a FullCachedLookup for caching allele symbols by their 
+ * @is a FullCachedLookup for caching allele symbols by their
  *  database keys
  * @has a RowDataCacheStrategy of type FULL_CACHE used for creating the
  * cache and performing the cache lookup 
@@ -48,9 +48,9 @@ public class AlleleSymbolLookupByKey extends FullCachedLookup {
     hasBeenInitialized = true;
   }
   /**
-   * look up the allele symbol given a marker key
+   * look up the allele symbol given a allele key
    * @param key the key to lookup
-   * @return the marker symbol
+   * @return the allele symbol
    * @throws CacheException thrown if there is an error accessing the cache
    * @throws ConfigException thrown if there is an error accessing the
    * configuration

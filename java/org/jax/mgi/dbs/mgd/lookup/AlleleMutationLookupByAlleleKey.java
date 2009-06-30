@@ -61,16 +61,13 @@ public class AlleleMutationLookupByAlleleKey extends FullCachedLookup
    * translation tables
    */
   public HashSet lookup(Integer alleleKey) throws CacheException,
-      DBException
-  {
+		DBException {
       return (HashSet)super.lookupNullsOk(alleleKey);
   }
 
   /**
    * get the full initialization query which is called by the CacheStrategy
    * class when performing cache initialization
-   * @assumes nothing
-   * @effects nothing
    * @return the full initialization query
    */
  public String getFullInitQuery()
@@ -86,30 +83,29 @@ public class AlleleMutationLookupByAlleleKey extends FullCachedLookup
   /**
    * get the RowDataInterpreter which is required by the CacheStrategy to
    * read the results of a database query.
-   * @assumes nothing
-   * @effects nothing
    * @return the partial initialization query
    */
   public RowDataInterpreter getRowDataInterpreter() {
     class Interpreter implements MultiRowInterpreter {
-	public Object interpret(RowReference row) throws DBException {
-	   //return new KeyValue(row.getString(1), row.getInt(2));
-	      return new RowData(row);
-	}
-	public Object interpretKey(RowReference ref) throws DBException {
-	    return ref.getInt(1);
-	}
+		public Object interpret(RowReference row) throws DBException {
+			//return new KeyValue(row.getString(1), row.getInt(2));
+			return new RowData(row);
+		}
 
-	public Object interpretRows(Vector v) {
-	    RowData rd = (RowData)v.get(0);
-	    Integer alleleKey = rd.alleleKey;
-	    HashSet mutationTermSet = new HashSet();
-	    for (Iterator it = v.iterator(); it.hasNext();) {
-		rd = (RowData)it.next();
-		mutationTermSet.add(rd.mutationTerm);
-	    }
-	    return new KeyValue(alleleKey, mutationTermSet);
-	}
+		public Object interpretKey(RowReference ref) throws DBException {
+			return ref.getInt(1);
+		}
+
+		public Object interpretRows(Vector v) {
+			RowData rd = (RowData)v.get(0);
+			Integer alleleKey = rd.alleleKey;
+			HashSet mutationTermSet = new HashSet();
+			for (Iterator it = v.iterator(); it.hasNext();) {
+				rd = (RowData)it.next();
+				mutationTermSet.add(rd.mutationTerm);
+			}
+			return new KeyValue(alleleKey, mutationTermSet);
+		}
     }
     return new Interpreter();
   }
@@ -121,11 +117,10 @@ public class AlleleMutationLookupByAlleleKey extends FullCachedLookup
    * configuration file
    */
   private void initialize()
-      throws CacheException, DBException, ConfigException
-  {
+      throws CacheException, DBException, ConfigException {
     // since cache is static make sure you do not reinit
     if (!hasBeenInitialized)
-      initCache(cache);
+		initCache(cache);
     hasBeenInitialized = true;
 
   }

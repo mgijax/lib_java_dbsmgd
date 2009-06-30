@@ -14,20 +14,22 @@ import org.jax.mgi.shr.dbutils.RowReference;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 
 /**
- * @is An object that knows how to look up a reference key to get
- * a J-Number
+ * @is An object that knows how to look up a lab code term and abbreviation given
+ *  a raw creator name
  * @has Nothing
  * @does
  * <UL>
- * <LI> Provides a method to look up a reference key to get a J-Number.
+ * <LI> Provides a method to lookup a raw creator term to find its lab code and
+ *      abbreviaton
+ * <LI> Uses the lab code translation to map raw creator (badName) to term
+ *      and abbreviation
  * </UL>
  * @company The Jackson Laboratory
  * @author sc
  * @version 1.0
  */
 
-public class LabNameAndCodeLookupByRawCreator extends FullCachedLookup
-{
+public class LabNameAndCodeLookupByRawCreator extends FullCachedLookup {
     // provide a static cache so that all instances share one cache
     private static HashMap cache = new HashMap();
 
@@ -36,8 +38,6 @@ public class LabNameAndCodeLookupByRawCreator extends FullCachedLookup
     
     /**
      * Constructs a LabNameAndCodeLookupByCreator object.
-     * @assumes Nothing
-     * @effects Nothing
      * @throws CacheException thrown if there is an error accessing the cache
      * @throws ConfigException thrown if there is an error accessing the
      * configuration
@@ -47,27 +47,25 @@ public class LabNameAndCodeLookupByRawCreator extends FullCachedLookup
     public LabNameAndCodeLookupByRawCreator ()
         throws CacheException, ConfigException, DBException {
         super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
-	// since cache is static make sure you do not reinit
-	if (!hasBeenInitialized) {
-	  initCache(cache);
-	}
-	hasBeenInitialized = true;
+		// since cache is static make sure you do not reinit
+		if (!hasBeenInitialized) {
+			initCache(cache);
+		}
+		hasBeenInitialized = true;
     }
 
-
     /**
-    * Looks up a reference key to find a J-Number.
+    * Looks up raw
     * @assumes Nothing
     * @effects Nothing
     * @param key The reference key to look up.
-    * @return An String object containing the J-Number for the reference key or
-    * a null if the reference key was not found.
+    * @return A KeyValue object where key is labName, value is labCode
     * @throws CacheException thrown if there is an error accessing the cache
     * @throws DBException thrown if there is an error accessing the
     * database
     */
-    public KeyValue lookup (String rawCreator) throws DBException, CacheException
-    {
+    public KeyValue lookup (String rawCreator) throws DBException, 
+			CacheException {
         return (KeyValue)super.lookupNullsOk(rawCreator);
     }
 
@@ -79,8 +77,7 @@ public class LabNameAndCodeLookupByRawCreator extends FullCachedLookup
      * @return The query to add an object to the database.
      * @throws Nothing
      */
-    public String getFullInitQuery ()
-    {
+    public String getFullInitQuery () {
         String stmt = "SELECT mt.badName, labName=vt.term, " +
 	    "labCode=vt.abbreviation " +
 	    "FROM MGI_Translation mt, VOC_Term vt " +
@@ -99,22 +96,18 @@ public class LabNameAndCodeLookupByRawCreator extends FullCachedLookup
      * @effects nothing
      * @return The RowDataInterpreter object
      */
-    public RowDataInterpreter getRowDataInterpreter()
-    {
-        class Interpreter implements RowDataInterpreter
-        {
+    public RowDataInterpreter getRowDataInterpreter() {
+        class Interpreter implements RowDataInterpreter {
             public Object interpret (RowReference row)
-                throws DBException
-            {
+                throws DBException {
                 String rawCreator = row.getString(1);
-		String labName = row.getString(2);
-		String labCode = row.getString(3);
-		//System.out.println("creator: " + rawCreator + " labName: " + labName + " labCode: " + labCode);
-		KeyValue labNameCode = new KeyValue(labName, labCode);
-		return new KeyValue(rawCreator, labNameCode);
+				String labName = row.getString(2);
+				String labCode = row.getString(3);
+				//System.out.println("creator: " + rawCreator + " labName: " + labName + " labCode: " + labCode);
+				KeyValue labNameCode = new KeyValue(labName, labCode);
+				return new KeyValue(rawCreator, labNameCode);
             }
         }
         return new Interpreter();
     }
-
 }

@@ -20,20 +20,15 @@ import java.util.Iterator;
 import java.util.Vector;
 
 /**
- * @is An object that knows how to look the set PubMed Ids,  associated with an 
- * allele, by allele key
- * @has Nothing
- * @does
- * <UL>
- * <LI> Provides a method to look up a allele key to get a PubMed ID.
- * </UL>
+ * @is An object that knows how to look up the set PubMed Ids,  associated with 
+ * an allele, by allele key
+ * @does Provides a method to look up a allele key to get a PubMed ID.
  * @company The Jackson Laboratory
  * @author sc
  * @version 1.0
  */
 
-public class PubMedIDLookupByAlleleKey extends FullCachedLookup
-{
+public class PubMedIDLookupByAlleleKey extends FullCachedLookup {
     
     // provide a static cache so that all instances share one cache
     private static HashMap cache = new HashMap();
@@ -43,8 +38,6 @@ public class PubMedIDLookupByAlleleKey extends FullCachedLookup
     
     /**
      * Constructs a PubMedIDLookupByAlleleKey object.
-     * @assumes Nothing
-     * @effects Nothing
      * @throws CacheException thrown if there is an error accessing the cache
      * @throws ConfigException thrown if there is an error accessing the
      * configuration
@@ -54,65 +47,46 @@ public class PubMedIDLookupByAlleleKey extends FullCachedLookup
     public PubMedIDLookupByAlleleKey ()
         throws CacheException, ConfigException, DBException {
         super(SQLDataManagerFactory.getShared(SchemaConstants.MGD));
-	if (!hasBeenInitialized) {
-	  initCache(cache);
-	}
-	hasBeenInitialized = true;
+		if (!hasBeenInitialized) {
+			initCache(cache);
+		}
+		hasBeenInitialized = true;
     }
 
 
     /**
     * Looks up a allele key to find a set of PubMed ID(s).
-    * @assumes Nothing
-    * @effects Nothing
     * @param key The allele key to look up.
-    * @return An HashSet object containing the set ofPubMed ID for the allele key  
-    *   If the allele key was not found, return an empty set
+    * @return A HashSet object containing the set of PubMed IDs for the allele   
+    *   key. If the allele key was not found, return an empty set.
     * @throws CacheException thrown if there is an error accessing the cache
     * @throws DBException thrown if there is an error accessing the
     * database
     */
-    public HashSet lookup (Integer key) throws DBException, CacheException
-    {
+    public HashSet lookup (Integer key) throws DBException, CacheException {
         HashSet idSet =  (HashSet)super.lookupNullsOk(key);
-	if (idSet ==  null) {
-	    idSet = new HashSet();
-	}
-	return idSet;
+		if (idSet ==  null) {
+			idSet = new HashSet();
+		}
+		return idSet;
     }
 
     /**
-     * Get the query to partially initialize the cache.
-     * @assumes Nothing
-     * @effects Nothing
-     * @return The query to partially initialize the cache.
-     */
-    /*
-    public String getPartialInitQuery ()
-    {
-        return null;
-    }*/
-
-
-    /**
-     * Get the query to add an object to the database.
-     * @assumes Nothing
-     * @effects Nothing
-     * @param addObject The object to add.
+     * get the full initialization query which is called by the CacheStrategy
+     * class when performing cache initialization
      * @return The query to add an object to the database.
-     * @throws Nothing
      */
     public String getFullInitQuery ()
     {
         String stmt = "SELECT ra._Object_key,  aa.accID " +
-                      "FROM MGI_Reference_Assoc ra, ACC_Accession aa " +
-                      "WHERE ra._MGIType_key = " + MGITypeConstants.ALLELE +
-		      " and ra._RefAssocType_key = " + 
-			MGIRefAssocTypeConstants.ALLELE_SEQUENCE +
-		      " and ra._Refs_key = aa._Object_key " +
-		      " and aa._MGIType_key = " + MGITypeConstants.REF +
-		      " and aa._LogicalDB_key = " + LogicalDBConstants.PUBMED +
-		      " order by ra._Object_key";
+			"FROM MGI_Reference_Assoc ra, ACC_Accession aa " +
+            "WHERE ra._MGIType_key = " + MGITypeConstants.ALLELE +
+		    " and ra._RefAssocType_key = " + 
+			  MGIRefAssocTypeConstants.ALLELE_SEQUENCE +
+		    " and ra._Refs_key = aa._Object_key " +
+		    " and aa._MGIType_key = " + MGITypeConstants.REF +
+		    " and aa._LogicalDB_key = " + LogicalDBConstants.PUBMED +
+		    " order by ra._Object_key";
 	   
         return stmt;
     }
@@ -126,34 +100,33 @@ public class PubMedIDLookupByAlleleKey extends FullCachedLookup
      * @return The RowDataInterpreter object
      */
     public RowDataInterpreter getRowDataInterpreter() {
-        class Interpreter implements MultiRowInterpreter
-        {
+        class Interpreter implements MultiRowInterpreter {
             public Object interpret(RowReference row) throws DBException {
-	   //return new KeyValue(row.getString(1), row.getInt(2));
-	      return new RowData(row);
-	    }
-	    public Object interpretKey(RowReference ref) throws DBException {
-		return ref.getInt(1);
-	    }
+			//return new KeyValue(row.getString(1), row.getInt(2));
+				return new RowData(row);
+			}
+			public Object interpretKey(RowReference ref) throws DBException {
+				return ref.getInt(1);
+			}
 
-	    public Object interpretRows(Vector v) {
-		RowData rd = (RowData)v.get(0);
-		Integer alleleKey = rd.alleleKey;
-		HashSet pubMedIDSet = new HashSet();
-		for (Iterator it = v.iterator(); it.hasNext();) {
-		    rd = (RowData)it.next();
-		    pubMedIDSet.add(rd.pubMedID);
+			public Object interpretRows(Vector v) {
+				RowData rd = (RowData)v.get(0);
+				Integer alleleKey = rd.alleleKey;
+				HashSet pubMedIDSet = new HashSet();
+				for (Iterator it = v.iterator(); it.hasNext();) {
+					rd = (RowData)it.next();
+					pubMedIDSet.add(rd.pubMedID);
+			}
+			return new KeyValue(alleleKey, pubMedIDSet);
+			}
 		}
-		return new KeyValue(alleleKey, pubMedIDSet);
-	    }
-        }
-        return new Interpreter();
+		return new Interpreter();
     }
-      /**
+     /**
      * Simple data object representing a row of data from the query
      */
     class RowData {
-	protected Integer alleleKey;
+		protected Integer alleleKey;
         protected String pubMedID;
         public RowData (RowReference row) throws DBException {
             alleleKey = row.getInt(1);
