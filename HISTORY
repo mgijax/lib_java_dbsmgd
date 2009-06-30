@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-gtlf-5
+DATE: 06/30/2009
+STAFF: sc
+CHANGES: TR7493 - Post Dev Build 6
+1) AlleleSymbolLookupByKey, MarkerSymbolLookupByKey added for reporting
+
 TAG: lib_java_dbsmgd-gtlf-4
 DATE: 06/23/2009
 STAFF: sc
