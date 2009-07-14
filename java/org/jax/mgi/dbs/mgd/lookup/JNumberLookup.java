@@ -62,7 +62,6 @@ public class JNumberLookup extends LazyCachedLookup
         return (Integer)super.lookupNullsOk(jNumber);
     }
 
-
     /**
      * Get the query to partially initialize the cache.
      * @assumes Nothing
@@ -120,6 +119,12 @@ public class JNumberLookup extends LazyCachedLookup
 
 
 //  $Log$
+//  Revision 1.13.50.1  2009/03/13 14:24:14  sc
+//  lib_java_dbsmgd-gtlf-2
+//
+//  Revision 1.13  2004/07/28 19:23:14  mbw
+//  javadocs only
+//
 //  Revision 1.12  2004/02/04 19:44:44  mbw
 //  merged jsam branch to the trunk
 //

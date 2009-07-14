@@ -1,3 +1,47 @@
+TAG: lib_java_dbsmgd-4-3-0-1
+DATE: 07/14/2009
+STAFF: sc
+CHANGES: merge TR7493 to trunk
+
+TAG: lib_java_dbsmgd-gtlf-7
+TAG: lib_java_dbsmgd-gtlf-6
+DATE: 06/30/2009
+STAFF: sc
+CHANGES: TR7493 - Post Dev Build 6
+1) comments and indent updates 
+
+TAG: lib_java_dbsmgd-gtlf-5
+DATE: 06/30/2009
+STAFF: sc
+CHANGES: TR7493 - Post Dev Build 6
+1) AlleleSymbolLookupByKey, MarkerSymbolLookupByKey added for reporting
+
+TAG: lib_java_dbsmgd-gtlf-4
+DATE: 06/23/2009
+STAFF: sc
+CHANGES: TR7493 - Post Dev Build 5
+1) PubMedIDLookupByAlleleKey- added "order by _Allele_key" to query
+
+TAG: lib_java_dbsmgd-gtlf-3
+DATE: 06/18/2009
+STAFF: sc
+CHANGES: TR7493
+1) Several lookups added to support genetrapload
+
+TAG: lib_java_dbsmgd-gtlf-2
+DATE: 03/13/2009
+STAFF: sc
+CHANGES: 
+1) Added MGINoteTypeConstants.java
+2) Added ALLELE_SEQUENCE to MGIRefAssocTypeConstants.java
+3) AccessionLookup.java - removed throw of KeyNotFound (i.e. not thrown)
+4) CoordMapFeatureLookup - updated comments
+
+TAG: lib_java_dbsmgd-gtlf-1
+DATE: 01/21/2009
+STAFF: sc
+CHANGES: additions to constants files and generatedTables.txt
+
 TAG: lib_java_dbsmgd-gtlf-BP
 DATE: 01/21/2009
 STAFF: sc

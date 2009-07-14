@@ -10,7 +10,6 @@ import org.jax.mgi.shr.cache.CacheConstants;
 import org.jax.mgi.shr.cache.KeyValue;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.config.ConfigException;
-import org.jax.mgi.shr.cache.KeyNotFoundException;
 import org.jax.mgi.shr.dbutils.DBException;
 import org.jax.mgi.shr.dbutils.SQLDataManagerFactory;
 import org.jax.mgi.dbs.SchemaConstants;
@@ -37,8 +36,6 @@ public class AccessionLookup extends CachedLookup {
 
     /**
      * Constructs an AccessionLookup object.
-     * @assumes Nothing
-     * @effects Nothing
      * @param logicalDBKey the logical db of the accession id to look up
      * @param mgiTypeKey the MGI type of the object key to return
      * @param preferred true (1)if preferred accession ids
@@ -162,10 +159,9 @@ public class AccessionLookup extends CachedLookup {
     * @return The _object_key for that accession id
     * @throws DBException thrown if there is an error accessing the database
     * @throws CacheException thrown if there is an error accessing the cache
-    * @throws KeyNotFoundException thrown if there is the key is not found
     */
     public Integer lookup (String accid)
-        throws DBException, CacheException, KeyNotFoundException{
+        throws DBException, CacheException {
         return (Integer)super.lookupNullsOk(accid);
     }
 }
