@@ -51,5 +51,5 @@ public class LogicalDBConstants
     public static final int SIGTR = 103;
     public static final int FHCRC = 104;
     public static final int TIGM_CELLLINE = 121;
-    
+    public static final int NCBI_GENEMODEL_EVIDENCE = 139;
 }
