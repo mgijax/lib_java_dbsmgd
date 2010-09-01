@@ -1,3 +1,10 @@
+TAG: lib_java_dbsmgd-4-3-3-2
+DATE: 09/01/2010
+STAFF: sc
+CHANGES: CellLineStrainKeyLookupByCellLineKey - 
+	fixed bug in the query, missing space. Obviously this
+	class not currently being used by anything.
+
 TAG: lib_java_dbsmgd-4-3-3-1
 DATE: 03/11/2010
 STAFF: sc

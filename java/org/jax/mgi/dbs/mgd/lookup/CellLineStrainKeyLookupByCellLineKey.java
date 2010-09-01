@@ -70,7 +70,7 @@ public class CellLineStrainKeyLookupByCellLineKey extends FullCachedLookup {
 	*/
 	public String getFullInitQuery() {
 		String s = "SELECT " +
-				   "c._CellLine_key,  c._Strain_key" +
+				   "c._CellLine_key,  c._Strain_key " +
 				   "FROM ALL_CellLine c";
 		return s;
 	}
