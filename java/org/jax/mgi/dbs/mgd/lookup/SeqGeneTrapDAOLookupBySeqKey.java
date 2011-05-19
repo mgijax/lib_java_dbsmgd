@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.jax.mgi.dbs.mgd.dao.SEQ_GeneTrapDAO;
 import org.jax.mgi.dbs.mgd.dao.SEQ_GeneTrapState;
+import org.jax.mgi.dbs.mgd.dao.SEQ_GeneTrapKey;
 import org.jax.mgi.dbs.SchemaConstants;
 import org.jax.mgi.shr.cache.CacheException;
 import org.jax.mgi.shr.cache.FullCachedLookup;
@@ -93,7 +94,6 @@ public class SeqGeneTrapDAOLookupBySeqKey extends FullCachedLookup {
 		  public Object interpret(RowReference row) throws DBException {
 			  Integer key = row.getInt(1);
 			  SEQ_GeneTrapState state = new SEQ_GeneTrapState();
-			  state.setSequenceKey(key);
 			  state.setTagMethodKey(row.getInt(2));
 			  state.setVectorEndKey(row.getInt(3));
 			  state.setReverseCompKey(row.getInt(4));
@@ -105,8 +105,9 @@ public class SeqGeneTrapDAOLookupBySeqKey extends FullCachedLookup {
 			  state.setModificationDate(row.getTimestamp(10));
 
 			  // not this table does not have a single primary key
-			  SEQ_GeneTrapDAO dao = new SEQ_GeneTrapDAO(state);
-				  return new KeyValue(key, dao);
+			  SEQ_GeneTrapDAO dao = new SEQ_GeneTrapDAO(new 
+			      SEQ_GeneTrapKey(key), state);
+			  return new KeyValue(key, dao);
 		  }
 		}
 		return new Interpreter();

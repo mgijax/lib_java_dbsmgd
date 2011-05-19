@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-4-4-1-1
+DATE: 05/19/2011
+STAFF: sc
+CHANGES:  TR10723/TR10594/TR10656
+1) SeqGeneTrapDAOLookupBySeqKey - Added support for SEQ_GeneTrapKey
+
 TAG: lib_java_dbsmgd-4-3-3-2
 DATE: 09/01/2010
 STAFF: sc
