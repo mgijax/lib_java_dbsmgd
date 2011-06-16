@@ -77,14 +77,17 @@ public class SeqTagIdLookupBySeqKey extends FullCachedLookup {
 	* @return the full initialization query
 	*/
 	public String getFullInitQuery() {
-		return new String("SELECT _Object_key as _Sequence_key, " +
-		"accID as seqTagId " +
-		"FROM ACC_Accession " +
-		"WHERE _MGIType_key = 19 " +
-		"and _LogicalDB_key in (" + LogicalDBConstants.IGTC + ", " +
-		LogicalDBConstants.LEXICON_SEQUENCE + ", " +
-		LogicalDBConstants.TIGM + ") " +
-		"and preferred = 1");
+	    return new String("SELECT _Object_key as _Sequence_key, " +
+	    "accID as seqTagId " +
+	    "FROM ACC_Accession " +
+	    "WHERE _MGIType_key = 19 " +
+	    "and _LogicalDB_key in (" + LogicalDBConstants.IGTC + ", " +
+	    LogicalDBConstants.LEXICON_SEQUENCE + ", " +
+	    LogicalDBConstants.TIGM +  ", " + 
+	    LogicalDBConstants.EUCOMM_GTTAG +  ", " +
+	    LogicalDBConstants.RULEY +  ", " +
+	    LogicalDBConstants.ISHIDA  + 
+		") and preferred = 1");
 	}
 
 	/**

@@ -1,3 +1,11 @@
+TAG: lib_java_dbsmgd-4-4-1-2
+DATE: 06/16/2011
+STAFF: sc
+CHANGES: TR10754 Dup EUCOMM, Ishida, Ruley seqTagIDs
+1) LogicalDBConstants - add EUCOMM, Ishida, Ruley seqTagId and Cell Line id
+   logicalDBs
+2) SeqTagIDLookupBySeqKey - added EUCOMM, Ishida and Ruley ldbs to query
+
 TAG: lib_java_dbsmgd-4-4-1-1
 DATE: 05/19/2011
 STAFF: sc
