@@ -1,3 +1,14 @@
+TAG: lib_java_dbsmgd-5-1-6-?
+DATE: 01/23/2014
+STAFF: lec
+CHANGES:
+1) TR11555/Ensembl 74/removing mgi_attributehistory table
+
+hist/AttrHistory.java : remove
+hist/PRB_SourceAttrHistory.java : remove
+hist/Seq_SequenceAttrHistory.java : remove
+dao/generatedTables.txt
+
 TAG: lib_java_dbsmgd-5-0-0-1
 DATE: 07/05/2012
 STAFF: sc
