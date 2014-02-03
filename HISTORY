@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-tr11515-1
+DATE: 02/03/2014
+STAFF: sc
+CHANGES:
+1) VocabularyTypeConstants.java - added ALLELE_COLLECTION and ALLELE_SUBTYPE
+
 TAG: lib_java_dbsmgd-tr11515-BP
 DATE: 01/29/2014
 STAFF: sc
