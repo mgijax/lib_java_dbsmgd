@@ -1,3 +1,9 @@
+TAG: lib_java_dbsmgd-tr11515-2
+DATE: 02/14/2014
+STAFF: sc
+CHANGES:
+1) generatedTables.txt - Added VOC_Annot
+
 TAG: lib_java_dbsmgd-tr11515-1
 DATE: 02/03/2014
 STAFF: sc

@@ -24,3 +24,4 @@ SEQ_GeneTrap
 SEQ_Sequence
 SEQ_Sequence_Raw
 SEQ_Source_Assoc
+VOC_Annot
