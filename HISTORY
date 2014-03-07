@@ -1,3 +1,21 @@
+TAG: lib_java_dbsmgd-5-1-8-1
+DATE: 03/07/2014
+STAFF: lec
+CHANGES:
+1) merge trunk from branch tr11515
+
+TAG: lib_java_dbsmgd-tr11515-2
+DATE: 02/14/2014
+STAFF: sc
+CHANGES:
+1) generatedTables.txt - Added VOC_Annot
+
+TAG: lib_java_dbsmgd-tr11515-1
+DATE: 02/03/2014
+STAFF: sc
+CHANGES:
+1) VocabularyTypeConstants.java - added ALLELE_COLLECTION and ALLELE_SUBTYPE
+
 TAG: lib_java_dbsmgd-tr11515-BP
 DATE: 01/29/2014
 STAFF: sc
