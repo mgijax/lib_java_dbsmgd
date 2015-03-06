@@ -47,5 +47,6 @@ public class VocabularyTypeConstants
     public static final int MKR_ALLELE_ASSOC_QUAL = 70;
     public static final int CELLLINE_LABCODE = 71;
     public static final int CELLLINE_VECTOR_NAME = 72;
-    
+    public static final int ALLELE_COLLECTION = 92;
+    public static final int ALLELE_SUBTYPE = 93;
 }
