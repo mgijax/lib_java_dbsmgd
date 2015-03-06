@@ -20,11 +20,11 @@
       <java classname="org.jax.mgi.shr.dbutils.cg.MGDGen"
             classpath="${classpath}"
             fork="true" failonerror="true" dir="${src.dir}">
-         <jvmarg value="-DDBSERVER=${env.MGD_DBSERVER}"/>
-         <jvmarg value="-DDBNAME=${env.MGD_DBNAME}"/>
-         <jvmarg value="-DDBUSER=${env.MGD_DBUSER}"/>
-         <jvmarg value="-DDBPASSWORDFILE=${env.MGD_DBPASSWORDFILE}"/>
-         <jvmarg value="-DDBURL=${env.MGD_DBURL}"/>
+         <jvmarg value="-DDBSERVER=${env.PG_DBSERVER}"/>
+         <jvmarg value="-DDBNAME=${env.PG_DBNAME}"/>
+         <jvmarg value="-DDBUSER=${env.PG_DBUSER}"/>
+         <jvmarg value="-DDBPASSWORDFILE=${env.PG_1LINE_PASSFILE}"/>
+         <jvmarg value="-DDBURL=${env.PG_DBSERVER}"/>
       </java>
    </target>
 
