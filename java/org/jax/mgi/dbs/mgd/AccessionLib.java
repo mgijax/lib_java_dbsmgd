@@ -260,14 +260,17 @@ public class AccessionLib
         ACC_AccessionReferenceDAO refDAO =
             new ACC_AccessionReferenceDAO(refState);
 
-        sqlStream.insert(refDAO);
         sqlStream.insert(accessionDAO);
+        sqlStream.insert(refDAO);
     }
 
 }
 
 
 //  $Log$
+//  Revision 1.4  2005/08/05 17:51:26  mbw
+//  merged code from branch lib_java_dbsmgd-tr6046-1
+//
 //  Revision 1.3.14.1  2005/08/02 17:48:24  mbw
 //  added new method for creating new accession associations to markers in the
 //  ACC_Accession table
