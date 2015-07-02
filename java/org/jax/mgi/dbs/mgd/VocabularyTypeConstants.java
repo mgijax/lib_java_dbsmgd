@@ -49,5 +49,4 @@ public class VocabularyTypeConstants
     public static final int CELLLINE_VECTOR_NAME = 72;
     public static final int ALLELE_COLLECTION = 92;
     public static final int ALLELE_SUBTYPE = 93;
-    
 }

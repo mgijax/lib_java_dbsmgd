@@ -78,8 +78,8 @@ public class LabNameAndCodeLookupByRawCreator extends FullCachedLookup {
      * @throws Nothing
      */
     public String getFullInitQuery () {
-        String stmt = "SELECT mt.badName, labName=vt.term, " +
-	    "labCode=vt.abbreviation " +
+        String stmt = "SELECT mt.badName, vt.term as labName, " +
+	    "vt.abbreviation as labCode " +
 	    "FROM MGI_Translation mt, VOC_Term vt " +
 	    "WHERE mt._TranslationType_Key = " + 
 	    TranslationTypeConstants.CELL_LINE_LABCODE + " " +

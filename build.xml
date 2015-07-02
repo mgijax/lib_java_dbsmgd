@@ -23,8 +23,8 @@
          <jvmarg value="-DDBSERVER=${env.MGD_DBSERVER}"/>
          <jvmarg value="-DDBNAME=${env.MGD_DBNAME}"/>
          <jvmarg value="-DDBUSER=${env.MGD_DBUSER}"/>
-         <jvmarg value="-DDBPASSWORDFILE=${env.MGD_DBPASSWORDFILE}"/>
-         <jvmarg value="-DDBURL=${env.MGD_DBURL}"/>
+         <jvmarg value="-DDBPASSWORDFILE=${env.PG_1LINE_PASSFILE}"/>
+         <jvmarg value="-DDBURL=${env.MGD_DBSERVER}"/>
       </java>
    </target>
 
