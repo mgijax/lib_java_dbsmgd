@@ -5,7 +5,6 @@ ALL_Allele_CellLine
 ALL_Allele_Mutation
 ALL_CellLine
 ALL_CellLine_Derivation
-ALL_Marker_Assoc
 MAP_Coord_Collection
 MAP_Coordinate
 MAP_Coord_Feature
