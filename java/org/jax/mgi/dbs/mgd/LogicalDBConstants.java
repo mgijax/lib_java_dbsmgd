@@ -23,8 +23,6 @@ public class LogicalDBConstants
     public static final int JAXREGISTRY = 22;
     public static final int REFSEQ = 27;
     public static final int PUBMED = 29;
-    public static final int DFCI = 35;
-    public static final int DOTS = 36;
     public static final int TREMBL = 41;
     public static final int NIA15K = 46;
     public static final int NIA7_4K = 50;
