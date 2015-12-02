@@ -13,7 +13,6 @@ MGI_Note
 MGI_NoteChunk
 MGI_Reference_Assoc
 MGI_SetMember
-MGI_Tables
 MRK_Chromosome
 PRB_Probe
 PRB_Reference
