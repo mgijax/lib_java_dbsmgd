@@ -1,0 +1,7 @@
+Configuration
+dbsmgd.jar
+java/org/jax/mgi/dbs/mgd/MGD.java
+java/org/jax/mgi/dbs/mgd/dao/*.java
+java/velocity.log
+classes/
+javadocs/
