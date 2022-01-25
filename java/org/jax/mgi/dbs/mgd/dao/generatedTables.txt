@@ -10,7 +10,6 @@ MAP_Coordinate
 MAP_Coord_Feature
 MGI_dbinfo
 MGI_Note
-MGI_NoteChunk
 MGI_Reference_Assoc
 MGI_SetMember
 MRK_Chromosome
