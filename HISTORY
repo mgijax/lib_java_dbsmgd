@@ -1,3 +1,8 @@
+TAG: lib_java_dbsmgd-6-0-22-1
+DATE: 11/15/2023
+STAFF: sc
+remove JCONNECT from build.xml (old sybase JDBC driver)
+
 TAG: lib_java_dbsmgd-6-0-18-1
 DATE: 02/21/2022
 STAFF: sc
